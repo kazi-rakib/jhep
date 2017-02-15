@@ -23,6 +23,11 @@ public @interface CliCommand {
      */
     String   command();
     /**
+     * information about what the command does.
+     * @return 
+     */
+    String info();
+    /**
      *  This array describes default values that can be passed
      * to the command. to use defaults, in the command line
      * one should use "!" symbol.

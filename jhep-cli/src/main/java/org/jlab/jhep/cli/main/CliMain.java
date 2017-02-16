@@ -95,7 +95,7 @@ public class CliMain {
         CliLogo.printLogo();
         
         CliMain cliMain = new CliMain();
-        cliMain.initModule("org.jlab.jhep.cli.test.SimpleCommands");
+        cliMain.initModule("org.jlab.jhep.cli.test.SystemCommands");
         cliMain.initModule("org.jlab.jhep.cli.test.MathCommands");
         cliMain.initModule("org.jlab.jhep.cli.test.StringCommands");
         

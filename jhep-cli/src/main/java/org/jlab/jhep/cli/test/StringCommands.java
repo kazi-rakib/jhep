@@ -30,7 +30,7 @@ public class StringCommands {
     }
     
     @CliCommand(
-            command="toupper",
+            command="tolower",
             info="converts string to lower case",
             defaults={"a"},
             descriptions={"string to convert to lower case"}

@@ -18,9 +18,9 @@ import org.jlab.jhep.cli.base.CommandClassParser;
  * @author gavalian
  */
 @CliSystem (system="sys", info="System commands")
-public class SimpleCommands {
+public class SystemCommands {
     
-    public SimpleCommands(){
+    public SystemCommands(){
         
     }
     
@@ -36,7 +36,7 @@ public class SimpleCommands {
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("ls");
         } catch (IOException ex) {
-            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SystemCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -52,7 +52,7 @@ public class SimpleCommands {
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("pwd");
         } catch (IOException ex) {
-            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SystemCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -67,24 +67,14 @@ public class SimpleCommands {
         try {
             Thread.sleep(sec*1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SystemCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("done...");
     }
-    
-    @CliCommand(
-            command="toupper",
-            info="converts string to upper case",
-            defaults={"a"},
-            descriptions={"string to convert to upper case"}
-    )
-    public void toupper(String input){
-        String output = input.toUpperCase();
-        System.out.println(output);
-    }
+        
     
     public static void main(String[] args){
-        SimpleCommands command = new SimpleCommands();
+        SystemCommands command = new SystemCommands();
         //CommandClassParser parser = new CommandClassParser();
         //parser.parse(command.getClass());        
         CliClass clazz = new CliClass();

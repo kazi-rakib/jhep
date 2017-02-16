@@ -44,10 +44,18 @@ public class CliClass {
         }
     }
     
+    
     public String getSystemName(){return systemName;}
     public String getSystemInfo(){return systemInfo;}
     public Boolean isInitialized(){return this.initialized;}
     
+    public List<String> getCommandList(){
+        List<String> commandList = new ArrayList<String>();
+        for(Map.Entry<String,CliCommandDescriptor> entry : this.descriptors.entrySet()){
+            commandList.add(this.getSystemName() + "/" + entry.getValue().getCommand());
+        }
+        return commandList;
+    }
     public void scanClass(){
         
         this.initialized = false;
@@ -75,7 +83,7 @@ public class CliClass {
                 CliCommandDescriptor desc = new CliCommandDescriptor(systemName,command);
                 desc.setMethod(method.getName()).setDescription(info);
                 for(int k = 0; k < types.length; k++){
-                    System.out.println(">>> type name = [" + types[k].getTypeName() + "]");
+                    //System.out.println(">>> type name = [" + types[k].getTypeName() + "]");
                     if(types[k].getTypeName().compareToIgnoreCase("int")==0){
                         //desc.addConverter(new BasicInputConverter<Integer>("a",args[k],Integer.parseInt(defaults[k])));
                         desc.addIntConverter(Integer.parseInt(defaults[k]));
@@ -90,11 +98,15 @@ public class CliClass {
                     }
                 }
                 this.descriptors.put(desc.getCommand(),desc);
-                System.out.println(" SIZE TYPES = " + types.length + " " + args.length + " " + defaults.length);
+                //System.out.println(" SIZE TYPES = " + types.length + " " + args.length + " " + defaults.length);
                 
             }
         }
-        if(this.descriptors.size()>0) initialized = true;
+        if(this.descriptors.size()>0) {
+            initialized = true;
+        } else {
+            System.out.println(" no decalred methods");
+        }
     }
     
     

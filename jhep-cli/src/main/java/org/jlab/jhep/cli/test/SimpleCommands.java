@@ -18,9 +18,9 @@ import org.jlab.jhep.cli.base.CommandClassParser;
  * @author gavalian
  */
 @CliSystem (system="sys", info="System commands")
-public class SimpleCommand {
+public class SimpleCommands {
     
-    public SimpleCommand(){
+    public SimpleCommands(){
         
     }
     
@@ -36,7 +36,7 @@ public class SimpleCommand {
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("ls");
         } catch (IOException ex) {
-            Logger.getLogger(SimpleCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -52,7 +52,7 @@ public class SimpleCommand {
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("pwd");
         } catch (IOException ex) {
-            Logger.getLogger(SimpleCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -67,11 +67,10 @@ public class SimpleCommand {
         try {
             Thread.sleep(sec*1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(SimpleCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("done...");
     }
-    
     
     @CliCommand(
             command="toupper",
@@ -85,7 +84,7 @@ public class SimpleCommand {
     }
     
     public static void main(String[] args){
-        SimpleCommand command = new SimpleCommand();
+        SimpleCommands command = new SimpleCommands();
         //CommandClassParser parser = new CommandClassParser();
         //parser.parse(command.getClass());        
         CliClass clazz = new CliClass();

@@ -122,7 +122,7 @@ public class CliClass {
         
         Object[] array   = desc.getInputs(arguments);
         Class[]  args    = desc.getMethodInputs();
-        System.out.println(" LENGTH = " + args.length);
+        //System.out.println(" LENGTH = " + args.length);
         try {
             Method method = this.cliClazz.getClass().getDeclaredMethod(command, args);
             method.invoke(cliClazz, array);

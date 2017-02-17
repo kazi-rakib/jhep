@@ -94,7 +94,7 @@ public class CliMain {
         //ConsoleReader reader = new ConsoleReader();
         CliLogo.printLogo();
         
-        CliMain cliMain = new CliMain();
+        CliModuleManager cliMain = new CliModuleManager();
         cliMain.initModule("org.jlab.jhep.cli.test.SystemCommands");
         cliMain.initModule("org.jlab.jhep.cli.test.MathCommands");
         cliMain.initModule("org.jlab.jhep.cli.test.StringCommands");
@@ -135,17 +135,18 @@ public class CliMain {
                 }
                 
                 if(line.equalsIgnoreCase("help")==true){
-                    cliMain.printHelp();
+                    //cliMain.printHelp();
                 }
                 
                 if(line.startsWith("help")==true){
                     String[] tokens = line.split("\\s+");
                     if(tokens.length>1){
-                        cliMain.printSystemHelp(tokens[1]);
+                        //cliMain.printSystemHelp(tokens[1]);
                     }
                 }
+                cliMain.execute(line);
                 //System.out.println(line);
-                cliMain.printMessageUnrecognizedCommand(line);
+                //cliMain.printMessageUnrecognizedCommand(line);
         }
         System.out.println("\n Bye-bye...\n");
     }

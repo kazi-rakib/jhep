@@ -147,19 +147,19 @@ public class FileUtils {
         List<String> items = new ArrayList<String>();
         try {
             File file = new File(filename);
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNext()) {
-                //System.out.println(scanner.next());
-                String nextLine = scanner.next();
-                if(nextLine.startsWith(starts_with)==true){
-                    if(replace==false) {
-                        items.add(nextLine);
-                    } else {
-                        items.add(nextLine.replace(starts_with, ""));
+            try (Scanner scanner = new Scanner(file)) {
+                while (scanner.hasNext()) {
+                    //System.out.println(scanner.next());
+                    String nextLine = scanner.next();
+                    if(nextLine.startsWith(starts_with)==true){
+                        if(replace==false) {
+                            items.add(nextLine);
+                        } else {
+                            items.add(nextLine.replace(starts_with, ""));
+                        }
                     }
                 }
             }
-            scanner.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

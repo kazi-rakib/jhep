@@ -6,6 +6,7 @@
 package org.jlab.jhep.cli.test;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jlab.jhep.cli.base.CliClass;
@@ -35,6 +36,14 @@ public class SystemCommands {
             java.lang.Runtime rt = java.lang.Runtime.getRuntime();
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("ls");
+            java.io.InputStream is = p.getInputStream();
+            java.io.BufferedReader reader = new java.io.BufferedReader(new InputStreamReader(is));
+            // And print each line
+            String s = null;
+            while ((s = reader.readLine()) != null) {
+                System.out.println(s);
+            }
+            is.close();
         } catch (IOException ex) {
             Logger.getLogger(SystemCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -51,6 +60,14 @@ public class SystemCommands {
             java.lang.Runtime rt = java.lang.Runtime.getRuntime();
             // Start a new process: UNIX command ls
             java.lang.Process p = rt.exec("pwd");
+            java.io.InputStream is = p.getInputStream();
+            java.io.BufferedReader reader = new java.io.BufferedReader(new InputStreamReader(is));
+            // And print each line
+            String s = null;
+            while ((s = reader.readLine()) != null) {
+                System.out.println(s);
+            }
+            is.close();
         } catch (IOException ex) {
             Logger.getLogger(SystemCommands.class.getName()).log(Level.SEVERE, null, ex);
         }

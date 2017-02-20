@@ -1,0 +1,71 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.jlab.hep.math.data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author gavalian
+ */
+public class DataVector<T extends Number> {
+    
+    private List<T> dataVector = new ArrayList<T>();
+    private Boolean    ordered = true;
+    private Boolean  fixedSize = false;
+    private T          maximum = null;
+    private T          minimum = null;
+    
+    public DataVector(){
+        
+    }
+    /**
+     * creates a data vector with given size and fills all elements 
+     * with given value.
+     * @param size
+     * @param value 
+     */
+    public DataVector(int size, T value){
+        for(int i = 0; i < size; i++){
+            dataVector.add(value);
+        }
+        this.minimum = value;
+        this.maximum = value;
+        this.ordered = false;
+        this.fixedSize = true;
+    }
+    /**
+     * creates a fixed size Data Vector and fills with given values
+     * @param values values to fill data vector with.
+     */
+    public DataVector(T... values){
+        for(int i = 0; i < values.length; i++){
+            dataVector.add(values[i]);
+        }
+        this.minimum = values[0];
+        this.maximum = values[0];
+        this.ordered = false;
+    }
+    
+    public T valueOf(int index){
+        return this.dataVector.get(index);
+    }
+    
+    public void setValue(int index, T value){
+        this.dataVector.set(index, value);
+    }
+    
+    public int getSize(){
+        return this.dataVector.size();
+    }
+    
+    
+    public final Boolean isFixedSize(){return this.fixedSize;}
+    public final void setFixedSize(boolean __fixed){
+        this.fixedSize = __fixed;
+    }
+}

@@ -27,6 +27,7 @@ public class SparseMatrix {
     private Map<String, List<String> > matrixDescription = new LinkedHashMap<String, List<String>>();
     
     private DataDescription     matrixDataDescription = new DataDescription();
+    private String name = "";
     
 //    private Integer 
     public SparseMatrix(){
@@ -48,6 +49,9 @@ public class SparseMatrix {
         int[] dims = this.getDimensions();
         this.initMatrix(dims);
     }
+    
+    public final void setName(String __name){ name = __name; }
+    public final String getName(){ return name; }
     
     public final void addData( DataVector vec, int... index){
 
@@ -140,7 +144,7 @@ public class SparseMatrix {
             matrix.addData(vec, i+1,1);
         }
         
-        matrix.printContent();
+        //matrix.printContent();
         //matrix.initMatrix(25,35,120);
     }
 }

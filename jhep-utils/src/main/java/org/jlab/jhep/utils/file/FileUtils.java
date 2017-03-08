@@ -5,11 +5,16 @@
  */
 package org.jlab.jhep.utils.file;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -124,16 +129,31 @@ public class FileUtils {
     public static List<String>  readFile(String filename){
         List<String> items = new ArrayList<String>();
         try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line = br.readLine();
+            while(line!=null){
+                items.add(line);
+                line = br.readLine();
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        /*
+        try {
             File file = new File(filename);
             Scanner scanner = new Scanner(file);
             while (scanner.hasNext()) {
                 //System.out.println(scanner.next());
-                items.add(scanner.next());
+                String line = scanner.next();
+                items.add(line);
+                System.out.println();
             }
             scanner.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         return items;
     }
     /**
@@ -145,6 +165,25 @@ public class FileUtils {
     public static List<String>  readFile(String filename, String starts_with, boolean replace){
         
         List<String> items = new ArrayList<String>();
+         try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line = br.readLine();
+            while(line!=null){
+                if(line.startsWith(starts_with)==true){
+                    if(replace==false){
+                        items.add(line);
+                    } else {
+                        items.add(line.replace(starts_with, ""));
+                    }
+                }
+                line = br.readLine();
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        /*
         try {
             File file = new File(filename);
             try (Scanner scanner = new Scanner(file)) {
@@ -162,7 +201,7 @@ public class FileUtils {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         return items;
     }
     /**

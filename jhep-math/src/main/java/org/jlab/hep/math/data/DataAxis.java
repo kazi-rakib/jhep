@@ -35,6 +35,35 @@ public class DataAxis {
         double binWidth = (this.max-this.min)/bins;
         return binWidth;
     }
+    /**
+     * returns the center of given bin.
+     * @param bin bin number
+     * @return central value
+     */
+    public final double  binCenter(int bin){
+        double   step = (this.max-this.min)/this.bins;
+        return   min + step*bin + step*0.5;
+    }
+    /**
+     * returns low edge of the bin.
+     * @param bin bin number
+     * @return low boundary of the bin
+     */
+    public final double   binLowEndge(int bin){
+        double center = this.binCenter(bin);
+        double  width = this.getBinWidth(bin);
+        return (center - width*0.5);
+    }
+    /**
+     * returns high edge of the bin.
+     * @param bin bin number
+     * @return high boundary of the bin
+     */
+    public final double  binHighEndge(int bin){
+        double center = this.binCenter(bin);
+        double  width = this.getBinWidth(bin);
+        return (center + width*0.5);
+    }
     
     public final String   getName() { return this.name; }
     public final Integer  getBins() { return this.bins; }
@@ -49,6 +78,21 @@ public class DataAxis {
     public final DataAxis setMax( double __max ) { this.max  = __max  ; return this; }
     
     public final DataAxis setLog(boolean __log){ this.log = __log; return this; }
+    
+    /**
+     * returns bin that given value falls into.
+     * @param value
+     * @return 
+     */
+    public int   findBin(double value){
+        int bin = -1;
+        for(int i = 0; i < this.bins; i++){
+            if(value>=this.binLowEndge(i)&&value<this.binHighEndge(i)){
+                return i;
+            }
+        }
+        return bin;
+    }
     
     public final String asJsonString(String tag){
         StringBuilder str = new StringBuilder();

@@ -113,6 +113,90 @@ void print_record(hipo_record_t record){
     
 }
 
+void read_event_node(int group, int item, hipo_event_t *event, hipo_node_t *node){
+    
+    int position  = 8;
+    int nodefound = -1;
+    int iteration = 0;
+    
+    node->size  = 0;
+    node->group = 0;
+    node->item  = 0;
+    node->type  = 0;
+    
+    while(position+8<event->data.size&&nodefound<0){
+        
+        uint16_t   gid = data_read_short(&event->data,position);
+        uint8_t    iid = data_read_byte(&event->data,position+2);
+        uint8_t   type = data_read_byte(&event->data,position+3);
+        int     length = data_read_int(&event->data,position+4);
+        //printf(" iterating position = %d group = %d item = %d length = %d\n",
+        //        position, (int) gid, (int) iid, length);
+        if(group==gid&&item==iid){
+            //printf(" found group %d item %d type %d with length %d iteration %d\n",
+            //        group,item,(int) type,length,iteration);
+            char *event_ptr = (char *) event->data.buffer;
+            data_allocate(&node->data,length);
+            memcpy( (char *) node->data.buffer, &event_ptr[position+8],length);
+            node->size  = length;
+            node->type  = type;
+            node->group = group;
+            node->item  = item;
+            
+            int nodeType = type;
+            
+            switch(nodeType){
+                case 2: node->size = length/2; break;
+                case 3: node->size = length/4; break;
+                case 4: node->size = length/4; break;
+                case 5: node->size = length/8; break;
+                case 8: node->size = length/8; break;
+                default: node->size = length;
+            }
+            
+            nodefound = 1;
+        }
+        position += (length + 8);
+        iteration++;
+    }
+    
+}
+
+int get_node_value_int(hipo_node_t *node, int index){
+    if(node->type!=3||index>=node->size){
+        printf(" group = %d item = %d is not an integer\n",node->group,node->item);
+        return 0;
+    }
+   int result = data_read_int(&node->data, index * sizeof(int));
+   return result;
+}
+
+uint8_t get_node_value_byte(hipo_node_t *node, int index){
+    if(node->type!=1||index>=node->size){
+        printf(" group = %d item = %d is not an byte\n",node->group,node->item);
+        return 0;
+    }
+   uint8_t result = data_read_byte(&node->data, index * sizeof(char));
+   return result;
+}
+
+uint16_t get_node_value_short(hipo_node_t *node, int index){
+    if(node->type!=2||index>=node->size){
+        printf(" group = %d item = %d is not an short\n",node->group,node->item);
+        return 0;
+    }
+    uint16_t result = data_read_short(&node->data, index * sizeof(uint16_t));
+   return result;
+}
+
+float get_node_value_float(hipo_node_t *node, int index){
+    if(node->type!=4||index>=node->size){
+        printf(" group = %d item = %d is not an float\n",node->group,node->item);
+        return 0;
+    }
+   float result = data_read_float(&node->data, index * sizeof(float));
+   return result;
+}
 
 void read_record_event(hipo_record_t *record, hipo_event_t *event, int order){
     int offset = 0;

@@ -32,9 +32,12 @@ int main(int argc, char** argv) {
         int nrecords = getEntries();
         for(int i = 0; i < nrecords; i++){
             readRecord(i);
+            printf("reading record # %d\n",i);
             int nevents = getEvents();
             for(int e = 0; e < nevents; e++){
                 readEvent(e);
+                readNode(22,1);
+                //printf("size = %d\n",hipo_node.size);
             }
             //printf("record = %12d  # events = %d\n" , i,nevents);
         }

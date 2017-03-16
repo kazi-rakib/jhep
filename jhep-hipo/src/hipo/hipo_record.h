@@ -46,6 +46,13 @@ extern "C" {
         data_buffer data;
     } hipo_event_t ;
     
+    typedef struct {
+        int group;
+        int item;
+        int size;
+        int type;
+        data_buffer data;
+    } hipo_node_t;
     
     void read_record_event(hipo_record_t *record, hipo_event_t *event, int order);
     int  read_record_header(FILE *fp, record_header_t *header, unsigned long position);
@@ -55,7 +62,11 @@ extern "C" {
     void read_record_index(hipo_file_t *file, record_index_t *index);
     void print_record_header(record_header_t header);
     void print_record(hipo_record_t record);
-    
+    void read_event_node(int group, int item, hipo_event_t *event, hipo_node_t *node);
+    uint8_t  get_node_value_byte(hipo_node_t *node, int index);
+    uint16_t  get_node_value_short(hipo_node_t *node, int index);
+    int  get_node_value_int(hipo_node_t *node, int index);
+    float  get_node_value_float(hipo_node_t *node, int index);
     void uncompress_LZ4(data_buffer *outbuffer, char* buffer, int bufferLength, int decompressedLength);
 
     

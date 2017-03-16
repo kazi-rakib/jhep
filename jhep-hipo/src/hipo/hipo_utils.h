@@ -30,7 +30,7 @@ extern "C" {
     int   readRecord(int record);
     int   getEvents();
     int   readEvent(int event);
-    
+    void  readNode(int group, int item);
 #ifdef __cplusplus
 }
 #endif

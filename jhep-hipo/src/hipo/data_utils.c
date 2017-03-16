@@ -29,8 +29,9 @@ void data_free(data_buffer *buffer){
         free(buffer->buffer);buffer->size = 0; buffer->buffer = NULL;
     }
 }
+
 int  data_read_int(data_buffer *buffer, int position){
-    if(position>=0&&position+4<buffer->size){
+    if(position>=0&&position+4<=buffer->size){
         char *array = (char *) buffer->buffer;
         int *pointer = (int *) &array[position];
         return *pointer;
@@ -39,7 +40,7 @@ int  data_read_int(data_buffer *buffer, int position){
 }
 
 uint8_t   data_read_byte  ( data_buffer *buffer, int position){
-    if(position>=0&&position<buffer->size){
+    if(position>=0&&position<=buffer->size){
         char *array = (char *) buffer->buffer;
         uint8_t *pointer = (uint8_t *) &array[position];
         return *pointer;
@@ -48,7 +49,7 @@ uint8_t   data_read_byte  ( data_buffer *buffer, int position){
 }
 
 uint16_t  data_read_short ( data_buffer *buffer, int position){
-    if(position>=0&&position+2<buffer->size){
+    if(position>=0&&position+2<=buffer->size){
         char *array = (char *) buffer->buffer;
         uint16_t *pointer = (uint16_t *) &array[position];
         return *pointer;
@@ -66,7 +67,7 @@ uint64_t  data_read_long  ( data_buffer *buffer, int position)
 }
 
 float     data_read_float ( data_buffer *buffer, int position){
-    if(position>=0&&position+4<buffer->size){
+    if(position>=0&&position+4<=buffer->size){
         char *array = (char *) buffer->buffer;
         float *pointer = (float *) &array[position];
         return *pointer;

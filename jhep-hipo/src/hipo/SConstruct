@@ -12,7 +12,7 @@ env = Environment(CPPPATH=["include",".","/usr/include","/usr/local/include","/o
 env.Append(ENV = os.environ)
 env.Append(CPPPATH=["src/root","src/evio"])
 env.Append(CCFLAGS=["-O2","-fPIC","-m64","-fmessage-length=0","-g"])
-env.Append(LIBPATH=["/opt/local/lib","/usr/lib","lib"])
+env.Append(LIBPATH=["/opt/local/lib","/usr/lib","/usr/local/lib"])
 #=================================================
 # Check for compression libraries.
 #=================================================
@@ -35,5 +35,5 @@ if conf.CheckLib('libz'):
 
 codeList_CC  = glob.glob('*.c')
 
-#env.Library(target="lib/libhipo.a",source = codeList_CPP)
-env.Program(target="hipo-test",source = codeList_CC)
+env.Library(target="lib/libhipo.a",source = codeList_CC)
+#env.Program(target="hipo-test",source = codeList_CC)

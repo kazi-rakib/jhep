@@ -201,7 +201,8 @@ float get_node_value_float(hipo_node_t *node, int index){
 void read_record_event(hipo_record_t *record, hipo_event_t *event, int order){
     int offset = 0;
     int length = 0;
-    for(int i = 0; i < order; i++){
+    int i;
+    for( i = 0; i < order; i++){
         int el = data_read_int(&record->index,i*4);
         offset += el;
     }

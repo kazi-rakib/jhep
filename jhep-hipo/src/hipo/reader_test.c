@@ -30,11 +30,13 @@ int main(int argc, char** argv) {
         openFile(filename);
         
         int nrecords = getEntries();
-        for(int i = 0; i < nrecords; i++){
+        int i;
+        int e;
+        for( i = 0; i < nrecords; i++){
             readRecord(i);
             printf("reading record # %d\n",i);
             int nevents = getEvents();
-            for(int e = 0; e < nevents; e++){
+            for( e = 0; e < nevents; e++){
                 readEvent(e);
                 readNode(22,1);
                 //printf("size = %d\n",hipo_node.size);

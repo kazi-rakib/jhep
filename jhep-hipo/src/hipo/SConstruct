@@ -13,6 +13,7 @@ env.Append(ENV = os.environ)
 env.Append(CPPPATH=["src/root","src/evio"])
 env.Append(CCFLAGS=["-O2","-fPIC","-m64","-fmessage-length=0","-g"])
 env.Append(LIBPATH=["/opt/local/lib","/usr/lib","/usr/local/lib"])
+env.Append(CONFIGUREDIR=["/group/clas12/packages/lz4/lib"])
 #=================================================
 # Check for compression libraries.
 #=================================================

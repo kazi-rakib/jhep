@@ -122,7 +122,8 @@ void read_node_float_(int *group, int *item, int *nread, float *buffer){
         int counter = 0;
         int    iter = node.size;
         //if(iter>*maxLength) iter = *maxLength;
-        for(int i = 0; i < iter; i++){
+        int i;
+        for(i = 0; i < iter; i++){
             float value = get_node_value_float(&node,i);
             buffer[i] = value;
             counter++;
@@ -154,7 +155,8 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
         int counter = 0;
         int    iter = node.size;
         //if(iter>*maxLength) iter = *maxLength;
-        for(int i = 0; i < iter; i++){
+        int i;
+        for( i = 0; i < iter; i++){
             int value = (uint8_t) get_node_value_byte(&node,i);
             buffer[i] = value;
             counter++;
@@ -168,7 +170,8 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
         int counter = 0;
         int    iter = node.size;
         //if(iter>*maxLength) iter = *maxLength;
-        for(int i = 0; i < iter; i++){
+        int i;
+        for( i = 0; i < iter; i++){
             int value = get_node_value_short(&node,i);
             buffer[i] = value;
             counter++;
@@ -184,7 +187,8 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
         int counter = 0;
         int    iter = node.size;
         //if(iter>*maxLength) iter = *maxLength;
-        for(int i = 0; i < iter; i++){
+        int i;
+        for( i = 0; i < iter; i++){
             int value = get_node_value_int(&node,i);
             buffer[i] = value;
             counter++;

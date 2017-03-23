@@ -97,7 +97,8 @@ void data_show(data_buffer *buffer){
 }
 
 void data_print(data_buffer *buffer, int wrap, int max){
-    for(int i = 0; i < buffer->size; i++){
+    int i;
+    for(i = 0; i < buffer->size; i++){
         printf(" %3X ", (unsigned int) data_read_byte(buffer,i));
         if(max>0 && i>max){
             printf("\n"); return;

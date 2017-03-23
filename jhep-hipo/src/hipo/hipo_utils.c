@@ -87,6 +87,13 @@ void open_hipo_(int *nrecords, const char *filename, int len){
     free(buffer);
 }
 
+void close_hipo_(){
+    fclose(hipo_file.fp);
+    hipo_file.fileSize = 0;
+    hipo_file.firstRecordPosition = 0;
+    hipo_file.headerRecordPosition = 0;
+}
+
 void read_record_(int *record, int *nevents){
     int r = *record;
     readRecord(r);
@@ -153,6 +160,7 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
             counter++;
         }
         *nread = counter;
+        data_free(&node.data);
         return;
     }
     
@@ -166,6 +174,7 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
             counter++;
         }
         *nread = counter;
+        data_free(&node.data);
         return;
     }
     
@@ -181,6 +190,7 @@ void read_node_int_(int *group, int *item, int *nread, int *buffer){
             counter++;
         }
         *nread = counter;
+        data_free(&node.data);
         return;
     }
       

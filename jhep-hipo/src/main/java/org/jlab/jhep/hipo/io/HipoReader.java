@@ -33,10 +33,9 @@ public class HipoReader {
     List<Long>    recordLength = new ArrayList<Long>(); 
     
     //List<HipoRecordIndex>  inRecords        = new ArrayList<HipoRecordIndex>();
-    List<HipoRecordIndex>  corruptedRecords = new ArrayList<HipoRecordIndex>();
-    
-    int                     debugMode = 0;
-    List<HipoRecordHeader>  readerRecords = new ArrayList<HipoRecordHeader>();
+ //   List<HipoRecordIndex>  corruptedRecords = new ArrayList<HipoRecordIndex>();
+    List<HipoRecordHeader>    readerRecords = new ArrayList<HipoRecordHeader>();
+    int                           debugMode = 0;
     
     private final SchemaFactory  schemaFactory = new SchemaFactory();
     /**

@@ -28,6 +28,7 @@ public class SparseMatrix {
     
     private DataDescription     matrixDataDescription = new DataDescription();
     private String name = "";
+    private int    vectorSize = 0;
     
 //    private Integer 
     public SparseMatrix(){
@@ -50,11 +51,19 @@ public class SparseMatrix {
         this.initMatrix(dims);
     }
     
+    public final int  getRank(){return this.index.getRank();}
+    public final int  getVectorSize(){ return vectorSize;}
+    
+    public final int  getEntries(){ return this.matrixElements.size();}
+    
     public final void setName(String __name){ name = __name; }
     public final String getName(){ return name; }
     
     public final void addData( DataVector vec, int... index){
-
+        if(this.matrixElements.isEmpty()==true){
+            this.vectorSize = vec.getSize();
+        }
+        
         if(this.hasEntry(index)==true){
             System.out.println("[MATRIX] >>>> error : matrix already has element : " + index.toString());
             return;
@@ -62,6 +71,8 @@ public class SparseMatrix {
         Long key = this.index.getKey(index);
         this.matrixElements.put(key, vec);
     }
+    
+    
     /**
      * prints the content of the MAP, all elements.
      */
@@ -70,6 +81,10 @@ public class SparseMatrix {
         for(Long key : keySet){
             System.out.println(String.format("%14s : %s", this.index.toIndexString(key), this.matrixElements.get(key).toString()));
         }
+    }
+    
+    public void show(){
+       System.out.printf("%15s : rank=%3d entries=%6d\n", getName(),getRank(),getEntries());
     }
     
     public final int[] getDimensions(){
@@ -133,6 +148,9 @@ public class SparseMatrix {
     public final double integral(){
         return 1.0;
     }
+    
+    
+    public Map<Long,DataVector<Float>> getMatrixMap(){ return this.matrixElements;}
     
     public static void main(String[] args){
         SparseMatrix  matrix = new SparseMatrix();

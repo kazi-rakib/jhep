@@ -7,12 +7,13 @@ package org.jlab.jhep.hipo.io;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author gavalian
  */
-public class HipoFileInfo {
+public class HipoFileInfo extends AbstractTableModel {
 
     List<HipoRecordHeader>  fileRecords = new ArrayList<HipoRecordHeader>();
         
@@ -79,6 +80,29 @@ public class HipoFileInfo {
     
     public int getEventOffset(){
         return (currentEvent - currentRecordFirstEvent);
+    }
+    
+    
+
+    @Override
+    public int getRowCount() {
+        return this.fileRecords.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 5;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+         switch(columnIndex){
+            case 0: Integer rowNum = rowIndex; return rowNum.toString();
+            //case 1: Long       pos = fileRecords.get(rowIndex).getPosition(); return pos.toString();
+            //case 2: Integer     = fileRecords.get(rowIndex).getPosition(); return pos.toString();
+            default : return "N/A";
+        }
+
     }
     
     public static void main(String[] args){

@@ -68,27 +68,27 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libhipo.a: ${OBJECTFILES}
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libhipo.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libhipo.a
 
-${OBJECTDIR}/data_utils.o: data_utils.c 
+${OBJECTDIR}/data_utils.o: data_utils.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/data_utils.o data_utils.c
 
-${OBJECTDIR}/hipo_file.o: hipo_file.c 
+${OBJECTDIR}/hipo_file.o: hipo_file.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hipo_file.o hipo_file.c
 
-${OBJECTDIR}/hipo_record.o: hipo_record.c 
+${OBJECTDIR}/hipo_record.o: hipo_record.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hipo_record.o hipo_record.c
 
-${OBJECTDIR}/hipo_utils.o: hipo_utils.c 
+${OBJECTDIR}/hipo_utils.o: hipo_utils.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hipo_utils.o hipo_utils.c
 
-${OBJECTDIR}/reader_test.o: reader_test.c 
+${OBJECTDIR}/reader_test.o: reader_test.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/reader_test.o reader_test.c
@@ -99,7 +99,6 @@ ${OBJECTDIR}/reader_test.o: reader_test.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libhipo.a
 
 # Subprojects
 .clean-subprojects:

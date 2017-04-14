@@ -11,6 +11,8 @@ package org.jlab.jhep.hipo.utils;
  */
 public class HipoLogo {
     
+    public static String LINE_RED = "";
+    
     /* MADE BY : http://patorjk.com/software/taag/ */
     
     public static String[] hipoWORD_ASCII_1 = new String[]{

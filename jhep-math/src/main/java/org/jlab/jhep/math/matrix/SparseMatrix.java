@@ -29,7 +29,7 @@ public class SparseMatrix {
     private DataDescription     matrixDataDescription = new DataDescription();
     private String name = "";
     private int    vectorSize = 0;
-    
+    private String jsonHeader = "";
 //    private Integer 
     public SparseMatrix(){
         
@@ -50,6 +50,10 @@ public class SparseMatrix {
         int[] dims = this.getDimensions();
         this.initMatrix(dims);
     }
+    
+    
+    public final void setHeader(String header){jsonHeader = header;}
+    public final String getHeader(){ return jsonHeader;}
     
     public final int  getRank(){return this.index.getRank();}
     public final int  getVectorSize(){ return vectorSize;}

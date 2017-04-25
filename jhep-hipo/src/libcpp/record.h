@@ -60,7 +60,11 @@ namespace hipo {
         
         void  init(const char *data, int dataLength, int dataLengthUncompressed, const char *index, int indexLength);
         int   getEventCount();
-        
+        void  addEvent(std::vector<char> &event);
+        void  addEvent(hipo::event &event);
+        int   getDataSize();
+        std::vector<char> build();
+        void  reset();
         std::vector<char>   getEvent(int index);
         hipo::event         getHipoEvent(int index);
         

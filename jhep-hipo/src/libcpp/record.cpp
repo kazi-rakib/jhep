@@ -21,9 +21,7 @@ namespace hipo {
 
     void record::init(const char *data, int dataLength, 
             int dataLengthUncompressed, const char *index, int indexLength){
-        
-        
-        
+                        
         //printf("--> decompress : %d  %d\n",dataLength,dataLengthUncompressed);
         
         char *uncompressed; 
@@ -78,8 +76,16 @@ namespace hipo {
         
     }
 
+    int   record::getDataSize(){
+        int size = 0;
+        for(int i = 0; i < eventBuffer.size(); i++){
+            size += eventBuffer[i].size();
+        }
+        return size;
+    }
     
     int   record::getEventCount(){ return (unsigned int) eventBuffer.size();}
+    void  record::reset(){ eventBuffer.clear();}
     
     std::vector<char>   record::getEvent(int index){
         return eventBuffer[index];
@@ -89,5 +95,58 @@ namespace hipo {
         hipo::event event;
         event.init(eventBuffer[index]);
         return event;
+    }
+    
+    void record::addEvent(std::vector<char>& event){
+        eventBuffer.push_back(event);
+    }
+    
+    void record::addEvent(hipo::event& event){
+        eventBuffer.push_back(event.getEventBuffer());
+    }
+    
+    std::vector<char> record::build(){
+        
+        int headerSize = 40;
+        int indexSize  = eventBuffer.size()*sizeof(int32_t);
+        int eventBufferSize = 0;
+        
+        for(int i = 0; i < eventBuffer.size(); i++){
+            eventBufferSize += eventBuffer[i].size();
+        }
+        
+        std::vector<char> recordVec(headerSize + indexSize + eventBufferSize);
+        
+        recordVec[0] = 'H'; recordVec[1] = 'R'; recordVec[2] = 'E'; recordVec[3] = 'C';
+
+        uint32_t  *recordLength_ptr = reinterpret_cast<uint32_t*>(&recordVec[4]);
+        uint32_t   *dataLengthU_ptr = reinterpret_cast<uint32_t*>(&recordVec[8]);
+        uint32_t   *dataLengthC_ptr = reinterpret_cast<uint32_t*>(&recordVec[12]);        
+        uint32_t     *numEvents_ptr = reinterpret_cast<uint32_t*>(&recordVec[16]);
+        uint32_t  *headerLength_ptr = reinterpret_cast<uint32_t*>(&recordVec[20]);
+        uint32_t   *indexLength_ptr = reinterpret_cast<uint32_t*>(&recordVec[24]);
+        
+        *recordLength_ptr = recordVec.size();
+        *dataLengthU_ptr  = eventBufferSize;
+        *dataLengthC_ptr  = eventBufferSize;
+        *numEvents_ptr    = eventBuffer.size();
+        *headerLength_ptr = 0;
+        *indexLength_ptr  = indexSize;
+        
+        
+        int indexPosition = 40;
+        for(int i = 0; i < eventBuffer.size(); i++){
+            uint32_t *index_ptr = reinterpret_cast<uint32_t*>(&recordVec[indexPosition]);
+            *index_ptr = eventBuffer[i].size();
+            indexPosition += 4;
+        }
+        
+        int dataPosition = indexPosition;
+        for(int i = 0; i < eventBuffer.size(); i++){
+            std:memcpy(&recordVec[dataPosition],& ((eventBuffer[i])[0]), eventBuffer[i].size());
+            dataPosition += eventBuffer[i].size();
+        }
+        
+        return recordVec;
     }
 }

@@ -127,6 +127,13 @@ public class HipoWriter {
      * @param array array to write as a header.
      */
     public final void open(String name, byte[] array) {
+        
+        if(this.outputFileExits(name)==true){
+            System.out.println("[HipoWriter] :: error. output file already exists : " + name);
+            outStream = null;
+            return;
+        }
+        
         HipoLogo.showLogo();
         try {
             outStream = new FileOutputStream(new File(name));
@@ -159,6 +166,11 @@ public class HipoWriter {
         } catch (IOException ex) {
             Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private boolean outputFileExits(String filename){
+        File f = new File(filename);
+        return f.exists();
     }
     /**
      * Adds string to configuration record, this record will be written the 
@@ -194,6 +206,10 @@ public class HipoWriter {
             }
         } */
         
+        if(this.outStream==null){
+            System.out.println("[HipoWriter] : error wrinting the record. output stream is not open.");
+            return;
+        }
         if(this.outputRecord.getEventCount()!=0){
             try {
                 long stime_compress = System.currentTimeMillis();

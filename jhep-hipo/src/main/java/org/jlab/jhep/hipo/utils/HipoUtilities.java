@@ -11,6 +11,8 @@ import java.util.Map;
 import org.jlab.jhep.hipo.data.HipoEvent;
 import org.jlab.jhep.hipo.data.HipoGroup;
 import org.jlab.jhep.hipo.io.HipoReader;
+import org.jlab.jhep.hipo.io.HipoRecord;
+import org.jlab.jhep.hipo.io.HipoWriter;
 import org.jlab.jhep.hipo.schema.SchemaFactory;
 import org.jlab.jhep.utils.options.OptionParser;
 
@@ -73,11 +75,33 @@ public class HipoUtilities {
         
     }
     
+    public static void compressFile(String inputFile, String outputFile){
+        HipoReader reader = new HipoReader();
+        reader.open(inputFile);
+        SchemaFactory  factory = reader.getSchemaFactory();
+        
+        HipoWriter writer = new HipoWriter();
+        HipoRecord schemaRecord = new HipoRecord();
+        HipoEvent  schemaEvent  = factory.getSchemaEvent();
+        schemaRecord.addEvent(schemaEvent.getDataBuffer());
+        
+        writer.open(outputFile, schemaRecord.build().array());
+        writer.setCompressionType(2);
+        
+        int nrecords = reader.getRecordCount();
+        int nevents = reader.getEventCount();
+        for(int i = 0; i < nevents; i++){
+            byte[] event = reader.readEvent(i);
+            writer.writeEvent(event);
+        }
+        writer.close();
+    }
+    
     public static void main(String[] args){
         OptionParser parser = new OptionParser();
         parser.addOption("-info", "0");
         parser.addOption("-verbose", "0");
-        
+        parser.addOption("-compress", "0");
         parser.parse(args);
         
         if(parser.getOption("-info").stringValue().compareTo("0")!=0){
@@ -86,6 +110,13 @@ public class HipoUtilities {
             return;
         }
         
+        if(parser.getOption("-compress").stringValue().compareTo("0")!=0){
+            String filename = parser.getOption("-info").stringValue();
+            List<String> inputParams = parser.getInputList();
+            
+            HipoUtilities.compressFile(inputParams.get(0), inputParams.get(1));
+            return;
+        }
         parser.printUsage();
         
     }

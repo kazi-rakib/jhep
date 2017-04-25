@@ -38,7 +38,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/event.o \
 	${OBJECTDIR}/hipodebug.o \
 	${OBJECTDIR}/reader.o \
-	${OBJECTDIR}/record.o
+	${OBJECTDIR}/record.o \
+	${OBJECTDIR}/writer.o
 
 
 # C Compiler Flags
@@ -86,6 +87,11 @@ ${OBJECTDIR}/record.o: record.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/record.o record.cpp
+
+${OBJECTDIR}/writer.o: writer.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/writer.o writer.cpp
 
 # Subprojects
 .build-subprojects:

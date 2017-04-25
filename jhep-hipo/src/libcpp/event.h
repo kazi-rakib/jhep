@@ -28,15 +28,25 @@ namespace hipo {
         
             
     public:
+        
         event();
         ~event();
         
         void showInfo();
         void init(std::vector<char> &buffer);
-        int getEventNode(int group, int item);
+        int  getEventNode(int group, int item);
+        
+        void appendNode(int group, int item, std::vector<int> &vec);
+        void appendNode(int group, int item, std::vector<int16_t> &vec);
+        void appendNode(int group, int item, std::vector<int8_t> &vec);
+        void appendNode(int group, int item, std::vector<float> &vec);
+        void appendNode(int group, int item, std::string &vec);
+        
         std::vector<int>    getInt(   int group, int item);
         std::vector<float>  getFloat( int group, int item);
         
+        std::vector<char> getEventBuffer();
+        void reset();        
     };
 }
 

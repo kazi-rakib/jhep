@@ -19,14 +19,17 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <map>
+
 
 namespace hipo {
     class event {
     private:
         std::vector<char> dataBuffer;
+        std::map<int,int> eventNodes;
         
+        //void scanEvent();
         
-            
     public:
         
         event();
@@ -42,12 +45,28 @@ namespace hipo {
         void appendNode(int group, int item, std::vector<float> &vec);
         void appendNode(int group, int item, std::string &vec);
         
+        int   getNodeAddress(int group, int item);
+        int   getNodeType(int address);
+        int   getNodeLength(int address);
+        int   getNodeSize(int address);
+        char *getNodePtr(int address);
+        
         std::vector<int>    getInt(   int group, int item);
         std::vector<float>  getFloat( int group, int item);
         
+        //template<class T>   node<T> getNode();
+        
+        void scanEvent();
         std::vector<char> getEventBuffer();
-        void reset();        
+        void reset();
     };
+    /*
+    template<class T>   node<T> event::getNode(){
+        node<T> en;
+        en.setLength(4);
+        en.setAddress(NULL);
+        return en;
+    } */   
 }
 
 #endif /* EVENT_H */

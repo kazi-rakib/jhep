@@ -72,8 +72,9 @@ public class HipoByteUtils {
 
     public static byte[] compressLZ4max(byte[] uncompressed){
         
+        System.out.println("high compression applies");
         LZ4Factory factory = LZ4Factory.fastestInstance();
-        LZ4Compressor compressor = factory.highCompressor();
+        LZ4Compressor compressor = factory.highCompressor(9);
         
         int maxCompressedLength = compressor.maxCompressedLength(uncompressed.length);
         byte[] compressed = new byte[maxCompressedLength];

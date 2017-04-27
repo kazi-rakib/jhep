@@ -75,7 +75,7 @@ public class HipoUtilities {
         
     }
     
-    public static void compressFile(String inputFile, String outputFile){
+    public static void compressFile(String inputFile, String outputFile, int compression){
         HipoReader reader = new HipoReader();
         reader.open(inputFile);
         SchemaFactory  factory = reader.getSchemaFactory();
@@ -86,7 +86,7 @@ public class HipoUtilities {
         schemaRecord.addEvent(schemaEvent.getDataBuffer());
         
         writer.open(outputFile, schemaRecord.build().array());
-        writer.setCompressionType(2);
+        writer.setCompressionType(compression);
         
         int nrecords = reader.getRecordCount();
         int nevents = reader.getEventCount();
@@ -113,8 +113,8 @@ public class HipoUtilities {
         if(parser.getOption("-compress").stringValue().compareTo("0")!=0){
             String filename = parser.getOption("-info").stringValue();
             List<String> inputParams = parser.getInputList();
-            
-            HipoUtilities.compressFile(inputParams.get(0), inputParams.get(1));
+            int compression = parser.getOption("-compress").intValue();
+            HipoUtilities.compressFile(inputParams.get(0), inputParams.get(1),compression);
             return;
         }
         parser.printUsage();

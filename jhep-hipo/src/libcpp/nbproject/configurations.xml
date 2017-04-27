@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>event.h</itemPath>
       <itemPath>hipoexceptions.h</itemPath>
+      <itemPath>node.h</itemPath>
       <itemPath>reader.h</itemPath>
       <itemPath>record.h</itemPath>
       <itemPath>writer.h</itemPath>
@@ -19,6 +20,7 @@
                    projectFiles="true">
       <itemPath>event.cpp</itemPath>
       <itemPath>hipodebug.cpp</itemPath>
+      <itemPath>node.cpp</itemPath>
       <itemPath>reader.cpp</itemPath>
       <itemPath>record.cpp</itemPath>
       <itemPath>writer.cpp</itemPath>
@@ -60,12 +62,17 @@
             <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </linkerDynSerch>
         </linkerTool>
       </folder>
       <item path="hipodebug.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hipoexceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="node.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="node.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="reader.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -112,12 +119,17 @@
             <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </linkerDynSerch>
         </linkerTool>
       </folder>
       <item path="hipodebug.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hipoexceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="node.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="node.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="reader.cpp" ex="false" tool="1" flavor2="0">
       </item>

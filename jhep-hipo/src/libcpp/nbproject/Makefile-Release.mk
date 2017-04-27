@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/event.o \
 	${OBJECTDIR}/hipodebug.o \
+	${OBJECTDIR}/node.o \
 	${OBJECTDIR}/reader.o \
 	${OBJECTDIR}/record.o \
 	${OBJECTDIR}/writer.o
@@ -77,6 +78,11 @@ ${OBJECTDIR}/hipodebug.o: hipodebug.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hipodebug.o hipodebug.cpp
+
+${OBJECTDIR}/node.o: node.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/node.o node.cpp
 
 ${OBJECTDIR}/reader.o: reader.cpp
 	${MKDIR} -p ${OBJECTDIR}

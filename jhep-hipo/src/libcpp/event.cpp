@@ -19,6 +19,7 @@ namespace hipo {
     void event::init(std::vector<char> &buffer){
         dataBuffer.resize(buffer.size());
         std::memcpy(&dataBuffer[0],&buffer[0],buffer.size());
+        scanEvent();
     }
     
     void event::appendNode(int group, int item, std::string& vec){
@@ -180,10 +181,77 @@ namespace hipo {
         return vector;
     }
     
+    int event::getNodeAddress(int group, int item){        
+        int key =  ((0x00000000|group)<<16) | ( (0x00000000|item)<<8);
+        if(eventNodes.count(key)==0) return -1;
+        int position = eventNodes[key];
+        int address  = (position)&0x00FFFFFF;
+        //printf(" request for %d %d %X %X \n",group,item, position,address);
+        return address;
+    }
+    
+    
+    int event::getNodeType(int address){
+        uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[address+3]));
+        return type;
+            //int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4]));
+    }
+    
+    void event::scanEvent(){
+        eventNodes.clear();
+        int position = 8;
+        while(position+8<dataBuffer.size()){
+            uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
+            uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2])); 
+            uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
+            int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4])); 
+            //printf("group = %4d , item = %4d\n",(unsigned int) gid, (unsigned int) iid);
+            //if(gid==group&&iid==item) return position;
+            
+            int key  =  ((0x00000000|gid)<<16)  | ( (0x00000000|iid)<<8);
+            int info =  ( (0x00000000|type)<<24) | (position);
+            eventNodes.insert(std::make_pair(key,info)); 
+            //printf(" adding node : %4d %4d %X\n",gid,iid,position);
+            //printf("     key = %6d , position = %6X\n",key,info);
+            position += (length + 8);
+        }
+    }
+    
+    int event::getNodeLength(int address){
+        int     length = *(reinterpret_cast<int*>(&dataBuffer[address+4]));
+        return length;
+    }
+    
+    int event::getNodeSize(int address){
+        uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[address+3]));
+        int     length = *(reinterpret_cast<int*>(&dataBuffer[address+4]));
+        switch(type){
+            case 2: return length/2;
+            case 3: return length/4;
+            case 4: return length/4;
+            case 5: return length/8;
+            case 8: return length/8;
+            default: return length;
+        }
+    }
+    
+    char *event::getNodePtr(int address){
+        return &dataBuffer[address+8];
+    }
     
     std::vector<char> event::getEventBuffer(){ return dataBuffer;}
+    /*
+    template<class T>   node<T> event::getNode(){
+        node<T> en;
+        en.setLength(4);
+        en.setAddress(NULL);
+    } */   
     
     void event::showInfo(){
         printf(" EVENT SIGNATURE =  SIZE = %lu\n",dataBuffer.size());
+        std::map<int,int>::iterator it = eventNodes.begin();
+        while(it != eventNodes.end()){
+            printf(" key = %5d , info = %5d \n",it->first,it->second);
+        }
     }
 }

@@ -8,11 +8,11 @@ import sys
 #=================================================
 # LOADING THE ENVIRONMENT
 #=================================================
-env = Environment(CPPPATH=["include",".","/usr/include","/usr/local/include","/opt/local/include","/group/clas12/packages/lz4","libcpp"])
+env = Environment(CPPPATH=["include",".","/usr/include","/usr/local/include","/opt/local/include","/group/clas12/packages/lz4/lib","libcpp"])
 env.Append(ENV = os.environ)
 env.Append(CPPPATH=["src/root","src/evio"])
 env.Append(CCFLAGS=["-O2","-fPIC","-m64","-fmessage-length=0","-g"])
-env.Append(LIBPATH=["/opt/local/lib","/usr/lib","/usr/local/lib","/group/clas12/packages/lz4","lib"])
+env.Append(LIBPATH=["/opt/local/lib","/usr/lib","/usr/local/lib","/group/clas12/packages/lz4/lib","lib"])
 env.Append(CONFIGUREDIR=["/group/clas12/packages/lz4/lib"])
 #=================================================
 # Check for compression libraries.

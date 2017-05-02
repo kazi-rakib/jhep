@@ -18,14 +18,16 @@
 #include "writer.h"
 #include "event.h"
 #include "node.h"
+#include "text.h"
+#include "data.h"
+
 
 using namespace std;
 
 
 void readFile(char* filename){
+
     hipo::reader reader;
-
-
     reader.open(filename);
     reader.showInfo();
     reader.readRecordIndex();
@@ -72,7 +74,7 @@ void readFile(char* filename){
                 printf(" %f %f %f %f %f %f\n",pxn.getValue(vn),pyn.getValue(vn),pzn.getValue(vn),
                         px[vn],py[vn],pz[vn]);
             }
-            printf("node size = %d  %d\n",pidn.getLength(),pid.size());
+            printf("node size = %d  %d\n",pidn.getLength(),(unsigned int) pid.size());
            // printf(" pid size = %ld charge size = %lu  px size = %lu\n",
            //         pid.size(),charge.size(), px.size());
 
@@ -82,6 +84,121 @@ void readFile(char* filename){
     printf(" total momentum = %f\n",mom);
 }
 
+void node_tests(){
+  /*
+  hipo::event event;
+
+  event.reset();
+  event.showInfo();
+  std::vector<int> vecInt;
+  std::vector<float> vecFloat;
+
+  vecInt.resize(12,45);
+  vecFloat.resize(12,1.2345);
+
+  event.appendNode(1200,1,vecInt);
+  event.appendNode(1200,2,vecFloat);
+  event.showInfo();
+
+
+  hipo::node<int> intNode (1200,1,event);
+  intNode.show();
+
+  std::vector<int> node = event.getInt(1200,1);
+  for(int i = 0; i < node.size(); i++){
+      std::cout << i << "  " << node[i] << '\n';
+  }
+  std::cout << "\n\n";
+  std::vector<float> nodeF = event.getFloat(1200,2);
+  for(int i = 0; i < nodeF.size(); i++){
+      std::cout << i << "  " << nodeF[i] << '\n';
+  }
+
+  hipo::record  record;
+
+  hipo::record  recordDict;
+  hipo::event   eventDict;
+  std::string  schema("{1200,mc::data}[1,pid,INT][2,mass,FLOAT]");
+  eventDict.appendNode(32111,1,schema);
+
+  recordDict.addEvent(eventDict);
+  std::vector<char> bufferDict = recordDict.build();
+
+  record.addEvent(event);
+
+  std::vector<char> vec = record.build();
+  std::cout << " record size = " << vec.size() << '\n';
+
+  hipo::writer writer;
+  writer.open("test.hipo",bufferDict);
+
+  for(int i = 0; i < 15; i++){
+      writer.writeEvent(event);
+  }
+
+  writer.close();
+  */
+}
+
+
+void readTextFile(const char *filename){
+  text::reader reader;
+  reader.open(filename);
+  std::string delim = ",";
+  reader.setDalim(delim);
+
+  data::data decoder;
+
+  int i = 0;
+
+  ofstream myFile;
+  myFile.open ("data2.bin", std::ios::out | std::ios::binary);
+
+  std::vector<uint16_t> low,high;
+  std::vector<char> encoded;
+  std::vector<char> vec16;
+
+  while(reader.readLine()){
+    std::string line = reader.getLine();
+    std::vector<int>  vec = reader.getIntVector();
+
+    vec16.resize(vec.size()*2);
+    for(int i = 0; i < vec.size(); i++){
+      uint16_t *ptr = reinterpret_cast<uint16_t*>(&vec16[i*2]);
+      uint16_t value = (uint16_t) vec[i];
+      *ptr = value;
+      printf(" %d ",*ptr);
+    }
+    printf("\n");
+    //std::cout << " VEC SIZE = " << vec.size() << '\n';
+    //std::cout << " LINE " << i << " : " << line << "\n";
+
+    i++;
+    printf("********************** EVENTS \n");
+    decoder.decompose(vec,low,high);
+    decoder.encode(vec, encoded);
+
+    //decoder.print(vec);
+    //decoder.print(low);
+    //decoder.print(high);
+
+    /*
+    std::vector<int> vsub = vecd.getSubtracted(vec);
+    std::vector<int> vreim = vecd.getReiman(vsub);
+    std::vector<int> vreduced = vecd.getReduced(vreim);
+    printf("********************** EVENTS \n");
+    vecd.print(vec);
+    vecd.print(vsub);
+    vecd.print(vreim);
+    vecd.print(vreduced);
+
+    std::vector<char> vlow = vecd.getLowerHalf(vec);*/
+    //myFile.write(&encoded[0], encoded.size());
+    myFile.write(&vec16[0], vec16.size());
+  }
+  myFile.close();
+  printf(" finished packing %d pulses\n",i);
+}
 /*
  *
  */
@@ -98,63 +215,11 @@ int main(int argc, char** argv) {
     }
     printf("--> open file : %s\n",filename);
 
-    readFile(filename);
+    //readFile(filename);
+    readTextFile(filename);
 
 
-    hipo::record record;
-
-    /*
-    hipo::event event;
-
-    event.reset();
-    event.showInfo();
-    std::vector<int> vecInt;
-    std::vector<float> vecFloat;
-
-    vecInt.resize(12,45);
-    vecFloat.resize(12,1.2345);
-
-    event.appendNode(1200,1,vecInt);
-    event.appendNode(1200,2,vecFloat);
-    event.showInfo();
 
 
-    hipo::node<int> intNode (1200,1,event);
-    intNode.show();
-
-    std::vector<int> node = event.getInt(1200,1);
-    for(int i = 0; i < node.size(); i++){
-        std::cout << i << "  " << node[i] << '\n';
-    }
-    std::cout << "\n\n";
-    std::vector<float> nodeF = event.getFloat(1200,2);
-    for(int i = 0; i < nodeF.size(); i++){
-        std::cout << i << "  " << nodeF[i] << '\n';
-    }
-
-    hipo::record  record;
-
-    hipo::record  recordDict;
-    hipo::event   eventDict;
-    std::string  schema("{1200,mc::data}[1,pid,INT][2,mass,FLOAT]");
-    eventDict.appendNode(32111,1,schema);
-
-    recordDict.addEvent(eventDict);
-    std::vector<char> bufferDict = recordDict.build();
-
-    record.addEvent(event);
-
-    std::vector<char> vec = record.build();
-    std::cout << " record size = " << vec.size() << '\n';
-
-    hipo::writer writer;
-    writer.open("test.hipo",bufferDict);
-
-    for(int i = 0; i < 15; i++){
-        writer.writeEvent(event);
-    }
-
-    writer.close();
-    */
     return 0;
 }

@@ -35,9 +35,11 @@ if conf.CheckLib('libz'):
 #=================================================
 
 codeList_CC  = glob.glob('*.cpp')
+codeList_F   = glob.glob('*.F')
 
-lib  = env.Library(target="lib/libhipo.a",source = codeList_CC)
-exe  = env.Program(target="hipodebug",source = codeList_CC)
+lib   = env.Library(target="lib/libhipo.a",source = codeList_CC)
+exe   = env.Program(target="hipodebug",source = codeList_CC)
+fort  = env.Program(target="wrapper.exe",source = codeList_CC + codeList_F)
 
 env.Alias('lib',lib)
 env.Alias('exe',exe)

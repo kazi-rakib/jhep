@@ -36,12 +36,13 @@ vector<int> getRandomVector(){
 }
 
 int main(int argc, char** argv) {
+
     int nevents = 1000;
     hipo::writer  writer;
     hipo::event   event;
 
     writer.open("test_file.hipo");
-
+    printf("----> creating file : test_file.hipo\n");
     for(int n = 0; n < nevents; n++){
       vector<int> vec1 = getRandomVector();
       vector<int> vec2 = getRandomVector();
@@ -51,5 +52,6 @@ int main(int argc, char** argv) {
       writer.writeEvent(event);
     }
     writer.close();
+    printf("----> finished writing file with %d events\n\n",nevents);
     return 0;
 }

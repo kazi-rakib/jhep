@@ -19,7 +19,13 @@ reader::~reader(){
 }
 
 void reader::open(const char *filename){
+
     inputStream.open(filename, std::ios::binary);
+    if(inputStream.is_open()==false){
+      printf("[ERROR] something went wrong with openning file : %s\n",
+            filename);
+      return;
+    }
     readHeader();
     readRecordIndex();
 }
@@ -115,6 +121,10 @@ void  reader::readRecord(record &record,int pos){
 
 
 void reader::showInfo(){
+    if(recordIndex.size()<1){
+      printf(" there are no records in the file : %d\n", inputStream.is_open());
+      return;
+    }
     long recordPosition = recordIndex[recordIndex.size()-1].recordPosition;
     float sizePos = recordPosition/1024.0/1024.0;
     printf("-------------------------------------\n");

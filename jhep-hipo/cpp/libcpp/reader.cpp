@@ -10,13 +10,13 @@
 #include <cstdlib>
 
 namespace hipo {
-reader::reader(){
+  reader::reader(){
+    printWarning();
+  }
 
-}
+  reader::~reader(){
 
-reader::~reader(){
-
-}
+  }
 
 void reader::open(const char *filename){
 
@@ -132,6 +132,16 @@ void reader::showInfo(){
     printf(" header Length : %d bytes\n", (unsigned int) getHeaderLength());
     printf("   file Length : %.2f MB\n", sizePos);
     printf("-------------------------------------\n");
-}
+  }
 
+  void reader::printWarning(){
+    #ifndef __LZ4__
+      std::cout << "******************************************************" << std::endl;
+      std::cout << "* WARNING:                                           *" << std::endl;
+      std::cout << "*   This library war compiled without LZ4 support.   *" << std::endl;
+      std::cout << "*   Reading and writing compressed buffers will not  *" << std::endl;
+      std::cout << "*   work. However un-compressed file I/O will work.  *" << std::endl;
+      std::cout << "******************************************************" << std::endl;
+    #endif
+  }
 }

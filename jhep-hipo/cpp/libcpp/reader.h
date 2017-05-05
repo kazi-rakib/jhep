@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   hipofile.h
  * Author: gavalian
  *
@@ -28,29 +28,28 @@
 namespace hipo {
 
     class reader {
-    
+
     private:
-        
+
         std::vector<char>               header;
         std::ifstream                   inputStream;
         std::vector<hipoRecordIndex_t>  recordIndex;
     public:
-        
+
         reader();
         ~reader();
-        
+
         void  open(const char *filename);
         void  readHeader();
         void  readRecordIndex();
-        
+
         int   getFirstRecordsPosition();
         int   getHeaderLength();
         int   getSignature();
         int   getRecordCount();
         void  readRecord(record &record, int pos);
         void  showInfo();
-        
+        void  printWarning();
     };
 }
 #endif /* HIPOFILE_H */
-

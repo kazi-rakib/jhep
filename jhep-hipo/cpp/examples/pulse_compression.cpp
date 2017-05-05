@@ -65,12 +65,12 @@ int main(int argc, char** argv) {
       std::vector<int>  vec = reader.getIntVector();
 
       vec16.resize(vec.size()*2);
-      for(int i = 0; i < vec.size(); i++){
-        uint16_t *ptr = reinterpret_cast<uint16_t*>(&vec16[i*2]);
-        uint16_t value = (uint16_t) vec[i];
+      for(int p = 0; p < vec.size(); p++){
+        uint16_t *ptr = reinterpret_cast<uint16_t*>(&vec16[p*2]);
+        uint16_t value = (uint16_t) vec[p];
         *ptr = value;
       }
-      
+
       i++;
       //printf("********************** EVENTS \n");
       decoder.decompose(vec,low,high);

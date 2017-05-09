@@ -24,6 +24,8 @@
 #include <stdlib.h>
 
 #include "record.h"
+#include "node.h"
+#include "event.h"
 
 namespace hipo {
 
@@ -34,12 +36,18 @@ namespace hipo {
         std::vector<char>               header;
         std::ifstream                   inputStream;
         std::vector<hipoRecordIndex_t>  recordIndex;
+        record                          reader_record;
+        event                           reader_event;
+        //std::vector <std::shared_ptr<leaf> > Leafs;
+        std::vector< std::shared_ptr<hipo::generic_node> > nodeList;
+
     public:
 
         reader();
         ~reader();
 
         void  open(const char *filename);
+
         void  readHeader();
         void  readRecordIndex();
 
@@ -47,9 +55,23 @@ namespace hipo {
         int   getHeaderLength();
         int   getSignature();
         int   getRecordCount();
+        int   getEventCount();
+
         void  readRecord(record &record, int pos);
+        void  readRecord(int index);
+        void  readEvent(int index);
+        void  addNode(std::shared_ptr<hipo::generic_node> node_ptr);
         void  showInfo();
         void  printWarning();
+
+        template<class T> hipo::node<T> *getNode(int group, int item);
     };
+
+template<class T> hipo::node<T> *reader::getNode(int group, int item){
+    hipo::node<T> *__leaf_node = new hipo::node<T>(group,item);
+    addNode(std::shared_ptr<generic_node> (__leaf_node) );
+    return __leaf_node;
+}
+
 }
 #endif /* HIPOFILE_H */

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   node.h
  * Author: gavalian
  *
@@ -19,24 +19,54 @@
 #include <cstdio>
 
 #include "event.h"
+//#include "reader.h"
 
 namespace hipo {
-    
-template <class T>
 
-class node {
+class generic_node {
+  private:
+    int __group_id;
+    int __item_id;
+    int __type;
+    int __length;
+    std::string __node_name;
+
+  public:
+    generic_node();
+    virtual ~generic_node();
+
+    virtual void setAddress(char *address){}
+
+    int  type();
+    int  length();
+    int  group();
+    int  item();
+    const char *name();
+
+    void name(const char *name);
+    void group(int group);
+    void item(int item);
+    void type(int type);
+    void length(int length);
+};
+
+template <class T>
+class node : public generic_node {
+
     private:
-        int length;
         T   *ptr;
     public:
-        
+
         node();
         node(int group, int item,hipo::event &event);
-        
+        node(int __group, int __item);
+        //node(hipo::reader &reader, int group, int item);
+
         virtual ~node();
-        
+
         T getValue(int index);
         //void setNode(int group, int item, hipo::event &event);
+        void reset();
         void show();
         int  getLength();
         void setLength(int l);
@@ -46,44 +76,59 @@ class node {
 }
 
 namespace hipo {
-    
+
     template <class T> node<T>::node(){
-        
+
     }
-    
+
+    template <class T> node<T>::node(int __group, int __item){
+      group(__group);
+      item(__item);
+    }
+
     template <class T> node<T>::node(int group, int item,hipo::event &event){
       int address = event.getNodeAddress(group,item);
       if(address<0){
-          length = 0;
+          length ( 0 );
           ptr    = NULL;
       } else {
-          length = event.getNodeSize(address);
+          length (event.getNodeSize(address));
           ptr    = reinterpret_cast<T*>(event.getNodePtr(address));
       }
     }
-    
+
+/*
+    template <class T> node<T>(hipo::reader &reader, int group, int item){
+       group(group);
+       item(item);
+       //reader.addNode(shared_ptr<generic_node>(this));
+    }*/
+
     template <class T> node<T>::~node(){
-        length = 0;
+        length (0);
         ptr    = 0L;
     }
-    
-    template <class T> void node<T>::setLength(int l){
-        length = l;
+
+    template <class T> void node<T>::reset(){
+        length(0);
     }
-    
+
+    template <class T> void node<T>::setLength(int l){
+        length(l);
+    }
+
     template <class T> void node<T>::setAddress(char* address){
         ptr = reinterpret_cast<T*>(address);
     }
-    
-    template <class T> int node<T>::getLength(){ return length;}
-    
+
+    template <class T> int node<T>::getLength(){ return length();}
+
     template <class T> T node<T>::getValue(int index){
         return ptr[index];
     }
-    
+
     template <class T> void node<T>::show(){
-        std::cout << " NODE LENGTH = " << length << '\n';
+        std::cout << " NODE LENGTH = " << length() << '\n';
     }
 }
 #endif /* NODE_H */
-

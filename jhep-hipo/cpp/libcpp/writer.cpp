@@ -5,7 +5,7 @@
  */
 
 #include "writer.h"
-
+#include "utils.h"
 
 namespace hipo {
 
@@ -21,6 +21,7 @@ namespace hipo {
     }
 
     void writer::open(const char* filename){
+        utils::printLogo();
         outputStream.open(filename,std::ios::out | std::ios::binary);
         std::vector<char> headerVec(72,0);
         char *header = &headerVec[0];

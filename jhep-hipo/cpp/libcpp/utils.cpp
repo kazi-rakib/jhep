@@ -20,7 +20,7 @@ namespace hipo {
     // Find first "non-delimiter".
     std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
-    
+
     while (std::string::npos != pos || std::string::npos != lastPos)
       {
 	// Found a token, add it to the vector.
@@ -30,5 +30,16 @@ namespace hipo {
 	// Find next "non-delimiter"
 	pos = str.find_first_of(delimiters, lastPos);
       }
+  }
+
+
+  void utils::printLogo(){
+    std::cout << "************************************************" << std::endl;
+    std::cout << "*         >=<         ---------------------    *" << std::endl;
+    std::cout << "*    ,.--'  ''-.      HIPO 2.0 I/O Library     *" << std::endl;
+    std::cout << "*    (  )  ',_.'      Jefferson National Lab   *" << std::endl;
+    std::cout << "*     Xx'xX           Date: 02/27/2016         *" << std::endl;
+    std::cout << "************************************************" << std::endl;
+    std::cout << std::endl;
   }
 }

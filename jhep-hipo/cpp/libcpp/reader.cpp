@@ -7,9 +7,11 @@
 #include "reader.h"
 #include "hipoexceptions.h"
 #include "record.h"
+#include "utils.h"
 #include <cstdlib>
 
 namespace hipo {
+
   reader::reader(){
     printWarning();
   }
@@ -19,7 +21,7 @@ namespace hipo {
   }
 
 void reader::open(const char *filename){
-
+    utils::printLogo();
     inputStream.open(filename, std::ios::binary);
     if(inputStream.is_open()==false){
       printf("[ERROR] something went wrong with openning file : %s\n",
@@ -120,7 +122,38 @@ void  reader::readRecord(record &record,int pos){
 }
 
 
+void reader::readRecord(int index){
+    readRecord(reader_record,index);
+}
+
+int reader::getEventCount(){
+  return reader_record.getEventCount();
+}
+
+void reader::readEvent(int index){
+   reader_record.readHipoEvent(reader_event,index);
+
+   int nodes_size = nodeList.size();
+   for(int i = 0; i < nodes_size; i++){
+     int group = nodeList[i]->group();
+     int item  = nodeList[i]->item();
+     int offset = reader_event.getNodeAddress(group,item);
+     //printf(" %3d : %6d %6d OFFSET = %5d\n",i,group,item,offset);
+     if(offset<0){
+       nodeList[i]->length(0);
+     } else {
+       nodeList[i]->length(reader_event.getNodeSize(offset));
+       nodeList[i]->setAddress(reader_event.getNodePtr(offset));
+     }
+   }
+}
+
+void reader::addNode(std::shared_ptr<hipo::generic_node> node_ptr){
+    nodeList.push_back(node_ptr);
+}
+
 void reader::showInfo(){
+
     if(recordIndex.size()<1){
       printf(" there are no records in the file : %d\n", inputStream.is_open());
       return;
@@ -132,9 +165,10 @@ void reader::showInfo(){
     printf(" header Length : %d bytes\n", (unsigned int) getHeaderLength());
     printf("   file Length : %.2f MB\n", sizePos);
     printf("-------------------------------------\n");
-  }
+}
 
-  void reader::printWarning(){
+
+void reader::printWarning(){
     #ifndef __LZ4__
       std::cout << "******************************************************" << std::endl;
       std::cout << "* WARNING:                                           *" << std::endl;

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   node.h
  * Author: gavalian
  *
@@ -21,20 +21,20 @@
 #include <vector>
 
 namespace hipo {
-    
+
   class utils {
   private:
-    
+
   public:
     utils();
     ~utils();
     static void tokenize(const std::string& str,
 			 std::vector<std::string>& tokens,
 			 const std::string& delimiters = " ");
-    
+
+    static void printLogo();
   };
 
 }
 
 #endif /* UTILS_H */
-

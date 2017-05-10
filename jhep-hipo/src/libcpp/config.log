@@ -1,4 +1,4 @@
-file /Users/gavalian/Work/Software/project-1a.0.0/Distribution/jhep/jhep-hipo/src/libcpp/SConstruct,line 20:
+file /Users/gavalian/Work/Software/project-1a.0.0/Distributions/jhep/jhep-hipo/src/libcpp/SConstruct,line 20:
 	Configure(confdir = .sconf_temp /group/clas12/packages/lz4/lib)
 scons: Configure: Checking for C library liblz4... 
 scons: Configure: ".sconf_temp /group/clas12/packages/lz4/lib/conftest_0.c" is up to date.

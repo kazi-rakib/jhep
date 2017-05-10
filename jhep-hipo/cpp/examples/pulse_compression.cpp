@@ -54,11 +54,15 @@ int main(int argc, char** argv) {
     myFileRaw.open ("data_raw.bin", std::ios::out | std::ios::binary);
     ofstream myFileComp;
     myFileComp.open ("data_comp.bin", std::ios::out | std::ios::binary);
+    ofstream myFileCompLossy;
+    myFileCompLossy.open ("data_comp_lossy.bin", std::ios::out | std::ios::binary);
 
     data::data decoder;
 
     std::vector<uint16_t> low,high;
     std::vector<char> encoded;
+    std::vector<char> encodedLossy;
+
     std::vector<char> vec16;
     int i = 0;
     while(reader.readLine()){
@@ -75,7 +79,19 @@ int main(int argc, char** argv) {
       //printf("********************** EVENTS \n");
       decoder.decompose(vec,low,high);
       decoder.encode(vec, encoded);
+      decoder.encodeLossy(vec, encodedLossy);
+      printf("#----->\n");
+
+
+      std::vector<int> vecSUB = decoder.getSubtracted(vec);
+      std::vector<int> vecREM = decoder.getReiman(vecSUB);
+      decoder.print(vecSUB);
+      decoder.print(vecREM);
+      decoder.print(vec);
+      decoder.print(low);
+      decoder.print(high);
       myFileComp.write(&encoded[0], encoded.size());
+      myFileCompLossy.write(&encodedLossy[0], encodedLossy.size());
       myFileRaw.write(&vec16[0],vec16.size());
     }
 

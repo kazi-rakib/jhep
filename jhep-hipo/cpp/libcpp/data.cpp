@@ -14,13 +14,13 @@ namespace data {
 
   void data::print(const std::vector<int> &vec){
     int n = vec.size();
-    for(int i = 0; i < n; i++) printf("%d ,",vec[i]);
+    for(int i = 0; i < n; i++) printf("%d  ",vec[i]);
     printf("\n");
   }
 
   void data::print(const std::vector<uint16_t> &vec){
     int n = vec.size();
-    for(int i = 0; i < n; i++) printf("%d ,", (unsigned int) vec[i]);
+    for(int i = 0; i < n; i++) printf("%d  ", (unsigned int) vec[i]);
     printf("\n");
   }
 
@@ -114,6 +114,58 @@ namespace data {
       dest.resize(2 + low.size()/2, 0);
       uint16_t *ped = reinterpret_cast<uint16_t *> (&dest[0]);
       *ped = minimum;
+      for(int i = 0; i < low.size(); i++){
+         int   index = 2 + i/2;
+         int   order = i%2;
+         char  value = dest[index];
+         char  ibyte = low[i];
+         //printf("value before %X  %d %d\n", (unsigned int) value, order, low[i]);
+         if(order==0){
+           value = (value|(ibyte&0x000F));
+         } else {
+           value = (value|((ibyte&0x000F)<<4));
+         }
+         //printf("value after %X\n", (unsigned int) value);
+         //printf("\n");
+         dest[index] = value;
+      }
+
+      int start_byte = 0;
+      int   end_byte = high.size() - 1;
+      for(int i = 0; i < high.size(); i++) if(high[i]!=0){ start_byte = i; break;};
+      for(int i = high.size()-1; i >= 0; i--) if(high[i]!=0) { end_byte = i; break;};
+      //printf(" array range = %d %d\n",start_byte, end_byte);
+      dest.push_back(start_byte-1);
+      dest.push_back(end_byte - start_byte + 1);
+      for(int i = start_byte; i <= end_byte; i++){
+        dest.push_back(high[i]);
+      }
+  }
+
+  void data::encodeLossy(std::vector<int> &pulse, std::vector<char> &dest){
+
+      std::vector<uint16_t> lowF;
+      std::vector<uint16_t> high;
+
+      decompose(pulse,lowF,high);
+
+      int minimum = pulse[0];
+      for(int i = 1; i < pulse.size(); i++){
+        if(pulse[i]<minimum) minimum = pulse[i];
+      }
+      dest.clear();
+
+      std::vector<uint16_t> low;
+
+      for(int i = 0; i < lowF.size(); i+=2){
+        uint16_t value =  (uint16_t) ((lowF[i]+lowF[i+1])/2);
+        low.push_back(value);
+      }
+
+      dest.resize(2 + low.size()/2, 0);
+      uint16_t *ped = reinterpret_cast<uint16_t *> (&dest[0]);
+      *ped = minimum;
+
       for(int i = 0; i < low.size(); i++){
          int   index = 2 + i/2;
          int   order = i%2;

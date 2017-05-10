@@ -39,6 +39,7 @@ namespace data {
                     std::vector<uint16_t> &high);
 
     void  encode(std::vector<int> &pulse, std::vector<char> &dest);
+    void  encodeLossy(std::vector<int> &pulse, std::vector<char> &dest);
     void  decode(std::vector<char> &dest, std::vector<uint16_t> &pulse);
 
     int getMinimum(const std::vector<int> &vec);

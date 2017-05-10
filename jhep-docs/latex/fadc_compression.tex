@@ -5,6 +5,7 @@
 
 \definecolor{LightCyan}{rgb}{0.88,1,1}
 \definecolor{LightRose}{rgb}{1,0.88,0.88}
+\definecolor{LightGreen}{rgb}{0.88,1,0.88}
 
 \title{FADC pulse compression}
 \author{Gagik Gavalian}
@@ -129,6 +130,9 @@ Bit Packed &  0.63~MB & 0.34 \\
 Bit Packed (LZ4) & 0.55~MB & 0.29 \\
 \rowcolor{LightRose}
 Bit Packed (GZIP) & 0.48~MB & 0.26 \\
+Bit Packed Lossy  & 0.39~MB & 0.21 \\
+\rowcolor{LightGreen}
+Bit Packed Lossy (GZIP) & 0.27~MB & 0.14 \\
 \hline
 \end{tabular}
 \caption{Data sizes compared to raw pulse and bit packed. The samples were further

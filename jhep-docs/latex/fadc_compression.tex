@@ -66,8 +66,8 @@ recording the pulse into 16 bit words (200 bytes).
 \begin{figure}[!ht]
 \begin{center}
 
- \includegraphics[width=5in]{pics/fadc_pulse_reduction.png}
- \includegraphics[width=5in]{pics/fadc_pulse_summ.png}
+ \includegraphics[width=6in]{pics/fadc_pulse_reduction.png}
+ \includegraphics[width=6in]{pics/fadc_pulse_summ.png}
 
  \caption {Typical pulse from Electro-Magnetic Calorimeter, top left) raw pulse, top right) pedestal subtracted pulse, bottom) integral sum of the pulse.}
  \label{FADC_PULSE}
@@ -85,7 +85,7 @@ difference between neighboring bins, and high 8 bits, show on Figure~\ref{FADC_P
 \begin{figure}[!ht]
 \begin{center}
 
- \includegraphics[width=5in]{pics/fadc_pulse_bits.png}
+ \includegraphics[width=6in]{pics/fadc_pulse_bits.png}
 
  \caption {Separated arrays of low (4) and high (8) bites. left) low 4 bites of difference array,
  right) high 8 bites of difference array. }
@@ -97,9 +97,9 @@ The two arrays are encoded differently. First distribution (left on Figure~\ref{
 throwing away leading and trailing 0s. One byte is first written for first bin with no 0 content, followed
 by N samples of 8 bits until the last non zero bin is reached.
 
-In the above given example occupied 55 bytes (instead of 200) to fully describe the pulse.
-Depending on the width of the pulse in average 10-15 bytes are used to encode high bits of 
-the pulse, while the low bits are always encoded using 52 bites.
+In the above given example occupied 63 bytes (instead of 200) to fully describe the pulse.
+The array of high 8 bits contains 10 non zero elements, so the array is encoded into 11 bytes,
+52+11=63 total bytes. Depending on the width of the pulse in average 5-15 bytes are used to encode high bits of the pulse, while the low bits are always encoded using 52 bites.
 
 \section{Benchmarks}
 

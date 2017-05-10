@@ -39,7 +39,7 @@ lib   = env.Library(target="lib/libhipo.a",source = codeList_CPP)
 # Building example codes
 #==================================================
 read_file   = env.Program(target="examples/read_file",source=codeList_CPP+["examples/read_file.cpp"])
-read_file_e = env.Program(target="examples/read_event_file",source=codeList_CPP+["examples/read_event_file.cpp"])
+#read_file_e = env.Program(target="examples/read_event_file",source=codeList_CPP+["examples/read_event_file.cpp"])
 read_file_a = env.Program(target="examples/read_file_advanced",source=codeList_CPP+["examples/read_file_advanced.cpp"])
 write_file  = env.Program(target="examples/write_file",source=codeList_CPP+["examples/write_file.cpp"])
 pulse_comp  = env.Program(target="examples/pulse_compression",source=codeList_CPP+["examples/pulse_compression.cpp"])

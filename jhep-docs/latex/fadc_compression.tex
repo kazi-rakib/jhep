@@ -83,7 +83,7 @@ is constructed, show on the bottom of Figure~\ref{FADC_PULSE}.
 Next the integral sum is split into two arrays, first one containing low 4 bits of the
 difference between neighboring bins, and high 8 bits, show on Figure~\ref{FADC_PULSE_BITS}.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \begin{center}
 
  \includegraphics[width=6in]{pics/fadc_pulse_bits.png}
@@ -102,6 +102,27 @@ In the above given example occupied 63 bytes (instead of 200) to fully describe 
 The array of high 8 bits contains 10 non zero elements, so the array is encoded into 11 bytes,
 52+11=63 total bytes. Depending on the width of the pulse in average 5-15 bytes are used to encode high bits of the pulse, while the low bits are always encoded using 52 bites.
 
+\section{Lossy Bit Packing}
+
+We can go even further to compress the pulse. At this step the compression becomes lossy.
+More compression is achieved by re-binning the array containing lower 4 bits. Each two neighbor
+bins are combined into one by calculating the average. This way the 50 byte array holding lower
+array will be reduced to 25 bytes. The impact of this re-binning on the total integral is minimal, and
+does not affect pedestal calculation, since pedestal is taken as average of first four bins.
+
+\begin{figure}[!h]
+\begin{center}
+
+ \includegraphics[width=6in]{pics/fadc_pulse_rebinned.png}
+
+ \caption {Re-binning the array with low 4 bits by combining two neighbor bins and taking the average. }
+ \label{FADC_PULSE_BITS_REBINNED}
+ \end{center}
+\end{figure}
+
+Applying lossy compression to lower array decreases the pulse size by factor of  5, and further
+GZIP compression reduces the size of the data size on tapes by factor of  7.
+
 \section{Benchmarks}
 
 For our tests we used a file from Electromagnetic Calorimeter cosmic runs. We took 9372 sample
@@ -117,7 +138,7 @@ and will reduce data by larger factor. The tests show that amount of data to be 
 
 \begin{table}[!h]
 \begin{center}
-\begin{tabular}{  p{8cm} | p{2cm} | p{1.5cm} }
+\begin{tabular}{  p{10cm} | p{2cm} | p{1.5cm} }
 \hline 
 Method & File Size & Ratio \\
 \hline 
@@ -131,6 +152,7 @@ Bit Packed (LZ4) & 0.55~MB & 0.29 \\
 \rowcolor{LightRose}
 Bit Packed (GZIP) & 0.48~MB & 0.26 \\
 Bit Packed Lossy  & 0.39~MB & 0.21 \\
+Bit Packed Lossy  (LZ4) & 0.30~MB & 0.16 \\
 \rowcolor{LightGreen}
 Bit Packed Lossy (GZIP) & 0.27~MB & 0.14 \\
 \hline
@@ -139,6 +161,10 @@ Bit Packed Lossy (GZIP) & 0.27~MB & 0.14 \\
 compressed using GZIP and LZ4 to present data reduction on tapes.}
 \end{center}
 \end{table}
+
+The lossy compression tests show data reduction by factor of 5 on data acquisition side,
+and real data archived on the tape is reduced by factor of 7 after GZIP compression.
+
 
 \section{Conclusion}
 

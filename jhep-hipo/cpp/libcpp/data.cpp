@@ -162,12 +162,17 @@ namespace data {
         low.push_back(value);
       }
 
-      dest.resize(2 + low.size()/2, 0);
-      uint16_t *ped = reinterpret_cast<uint16_t *> (&dest[0]);
+      dest.resize(7 + low.size()/2, 0);
+      dest[0] = 'P';
+      dest[1] = 'U';
+      dest[2] = 'L';
+      dest[3] = 'S';
+      dest[4] = 'E';
+      uint16_t *ped = reinterpret_cast<uint16_t *> (&dest[5]);
       *ped = minimum;
 
       for(int i = 0; i < low.size(); i++){
-         int   index = 2 + i/2;
+         int   index = 7 + i/2;
          int   order = i%2;
          char  value = dest[index];
          char  ibyte = low[i];

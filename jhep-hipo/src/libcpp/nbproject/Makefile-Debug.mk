@@ -69,32 +69,32 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibcpp.a: ${OBJECTFILES}
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibcpp.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibcpp.a
 
-${OBJECTDIR}/event.o: event.cpp 
+${OBJECTDIR}/event.o: event.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/event.o event.cpp
 
-${OBJECTDIR}/hipodebug.o: hipodebug.cpp 
+${OBJECTDIR}/hipodebug.o: hipodebug.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hipodebug.o hipodebug.cpp
 
-${OBJECTDIR}/node.o: node.cpp 
+${OBJECTDIR}/node.o: node.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/node.o node.cpp
 
-${OBJECTDIR}/reader.o: reader.cpp 
+${OBJECTDIR}/reader.o: reader.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/reader.o reader.cpp
 
-${OBJECTDIR}/record.o: record.cpp 
+${OBJECTDIR}/record.o: record.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/record.o record.cpp
 
-${OBJECTDIR}/writer.o: writer.cpp 
+${OBJECTDIR}/writer.o: writer.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/writer.o writer.cpp
@@ -105,7 +105,6 @@ ${OBJECTDIR}/writer.o: writer.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibcpp.a
 
 # Subprojects
 .clean-subprojects:

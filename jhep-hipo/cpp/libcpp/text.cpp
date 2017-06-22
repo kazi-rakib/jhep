@@ -19,11 +19,12 @@ namespace text {
 
   bool reader::readLine(){
     std::string str;
-    bool status = std::getline(inputStream, str);
+    std::getline(inputStream, str);
     textLines.clear();
     stringUtils.tokenize(str, textLines, delim);
     //textLines.push_back(str);
-    return status;
+    if(inputStream.eof()) return false;
+    return true;
   }
 
   void reader::setDalim(std::string &d){

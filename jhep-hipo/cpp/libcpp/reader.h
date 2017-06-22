@@ -22,6 +22,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory>
 
 #include "record.h"
 #include "node.h"

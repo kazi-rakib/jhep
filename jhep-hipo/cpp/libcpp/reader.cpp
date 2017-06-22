@@ -22,6 +22,10 @@ namespace hipo {
 
 void reader::open(const char *filename){
     utils::printLogo();
+    if(inputStream.is_open()==true){
+      inputStream.close();
+    }
+    
     inputStream.open(filename, std::ios::binary);
     if(inputStream.is_open()==false){
       printf("[ERROR] something went wrong with openning file : %s\n",

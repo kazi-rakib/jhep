@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SCRIPT_HOME=`dirname $0`
+LIBRARY_HOME=`dirname $0`/../target ; export LIBRARY_HOME
+
+#-------------------------------------------------------------
+
+echo " "
+echo " "
+echo "*****************************************"
+echo "*    Running JNP Utils                  *"
+echo "*    Version : 1a  Release : 2017       *"
+echo "*****************************************"
+echo " "
+echo " "
+java -Xms1024m -cp "$LIBRARY_HOME/*" org.jlab.jnp.tmd.process.SIDISEventGeneratorLOCAL $*

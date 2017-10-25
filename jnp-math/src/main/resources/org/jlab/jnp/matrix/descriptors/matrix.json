@@ -1,0 +1,11 @@
+[
+  {
+     "bank": "matrix::sparse",
+    "group": 22101,
+     "info": "Bank description for Sparse Matrix",
+    "items": [
+       {"name":"key",    "id":1, "type":"long",  "info":"key index of the cell"},
+       {"name":"value",  "id":2, "type":"long",  "info":"value if the cell"}
+    ]  
+  }
+]

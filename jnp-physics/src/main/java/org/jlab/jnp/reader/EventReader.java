@@ -7,11 +7,11 @@ package org.jlab.jnp.reader;
 
 import java.util.List;
 import java.util.Objects;
-import org.jlab.jhep.hipo.data.HipoEvent;
-import org.jlab.jhep.hipo.data.HipoGroup;
-import org.jlab.jhep.hipo.data.HipoNode;
-import org.jlab.jhep.hipo.io.HipoReader;
-import org.jlab.jhep.utils.options.OptionParser;
+import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.io.HipoReader;
+import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.physics.Particle;
 import org.jlab.jnp.physics.PhysicsEvent;
 import org.jlab.jnp.physics.map.BaseMapProducer;

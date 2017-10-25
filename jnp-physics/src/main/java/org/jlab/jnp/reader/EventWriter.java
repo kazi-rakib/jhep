@@ -6,14 +6,14 @@
 package org.jlab.jnp.reader;
 
 import java.util.List;
-import org.jlab.jhep.hipo.data.HipoEvent;
-import org.jlab.jhep.hipo.data.HipoGroup;
-import org.jlab.jhep.hipo.data.HipoNode;
-import org.jlab.jhep.hipo.data.HipoNodeType;
-import org.jlab.jhep.hipo.io.HipoWriter;
-import org.jlab.jhep.hipo.schema.SchemaFactory;
-import org.jlab.jhep.utils.benchmark.Benchmark;
-import org.jlab.jhep.utils.options.OptionParser;
+import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.data.HipoNodeType;
+import org.jlab.jnp.hipo.io.HipoWriter;
+import org.jlab.jnp.hipo.schema.SchemaFactory;
+import org.jlab.jnp.utils.benchmark.Benchmark;
+import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.physics.Particle;
 import org.jlab.jnp.physics.PhysicsEvent;
 

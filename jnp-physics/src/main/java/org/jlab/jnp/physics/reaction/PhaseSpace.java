@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
-import org.jlab.jhep.utils.file.FileUtils;
-import org.jlab.jhep.utils.json.Json;
-import org.jlab.jhep.utils.json.JsonArray;
-import org.jlab.jhep.utils.json.JsonObject;
+import org.jlab.jnp.utils.file.FileUtils;
+import org.jlab.jnp.utils.json.Json;
+import org.jlab.jnp.utils.json.JsonArray;
+import org.jlab.jnp.utils.json.JsonObject;
 
 /**
  *

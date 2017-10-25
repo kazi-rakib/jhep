@@ -7,10 +7,10 @@ package org.jlab.jnp.physics;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jlab.jhep.hipo.data.HipoEvent;
-import org.jlab.jhep.hipo.data.HipoGroup;
-import org.jlab.jhep.hipo.schema.SchemaFactory;
-import org.jlab.jhep.utils.benchmark.Benchmark;
+import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.schema.SchemaFactory;
+import org.jlab.jnp.utils.benchmark.Benchmark;
 import org.jlab.jnp.reader.EventWriter;
 import org.jlab.jnp.reader.LundReader;
 

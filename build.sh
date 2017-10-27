@@ -1,5 +1,28 @@
 #!/bin/bash
-
+#********************************************************
+# Compilation code for the JNP Library project.
+# To compile and deploy the library use the command
+# >./build.sh -b
+# This will build all the submodules and deploy them
+# to MAVEN repository at Jefferson Lab
+# To clean the previous build use:
+# >./build.sh -c
+# To clean all built jars and temporary files
+# To generate JavaDoc ( Java API documentation) use:
+# >./build.sh -d
+#
+# The project has a synchronized version set to all
+# submodules, currently the change is done manually
+# using the command:
+# 
+# mvn versions:set -DnewVersion=1.1-SNAPSHOT
+# 
+# this command is run in each directory, to switch the
+# version numbers. In the future this will be automated
+#--------------------------------------------------------
+#********************************************************
+#  Parsing command line arguments
+#--------------------------------------------------------
 while [ "$1" != "" ]; do
     case $1 in
 	-c)
@@ -21,7 +44,10 @@ while [ "$1" != "" ]; do
             break
     esac
 done
-
+#-----------------------------------------------------------
+# If clean command was activated. maven clean is performed
+# in all sub directories
+#-----------------------------------------------------------
 if [[ ! -z $CLEAN_COMMAND ]]
 then
   echo 'Cleaning the distribution'
@@ -31,7 +57,10 @@ then
   cd jnp-math  ; mvn clean; cd -
   cd jnp-physics  ; mvn clean; cd -
 fi
-
+#-----------------------------------------------------------
+# If the build command is activated maven install and 
+# maven deploy commands are executed for all sub modules
+#-----------------------------------------------------------
 if [[ ! -z $BUILD_COMMAND ]]
 then
     echo 'building the distribution'
@@ -42,7 +71,11 @@ then
     cd jnp-math  ; mvn install; mvn deploy; cd -
     cd jnp-physics  ; mvn install; mvn deploy; cd -
 fi
-
+#-----------------------------------------------------------
+# generating the documentation for the sub modules.
+# if permissions permit, they will be ported to clas12
+# documentation site.
+#-----------------------------------------------------------
 if [[ ! -z $DOCS_COMMAND ]]
 then
   echo 'documenting the distribution'
@@ -50,5 +83,5 @@ then
   scp -r javadoc clas12@ifarm1402:/group/clas/www/clasweb/html/jnp/docs/.
 fi
 
-
+#-----------------------------------------------------------
 echo ''; echo 'all done.....'; echo ''

@@ -41,7 +41,7 @@ public class EventReader {
     
     public Boolean nextEvent(){
         if(Objects.equals(currentEvent, numberOfEvents)) return false;
-        hipoEvent = reader.readHipoEvent(currentEvent);
+        hipoEvent = reader.readEvent(currentEvent);
         currentEvent++;
         return true;
     }

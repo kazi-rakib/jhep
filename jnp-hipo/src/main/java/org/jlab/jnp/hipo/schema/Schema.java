@@ -48,6 +48,17 @@ public class Schema {
         this.setName(n);
         this.setGroup(grp);
     }
+    /**
+     * Creates a HipoNode containing the string format representation
+     * of the Schema. Can be parsed by parseString() method
+     * @param group group number
+     * @param id item number
+     * @return HipoNode with schema information
+     */
+    public HipoNode  createNode(int group, int id){
+        HipoNode node = new HipoNode(group,id,getText());
+        return node;
+    }
     
     public Map<Integer,HipoNode>  createNodeMap(int size){
         Map<Integer,HipoNode>  map = new HashMap<Integer,HipoNode>();

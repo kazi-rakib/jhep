@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoGroup;
-import org.jlab.jnp.hipo.io.HipoReader;
-import org.jlab.jnp.hipo.io.HipoRecord;
-import org.jlab.jnp.hipo.io.HipoWriter;
+import org.jlab.jnp.hipo2.io.HipoReader;
+import org.jlab.jnp.hipo2.io.HipoRecord;
+import org.jlab.jnp.hipo2.io.HipoWriter;
 import org.jlab.jnp.hipo.schema.SchemaFactory;
 import org.jlab.jnp.utils.options.OptionParser;
 

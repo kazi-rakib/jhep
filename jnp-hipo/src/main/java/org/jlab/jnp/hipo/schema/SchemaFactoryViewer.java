@@ -39,7 +39,7 @@ public class SchemaFactoryViewer extends JPanel {
     
     
     public static void main(String[] args){
-          JFrame frame = new JFrame();
+        JFrame frame = new JFrame();
         SchemaFactoryViewer scViewer = new SchemaFactoryViewer();
         Schema schema = new Schema("mc::event" , 32111, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
         Schema schemadata = new Schema("data::event" , 32211, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");

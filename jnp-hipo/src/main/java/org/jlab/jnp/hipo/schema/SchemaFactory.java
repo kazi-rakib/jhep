@@ -52,6 +52,15 @@ public class SchemaFactory {
                 return;
             }
         }
+        if(schemaStoreGroups.containsKey(schema.getGroup())==true){
+            System.out.println("[SchemaFactory] ---> warning : schema with group id "+
+                    schema.getGroup() + " already exists.");
+            if(this.overrideMode==false){
+                System.out.println("[SchemaFactory] ---> warning : new schema "+
+                        " is not added");
+                return;
+            }
+        }
         this.schemaStore.put(schema.getName(), schema);
         this.schemaStoreGroups.put(schema.getGroup(), schema);
     }

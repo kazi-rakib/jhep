@@ -13,16 +13,17 @@ package org.jlab.jnp.hipo.data;
  */
 public enum HipoNodeType {
     
-    UNDEFINED ( 0, 0, "UNDEFINED"),
-    BYTE      ( 1, 1, "BYTE"),
-    SHORT     ( 2, 2, "SHORT"),
-    INT       ( 3, 4, "INT"),    
-    FLOAT     ( 4, 4, "FLOAT"),
-    DOUBLE    ( 5, 8, "DOUBLE"),
-    STRING    ( 6, 1, "STRING"),
-    GROUP     ( 7, 0, "GROUP"),
-    LONG      ( 8, 8, "LONG"),
-    VECTOR3F  ( 9, 12, "VECTOR3F");
+    UNDEFINED (  0, 0, "UNDEFINED"),
+    BYTE      (  1, 1, "BYTE"),
+    SHORT     (  2, 2, "SHORT"),
+    INT       (  3, 4, "INT"),    
+    FLOAT     (  4, 4, "FLOAT"),
+    DOUBLE    (  5, 8, "DOUBLE"),
+    STRING    (  6, 1, "STRING"),
+    GROUP     (  7, 0, "GROUP"),
+    LONG      (  8, 8, "LONG"),
+    VECTOR3F  (  9, 12, "VECTOR3F"),
+    COMPOSITE ( 10, 1, "COMPOSITE");
     
     private final int typeid;
     private final int sizeOf;

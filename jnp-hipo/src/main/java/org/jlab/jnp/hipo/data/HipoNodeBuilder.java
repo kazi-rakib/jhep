@@ -140,6 +140,5 @@ public class HipoNodeBuilder<T extends Number> {
             }
         }
         return null;
-    }
-    
+    }    
 }

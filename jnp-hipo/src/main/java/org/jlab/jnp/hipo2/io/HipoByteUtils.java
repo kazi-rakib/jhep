@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.jnp.hipo.io;
+package org.jlab.jnp.hipo2.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -7,7 +7,7 @@ package org.jlab.jnp.hipo.map;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jlab.jnp.hipo.io.HipoReader;
+import org.jlab.jnp.hipo2.io.HipoReader;
 
 /**
  *

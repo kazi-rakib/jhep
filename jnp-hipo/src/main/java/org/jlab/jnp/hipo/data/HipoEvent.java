@@ -252,7 +252,10 @@ public class HipoEvent {
             if(this.eventSchemaFactory.hasSchema(entry.getKey())==true){
                 name = this.eventSchemaFactory.getSchema(entry.getKey()).getName();
             }
+            System.out.println("------> name = " + name);
             Integer size = entry.getValue().getItemList().size();
+            System.out.println("------> key = " + entry.getKey());
+            eventSchemaFactory.show();
             HipoGroup group = this.getGroup(this.eventSchemaFactory.getSchema(entry.getKey()).getName());
             Integer rows = group.getMaxSize();
             table.addData(new String[]{counter.toString(), name, rows.toString(), entry.getKey().toString(),size.toString()});

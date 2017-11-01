@@ -16,6 +16,7 @@ import org.jlab.jnp.utils.benchmark.Benchmark;
 import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.physics.Particle;
 import org.jlab.jnp.physics.PhysicsEvent;
+import org.jlab.jnp.utils.options.OptionStore;
 
 /**
  *
@@ -26,15 +27,14 @@ public class EventWriter {
     HipoWriter writer = null;
     HipoEvent  hipoEvent = null;
     
-    public EventWriter(String name){
+    public EventWriter(String name){        
         writer = new HipoWriter();
         writer.defineSchema("mc::header", 32110, "parameters/F:weight/F");
         writer.defineSchema("mc::event" , 32111, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
         writer.defineSchema("data::event", 32210, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:beta/F:chi2pid/F:charge/B:parent/B:status/B");
         writer.defineSchema("data::detector", 32211, "id/I:pindex/S:x/F:y/F:z/F:path/F:time/F:energy/F");
-        writer.open(name);
-        writer.setCompressionType(3);
-        
+        writer.setCompressionType(2);
+        writer.open(name);        
         hipoEvent = new HipoEvent(writer.getSchemaFactory());
     }
     
@@ -116,40 +116,45 @@ public class EventWriter {
     
     public void close(){ writer.close();}
     
+    public static void convertLUND2HIPO(String outputFile, List<String> inputList){
+        EventWriter writer = new EventWriter(outputFile);
+        PhysicsEvent event = new PhysicsEvent();
+        int icounter = 0;
+        for(String item : inputList){
+            LundReader  reader = new LundReader();
+            reader.addFile(item);
+            reader.open();
+            System.out.println("[LUND] ---> opening file : " + item);
+            while(reader.nextEvent(event)==true){
+                //System.out.println(event.toLundString());
+                writer.reset();
+                //writer.writeEvent(event);
+                writer.appendMcEvent(event);
+                writer.write();                
+                icounter++;
+            }
+            System.out.println("[LUND] ---> done reading file at event # " + icounter);
+        }
+        writer.close();
+    }
+    
     public static void main(String[] args){
+        OptionStore parser = new OptionStore("hipoutils");
         
-        OptionParser parser = new OptionParser("lund-convertor");
+        parser.addCommand("-convert", "convert files to hipo format");
+        //parser.getOptionParser("-convert").addRequired("-lund", "LUND file name (in ascii format)");
+        parser.getOptionParser("-convert").addRequired("-o", "output file name");
+       // OptionParser parser = new OptionParser("lund-convertor");
         
-        parser.addRequired("-o", "output file name");
+        //parser.addRequired("-o", "output file name");
         
         parser.parse(args);
-        
-        if(parser.hasOption("-o")==true){
-            String outputFile = parser.getOption("-o").stringValue();
-            List<String> inputList = parser.getInputList();
-            
-            EventWriter writer = new EventWriter(outputFile);
-            
-            Benchmark bench = new Benchmark();
-            PhysicsEvent event = new PhysicsEvent();
-            bench.addTimer("LUNDREADER");
-            bench.resume("LUNDREADER");
-            int icounter = 0;            
-            for(String item : inputList){
-                LundReader  reader = new LundReader();
-                reader.addFile(item);            
-                reader.open();
-                System.out.println("[LUND] ---> opening file : " + item);                                           
-                
-                while(reader.nextEvent(event)==true){
-                    writer.writeEvent(event);
-                    icounter++;
-                }
+        if(parser.getCommand().compareTo("-convert")==0){
+            if(parser.getOptionParser("-convert").hasOption("-o")==true){
+                String outputFile = parser.getOptionParser("-convert").getOption("-o").stringValue();
+                List<String> inputList = parser.getOptionParser("-convert").getInputList();
+                EventWriter.convertLUND2HIPO(outputFile, inputList);
             }
-            bench.pause("LUNDREADER");
-            writer.close();
-            System.out.println(bench.toString());
-            System.out.println("processed events = " + icounter);
         }
     }
 }

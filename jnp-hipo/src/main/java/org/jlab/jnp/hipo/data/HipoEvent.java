@@ -23,17 +23,16 @@ import org.jlab.jnp.utils.data.TextTable;
  */
 public class HipoEvent {
     
-    ByteBuffer           eventBuffer = null;
-    
+    private final int    EVENT_HEADER_LENGTH = 16;
+    private final int     NODE_HEADER_LENGTH = 8;
+    ByteBuffer           eventBuffer = null;    
     //List<HipoNodeIndex>   eventIndex = new ArrayList<HipoNodeIndex>();    
     Map<Integer,GroupNodeIndexList>  groupsIndex = new HashMap<Integer,GroupNodeIndexList>();
-    
-    
     private SchemaFactory    eventSchemaFactory = new SchemaFactory();
         
     
     public HipoEvent(){
-        byte[] header = new byte[8];
+        byte[] header = new byte[EVENT_HEADER_LENGTH];
         header[0] = 'E';
         header[1] = 'V';
         header[2] = 'N';
@@ -41,10 +40,12 @@ public class HipoEvent {
         
         eventBuffer = ByteBuffer.wrap(header);
         eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        eventBuffer.putInt( 4, 0);
+        eventBuffer.putLong(8, 0L);
     }
     
     public HipoEvent(SchemaFactory factory){        
-        byte[] header = new byte[8];
+        byte[] header = new byte[EVENT_HEADER_LENGTH];
         header[0] = 'E';
         header[1] = 'V';
         header[2] = 'N';
@@ -52,6 +53,8 @@ public class HipoEvent {
         
         eventBuffer = ByteBuffer.wrap(header);
         eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        eventBuffer.putInt( 4, 0);
+        eventBuffer.putLong(8, 0L);
         eventSchemaFactory.copy(factory);
         this.updateNodeIndex();
     }
@@ -93,7 +96,8 @@ public class HipoEvent {
             System.out.print(String.format("%3X", dataBuffer[i]));
         }*/
         eventBuffer = ByteBuffer.wrap(dataBuffer);
-        eventBuffer.order(ByteOrder.LITTLE_ENDIAN);        
+        eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        eventBuffer.putInt(4, nodeLength+eventLength);
     }
     /**
      * Add the nodes in the list to the event.
@@ -126,14 +130,14 @@ public class HipoEvent {
      */
     public final void updateNodeIndex(){
         
-        int position = 8;
+        int position = EVENT_HEADER_LENGTH;
         int capacity = eventBuffer.capacity();
         
         //eventIndex.clear();
         this.groupsIndex.clear();
         int counter = 0;
         
-        while((position+8)<capacity){
+        while((position+EVENT_HEADER_LENGTH)<capacity){
             
             short group = eventBuffer.getShort( position    );
             //System.out.println(" group = " + group);
@@ -157,13 +161,13 @@ public class HipoEvent {
             //index.nodeOffset = position;
             //index.nodeLength = size;            
             //eventIndex.add(index);
-            position += 8 + size;
+            position += NODE_HEADER_LENGTH + size;
         }
     }
     
     
     public void reset(){
-        byte[] header = new byte[8];
+        byte[] header = new byte[EVENT_HEADER_LENGTH];
         header[0] = 'E';
         header[1] = 'V';
         header[2] = 'N';
@@ -171,6 +175,8 @@ public class HipoEvent {
         
         eventBuffer = ByteBuffer.wrap(header);
         eventBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        eventBuffer.putInt( 4, 0);
+        eventBuffer.putLong(8, 0L);
     }
     /**
      * writes all the nodes in the group into the event.
@@ -282,13 +288,14 @@ public class HipoEvent {
         }
     }
     
+    
     public HipoNode getNode(int group, int item){
         
         if(this.groupsIndex.containsKey(group)==true){
             GroupNodeIndexList list = groupsIndex.get(group);
             if(list.hasItem(item)==true){
                 NodeIndexList nL = list.getItemIndex(item);
-                int nodeLength = 8 + nL.nodeLength;
+                int nodeLength = NODE_HEADER_LENGTH + nL.nodeLength;
                 byte[] array = new byte[nodeLength];
                 System.arraycopy(eventBuffer.array(), nL.nodeOffset, array, 0, nodeLength);
                 return new HipoNode(array);
@@ -312,6 +319,14 @@ public class HipoEvent {
         return this.groupsIndex.containsKey(group);
     }
     
+    public boolean hasNode(int group, int item){
+        if(this.groupsIndex.containsKey(group)==false){
+            return false;
+        } else {
+            GroupNodeIndexList list = groupsIndex.get(group);
+            return list.hasItem(item);                
+        }
+    }
     public boolean hasGroup(String group){
         if(this.eventSchemaFactory.hasSchema(group)==true){
             int groupId = this.eventSchemaFactory.getSchema(group).getGroup();

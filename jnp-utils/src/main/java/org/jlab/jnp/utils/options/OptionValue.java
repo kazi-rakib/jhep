@@ -5,6 +5,7 @@
  */
 package org.jlab.jnp.utils.options;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +36,22 @@ public class OptionValue {
     public int     intValue()     { return Integer.parseInt(this.optionValue);}
     public double  doubleValue()  { return Double.parseDouble(this.optionValue);}
     public String  stringValue()  { return this.optionValue;}
+    
+    public List<Integer> intArrayValue()
+    {
+        List<Integer> values = new ArrayList<Integer>();
+        String[] tokens = optionValue.split(":");
+        for(String token : tokens){
+            try {
+                Integer value = Integer.parseInt(token);
+                values.add(value);
+            } catch (Exception e){
+                System.out.println("[parser error] ---> " + token
+                + " is not an integer value.");
+            }
+        }
+        return values;
+    }
     
     private int getOptionIndex(List<String> options){
         for(int i = 0; i < options.size(); i++){

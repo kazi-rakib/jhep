@@ -47,6 +47,11 @@ public class HipoNode {
         createNode(group,item,HipoNodeType.INT,value.length);
         for(int i = 0; i < value.length;i++) this.setInt(i, value[i]);        
     }
+    
+    public HipoNode(int group, int item, short[] value){
+        createNode(group,item,HipoNodeType.SHORT,value.length);
+        for(int i = 0; i < value.length;i++) this.setInt(i, value[i]);        
+    }
     /**
      * Initialize HipoNode from a byte array. 
      * @param buffer byte array with the data

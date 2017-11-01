@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- *
+ * Option parser for command line utilities.
  * @author gavalian
  */
 public class OptionParser {
@@ -23,6 +23,7 @@ public class OptionParser {
     private String                             program = "undefined";
     private boolean                  requiresInputList = true;
     private String                  programDescription = "";
+    private boolean                      parserSuccess = false;
     
     public OptionParser(){
         
@@ -120,24 +121,25 @@ public class OptionParser {
         System.out.println(this.getUsageString());
         System.out.println("\n\n");
     }
-    
-    public void parse(String[] args){
-        List<String> arguments = new ArrayList<String>();
-        for(String item : args){ arguments.add(item); }
-        
+
+    public boolean getStatus(){
+        return parserSuccess;
+    }
+            
+    public void parseList(List<String> arguments){
+        this.parserSuccess = true;
         if(this.containsOptions(arguments, "-h","-help")==true){
             this.printUsage();
             System.exit(0);
         }
-
-//this.show(arguments);
         for(Map.Entry<String,OptionValue> entry : this.requiredOptions.entrySet()){
             boolean status = entry.getValue().parse(arguments);
             if(status==false) { 
                 this.parsedOptions.clear();
                 this.printUsage();
                 System.out.println(" \n*** ERROR *** Missing argument : " + entry.getValue().getOption());
-                System.exit(0);
+                //System.exit(0);
+                parserSuccess = false;
                 return;
             }
             this.parsedOptions.put(entry.getValue().getOption(), entry.getValue());
@@ -153,7 +155,12 @@ public class OptionParser {
                 this.parsedInputList.add(item);
             }
         }
-        //this.show(arguments);
+    }
+    
+    public void parse(String[] args){        
+        List<String> arguments = new ArrayList<String>();
+        for(String item : args){ arguments.add(item); }       
+        parseList(arguments);
     }
     
     public List<String> getInputList(){

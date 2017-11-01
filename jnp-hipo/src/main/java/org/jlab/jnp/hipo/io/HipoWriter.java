@@ -15,6 +15,7 @@ import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoNode;
 import org.jlab.jnp.hipo.schema.Schema;
 import org.jlab.jnp.hipo.schema.SchemaFactory;
+import org.jlab.jnp.hipo.utils.HipoLogo;
 
 /**
  * This is the version 3 of HIPO Writer, which has the same format
@@ -23,14 +24,17 @@ import org.jlab.jnp.hipo.schema.SchemaFactory;
  */
 public class HipoWriter {
     
+    public static final int  SCHEMA_GROUP = 31111;
+    public static final int   SCHEMA_ITEM = 1;
+    
     private Writer writer = null;
     private  final SchemaFactory  schemaFactory = new SchemaFactory();
     /**
      * default constructor
      */
     public HipoWriter(){
-        writer = new Writer(HeaderType.HIPO_FILE,ByteOrder.LITTLE_ENDIAN,10000,8*1024*1024);
-        writer.setCompressionType(1);
+        writer = new Writer(HeaderType.HIPO_FILE,ByteOrder.LITTLE_ENDIAN,10000,8*1024*1024);        
+        writer.setCompressionType(2);
     }
     /**
      * Adds a schema to the schema factory. by default the schema factory
@@ -126,6 +130,7 @@ public class HipoWriter {
                     + filename);
         } else {
             writer.open(filename, userHeader);
+            HipoLogo.showLogo();
         }
     }    
     /**
@@ -138,18 +143,27 @@ public class HipoWriter {
             System.out.println("[HIPO-WRITER] ** error ** the output file already exists : " 
                     + filename);
         } else {
-            RecordOutputStream recDictionary = this.createSchemaRecord();
-            recDictionary.getHeader().setCompressionType(2);
-            //System.out.println("compression type = " + recDictionary.getHeader().getCompressionType());
-            recDictionary.build();
-            ByteBuffer buffer = recDictionary.getBinaryBuffer();
-            int size = buffer.limit();
-            int sizeWords = buffer.getInt(0);
-            //System.out.println(" The encoded bytes = " + buffer.limit() + " size = " + size 
-            //        + "  words = " + sizeWords);
-            byte[] userHeader = new byte[sizeWords*4];
-            System.arraycopy(buffer.array(), 0, userHeader, 0, userHeader.length);
-            writer.open(filename,userHeader);
+            if(this.schemaFactory.getSchemaList().isEmpty()){
+                writer.open(filename);
+                HipoLogo.showLogo();
+            } else {
+                RecordOutputStream recDictionary = this.createSchemaRecord();
+                recDictionary.getHeader().setCompressionType(0);
+                //System.out.println("compression type = " + recDictionary.getHeader().getCompressionType());
+                recDictionary.build();
+                ByteBuffer buffer = recDictionary.getBinaryBuffer();
+                int size = buffer.limit();
+                int sizeWords = buffer.getInt(0);
+                //System.out.println(" The encoded bytes = " + buffer.limit() + " size = " + size 
+                //        + "  words = " + sizeWords);
+                byte[] userHeader = new byte[sizeWords*4];
+                System.arraycopy(buffer.array(), 0, userHeader, 0, userHeader.length);
+                writer.open(filename,userHeader);
+                HipoLogo.showLogo();
+                System.out.println("[HipoWriter] ---> schmea dictionary written with " 
+                        + this.schemaFactory.getSchemaList().size() + " entries.");
+                System.out.println("[HipoWriter] ---> compression type "  );
+            }
         }
     }
     /**
@@ -177,12 +191,11 @@ public class HipoWriter {
     public void close() {
         writer.close();
     }
-    
-    
-    public static void main(String[] args){
         
+    public static void main(String[] args){        
         System.setProperty("COATJAVA", "/Users/gavalian/Work/Software/Release-4a.0.0/COATJAVA/coatjava");
         HipoWriter writer = new HipoWriter();
+        writer.setCompressionType(0);
         writer.defineSchema("mc::event", 32100, "id/I:px/F:py/F:pz/F");
         writer.defineSchema("mc::info" , 32101, "param");
         writer.appendSchemaFactoryFromDirectory("COATJAVA", "etc/bankdefs/hipo");

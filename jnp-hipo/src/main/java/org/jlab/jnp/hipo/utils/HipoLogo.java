@@ -64,17 +64,27 @@ public class HipoLogo {
         "------~~~~~~~~~----------~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~     |  _  || ||  __/| |_| |  / __/ | |_| |",
         "~~~~~~~~~   ~~~~~~~~~       ~~~~~~~   ~~~~~~~~~  ~~~~~~~~~~~~~~~   |_| |_|___|_|    \\___/  |_____(_)___/"
     };
-            
+    
+    private static final String[] hipoASCII_3 = new String[]{
+        "  ██╗  ██╗██╗██████╗  ██████╗     ██████╗     ██████╗",
+        "  ██║  ██║██║██╔══██╗██╔═══██╗    ╚════██╗   ██╔═████╗",
+        "  ███████║██║██████╔╝██║   ██║     █████╔╝   ██║██╔██║",
+        "  ██╔══██║██║██╔═══╝ ██║   ██║     ╚═══██╗   ████╔╝██║",
+        "  ██║  ██║██║██║     ╚██████╔╝    ██████╔╝██╗╚██████╔╝",
+        "  ╚═╝  ╚═╝╚═╝╚═╝      ╚═════╝     ╚═════╝ ╚═╝ ╚═════╝",
+        "  Physics Division (c) Jeffeson Lab (2017)",
+        " "
+    };
+    
     public static void showLogo(){
         System.out.println("\n\n");
-        for(int i = 0; i < HipoLogo.hipoASCII_2.length; i++){
-            System.err.println("    " + HipoLogo.hipoASCII_2[i]);
+        for(int i = 0; i < HipoLogo.hipoASCII_3.length; i++){
+            System.err.println("    " + HipoLogo.hipoASCII_3[i]);
         }
         /*
         for(int i = 0; i < HipoLogo.hipoASCII_1.length; i++){
             System.err.println("    " + HipoLogo.hipoASCII_1[i]);
-        }*/
-        
+        }*/        
         
         System.out.println("\n");
     }
@@ -85,6 +95,6 @@ public class HipoLogo {
             for(int i = 0; i < HipoLogo.hipoWORD_ASCII_1.length;i++){
                 System.out.println("    " + HipoLogo.hipoWORD_ASCII_1[i]);
             }
-        }
+        }        
     }
 }

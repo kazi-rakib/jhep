@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoEventFilter;
 import org.jlab.jnp.hipo.data.HipoGroup;
-import org.jlab.jnp.hipo2.io.HipoReader;
-import org.jlab.jnp.hipo2.io.HipoRecord;
-import org.jlab.jnp.hipo2.io.HipoWriter;
+import org.jlab.jnp.hipo.io.HipoReader;
+import org.jlab.jnp.hipo.io.HipoWriter;
+
 import org.jlab.jnp.hipo.schema.SchemaFactory;
 import org.jlab.jnp.utils.options.OptionParser;
+import org.jlab.jnp.utils.options.OptionStore;
 
 /**
  *
@@ -41,7 +43,7 @@ public class HipoUtilities {
         Map<String,Integer>  bankRows = new HashMap<String,Integer>();
         
         for(int i = 0; i < nevents; i++){
-            HipoEvent event = reader.readHipoEvent(i);
+            HipoEvent event = reader.readEvent(i);
             List<HipoGroup> groups = event.getGroups();
             //System.out.println("****");
             for(HipoGroup group : groups){
@@ -79,7 +81,7 @@ public class HipoUtilities {
         HipoReader reader = new HipoReader();
         reader.open(inputFile);
         SchemaFactory  factory = reader.getSchemaFactory();
-        
+        /*
         HipoWriter writer = new HipoWriter();
         HipoRecord schemaRecord = new HipoRecord();
         HipoEvent  schemaEvent  = factory.getSchemaEvent();
@@ -94,10 +96,53 @@ public class HipoUtilities {
             byte[] event = reader.readEvent(i);
             writer.writeEvent(event);
         }
-        writer.close();
+        writer.close();*/
+    }
+    
+    public static void filterFile(String outputFile, List<String> inputFiles, HipoEventFilter filter){
+        
+    }
+    
+    
+    public static void printFileInfo(String filename){
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int  nrecords = reader.getRecordCount();
+        int  nevents  = reader.getEventCount();
+        System.out.println(String.format("%14s : %d", "RECORDS",nrecords));
+        System.out.println(String.format("%14s : %d", "EVENTS",nevents));
+        reader.close();
     }
     
     public static void main(String[] args){
+        
+        OptionStore parser = new OptionStore("hipoutils");
+        parser.addCommand("-filter", "filter the file for given banks");
+        parser.getOptionParser("-filter").addRequired("-o", "output file name");
+        parser.getOptionParser("-filter").addRequired("-e", "list of banks that should exist for event to be valid (i.e. 1234:7656:45)");
+        parser.getOptionParser("-filter").addRequired("-l", "list of banks to write out (i.e. 11234:2345:65)");
+        
+        parser.addCommand("-info", "print information about the file");
+        
+        parser.parse(args);
+        
+        if(parser.getCommand().compareTo("-filter")==0){
+            
+            String output = parser.getOptionParser("-filter").getOption("-o").stringValue();
+            List<Integer>    exBanks = parser.getOptionParser("-filter").getOption("-e").intArrayValue();
+            List<Integer>   outBanks = parser.getOptionParser("-filter").getOption("-l").intArrayValue();
+            List<String>  inputFiles = parser.getOptionParser("-filter").getInputList();
+            
+            HipoEventFilter   filter = new HipoEventFilter();
+            filter.addRequired( exBanks );
+            filter.addOutput(  outBanks );
+            HipoUtilities.filterFile(output, inputFiles, filter);
+        }
+        if(parser.getCommand().compareTo("-info")==0){
+             List<String>  inputFiles = parser.getOptionParser("-info").getInputList();
+             HipoUtilities.printFileInfo(inputFiles.get(0));
+         }
+        /*
         OptionParser parser = new OptionParser();
         parser.addOption("-info", "0");
         parser.addOption("-verbose", "0");
@@ -118,6 +163,6 @@ public class HipoUtilities {
             return;
         }
         parser.printUsage();
-        
+        */
     }
 }

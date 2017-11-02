@@ -252,16 +252,19 @@ public class HipoEvent {
             if(this.eventSchemaFactory.hasSchema(entry.getKey())==true){
                 name = this.eventSchemaFactory.getSchema(entry.getKey()).getName();
             }
-            System.out.println("------> name = " + name);
+            //System.out.println("------> name = " + name);
             Integer size = entry.getValue().getItemList().size();
-            System.out.println("------> key = " + entry.getKey());
-            eventSchemaFactory.show();
-            HipoGroup group = this.getGroup(this.eventSchemaFactory.getSchema(entry.getKey()).getName());
-            Integer rows = group.getMaxSize();
-            table.addData(new String[]{counter.toString(), name, rows.toString(), entry.getKey().toString(),size.toString()});
+            //System.out.println("------> key = " + entry.getKey());
+            //eventSchemaFactory.show();
+            if(this.eventSchemaFactory.hasSchema(entry.getKey())){
+                //System.out.println(" number of schema in factory " + eventSchemaFactory.getSchemaList().size());
+                HipoGroup group = this.getGroup(this.eventSchemaFactory.getSchema(entry.getKey()).getName());
+                Integer rows = group.getMaxSize();
+                table.addData(new String[]{counter.toString(), name, rows.toString(), entry.getKey().toString(),size.toString()});
             //System.out.println(String.format("|%24d | %-24s | %5d |", 
             //        entry.getKey(), name, entry.getValue().getItemList().size()));
             counter++;
+            }
         }
         //System.out.println("+------------------------------------------------------------+");
         System.out.println(table.toString());

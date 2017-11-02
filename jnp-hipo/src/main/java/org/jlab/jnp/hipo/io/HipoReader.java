@@ -30,9 +30,9 @@ public class HipoReader {
     
     public void open(String filename){
         reader = new Reader(filename,true);
-        System.out.println(" HAS FIRST EVENT = " + reader.hasFirstEvent() + "  dictionary " + reader.hasDictionary());
+        //System.out.println(" HAS FIRST EVENT = " + reader.hasFirstEvent() + "  dictionary " + reader.hasDictionary());
         ByteBuffer userHeader = reader.readUserHeader();
-        //System.out.println(" FIRST EVENT SIZE = " + userHeader.capacity());
+        //System.out.println("[dictionary::open]  FIRST EVENT SIZE = " + userHeader.capacity());
         //System.out.println("[Reader::Open] ---> opened a reader with event count " 
         //        + reader.getEventCount());
         //System.out.println("[Reader::Open] ---> number of records = " + reader.getRecordCount());
@@ -53,10 +53,12 @@ public class HipoReader {
                         Schema schema = new Schema();
                         schema.setFromText(node.getString());
                         schemaFactory.addSchema(schema);
+                        //System.out.println(" found schema : " + schema.getName());
                         //System.out.println(schema.toString());
                         //System.out.println(schema.getText());
                     }
                 }
+                System.out.println("[READER] ---> total number of schema loaded " + schemaFactory.getSchemaList().size());
             } catch (HipoException ex) {
                 Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
             }

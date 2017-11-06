@@ -29,10 +29,14 @@ public class TextFileReader {
     public TextFileReader(){
         ignoreLines.add("#");
     }
-    
+        
     public TextFileReader(String filename){
         ignoreLines.add("#");
         open(filename);
+    }
+    
+    public void setSeparator(String delim){
+        this.tokenizerSymbol = delim;
     }
     
     public final void open(String filename){
@@ -80,6 +84,34 @@ public class TextFileReader {
             return false;
         }
         return true;
+    }
+    
+    public short[]   getAsShortArray(){
+        short[] array = new short[entryTokens.size()];
+        for(int i =0; i < array.length; i++){
+            try {
+                array[i] = Short.parseShort(entryTokens.get(i).trim());
+            } catch(Exception e){
+                System.out.println("[TextReader] ** error ** can not convert "
+                        + entryTokens.get(i) + " to short");
+                array[i] = 0;
+            }
+        }
+        return array;
+    }
+    
+    public int[]   getAsIntArray(){
+        int[] array = new int[entryTokens.size()];
+        for(int i =0; i < array.length; i++){
+            try {
+                array[i] = Integer.parseInt(entryTokens.get(i));
+            } catch(Exception e){
+                System.out.println("[TextReader] ** error ** can not convert "
+                + entryTokens.get(i) + " to integer");
+                array[i] = 0;
+            }
+        }
+        return array;
     }
     
     public int entrySize(){ return entryTokens.size();}

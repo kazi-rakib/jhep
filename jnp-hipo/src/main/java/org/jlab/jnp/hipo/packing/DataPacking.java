@@ -296,24 +296,42 @@ public class DataPacking {
             
             if(n_high>0){
                 header = (short) (header|(0x0001<<12));
-                header = (short) (header|(0x0001<<13));
-                mode   = 1;
+                //header = (short) (header|(0x0001<<13));
+                mode   = 0;
             } else {
                 header = (short) (header|(0x0002<<13));
                 mode   = 2;
             }
+            
             int position = offset;
             buffer.putShort(position, header);
             position+=2;
+            if(mode==0){
+                int nskip = this.getHighByteSkip();
+                this.writeLow8(buffer, position);
+                position+=8;
+                short header_high =  0;
+                header_high = (short) ((nskip<<4)|header_high);
+                header_high = (short) ((n_high)|header_high);
+                System.out.println("packing : skip = " + nskip + " count = " + n_high);
+                buffer.put(position, (byte) header_high);
+                position++;
+                for(int i = 0; i < n_high; i++){
+                    buffer.put(position, dataHigh[nskip+i]);
+                    position++;
+                }
+            }
             
             if(mode==1){
                 int nskip = this.getHighByteSkip();
-                for(int i = 0; i < 8; i+=2){
+                /*for(int i = 0; i < 8; i+=2){
                     byte vec = this.getCombined(dataLow[i], dataLow[i+1]);
                     //dataLow[i+2],dataLow[i+3]);
                     buffer.put(position, vec);
                     position++;
-                }
+                }*/
+                this.writeLow4(buffer, position);
+                position+=4;
                 short header_high =  0;
                 header_high = (short) ((nskip<<4)|header_high);
                 header_high = (short) ((n_high)|header_high);
@@ -326,12 +344,14 @@ public class DataPacking {
                 }
             } else {
                 
-                for(int i = 0; i < 8; i+=4){
+               /* for(int i = 0; i < 8; i+=4){
                     byte vec = this.getCombined(dataLow[i], dataLow[i+1],
                             dataLow[i+2],dataLow[i+3]);
                     buffer.put(position, vec);
                     position++;
-                }
+                }*/
+               this.writeLow2(buffer, position);
+               position+=2;
             }
             return position - offset;
         }
@@ -353,10 +373,10 @@ public class DataPacking {
                 for(int i = 0; i < 8; i++){
                     byte vec = buffer.get(position);
                     position++;
-                    int v1 = (vec&0x0F);
-                    int v2 = (vec&0xF0)>>4;
-                    pulseSegment[i*2    ] = (short) (minimum + v1); 
-                    pulseSegment[i*2 + 1] = (short) (minimum + v2);
+                    int v2 = (vec&0x0F);
+                    int v1 = (vec&0xF0)>>4;
+                    pulseSegment[i*2    ] = (short) (minimum + v2); 
+                    pulseSegment[i*2 + 1] = (short) (minimum + v1);
                 }
             }
             
@@ -540,7 +560,7 @@ public class DataPacking {
         public String toString(){
             StringBuilder str = new StringBuilder();
             str.append(String.format("(%4d) : ", dataMinimum));
-            for(int i =0; i < dataLow.length; i++) str.append(String.format(" 0x%2X", dataLow[i]));
+            for(int i =0; i < dataLow.length; i++) str.append(String.format(" 0x%02X", dataLow[i]));
             str.append(String.format("  || (%3d, %3d, %3d) || ", getHighByteCount(),zeroLeading, zeroTrailing));
             for(int i = 0; i < dataHigh.length; i++) str.append(String.format("%4d", dataHigh[i]));
             return str.toString();
@@ -556,13 +576,13 @@ public class DataPacking {
         //reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/tac_monitor_30853_Samples.txt");
         int counter = 0;
         while(reader.readNext()==true){
-            if(counter>25) break;
+            //if(counter>25) break;
             short[] array = reader.getAsShortArray();
             System.out.println(" PULSE # " + counter);
-            packing.packDebug(array, 3);
+            //packing.packDebug(array, 3);
 //for(int i =0; i < 6; i++){
             //packing.packRegion(array, i*16);
-            //packing.pack(array);
+            packing.pack(array);
             //ByteBuffer buffer = packing.getByteBuffer();
             //packing.unpack(buffer);
             //}

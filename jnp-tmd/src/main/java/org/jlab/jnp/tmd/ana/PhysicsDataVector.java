@@ -6,7 +6,8 @@
 package org.jlab.jnp.tmd.ana;
 
 import java.util.Map;
-import org.jlab.hep.math.data.DataVector;
+import org.jlab.jnp.math.data.DataVector;
+
 import org.jlab.jnp.physics.PhysicsEvent;
 import org.jlab.jnp.physics.reaction.PhaseSpace;
 import org.jlab.jnp.processes.SIDIS;

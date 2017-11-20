@@ -15,6 +15,8 @@ import java.util.Map;
 import org.jlab.jnp.hipo.schema.Schema;
 import org.jlab.jnp.hipo.schema.SchemaFactory;
 import org.jlab.jnp.utils.data.TextTable;
+import org.jlab.jnp.utils.log.Logger;
+import org.jlab.jnp.utils.log.LoggerFactory;
 
 
 /**
@@ -25,11 +27,13 @@ public class HipoEvent {
     
     private final int    EVENT_HEADER_LENGTH = 16;
     private final int     NODE_HEADER_LENGTH = 8;
-    ByteBuffer           eventBuffer = null;    
+    ByteBuffer                   eventBuffer = null;    
     //List<HipoNodeIndex>   eventIndex = new ArrayList<HipoNodeIndex>();    
     Map<Integer,GroupNodeIndexList>  groupsIndex = new HashMap<Integer,GroupNodeIndexList>();
     private SchemaFactory    eventSchemaFactory = new SchemaFactory();
-        
+    
+    
+    private final Logger                log = LoggerFactory.getLogger(HipoEvent.class);
     
     public HipoEvent(){
         byte[] header = new byte[EVENT_HEADER_LENGTH];
@@ -112,6 +116,8 @@ public class HipoEvent {
         
         int eventLength = eventBuffer.capacity();
         
+        log.debug("appending " + nodes.size() + " nodes with total length = " + nodesLength);
+         
         byte[] dataBuffer = new byte[nodesLength+eventLength];
         // copy previous event, into the new byte array
         System.arraycopy(eventBuffer.array(), 0, dataBuffer, 0, eventLength);
@@ -137,7 +143,7 @@ public class HipoEvent {
         this.groupsIndex.clear();
         int counter = 0;
         
-        while((position+EVENT_HEADER_LENGTH)<capacity){
+        while((position+NODE_HEADER_LENGTH)<capacity){
             
             short group = eventBuffer.getShort( position    );
             //System.out.println(" group = " + group);
@@ -183,11 +189,14 @@ public class HipoEvent {
      * @param group group containing nodes
      */
     public void writeGroup(HipoGroup group){
+        
         if(this.hasGroup(group.getSchema().getGroup())==true){
             System.out.println("[HipoEvent] warning : groups is not added. The event contains group id = " 
             + group.getSchema().getGroup() + " name = " + group.getSchema().getName());
         } else {
             List<HipoNode> nodes = group.getNodes();
+            log.debug("adding group to the event. group id = "+group.getSchema().getGroup()+
+                    " node count = " + nodes.size());
             this.addNodes(nodes);
         }
         this.updateNodeIndex();
@@ -198,9 +207,18 @@ public class HipoEvent {
      * @return group containing HipoNodes
      */
     public HipoGroup getGroup(String name){
+        log.debug("getting the schema for the group ["+name+"]");
         if(this.eventSchemaFactory.hasSchema(name)==true){
             Schema schema = this.eventSchemaFactory.getSchema(name);
+            log.debug("schema is found with number of nodes = " + schema.getEntries());
             Map<Integer,HipoNode> nodes = getGroup(schema.getGroup());
+            log.debug("number of loaded nodes = " + nodes.size());
+            
+            if(schema.getEntries()!=nodes.size()){
+                log.error("loading schema ["+schema.getName()+"] with entries = " + schema.getEntries() 
+                        + ". Nodes read = " + nodes.size());
+                this.showNodes();
+            }
             return new HipoGroup(nodes,schema);
         }
         return null;
@@ -391,7 +409,7 @@ public class HipoEvent {
             GroupNodeIndexList list = groupsIndex.get(group);
             for(Map.Entry<Integer,NodeIndexList> entry : list.getItemList().entrySet()){
                 int itemID = entry.getValue().nodeItem;
-                HipoNode node = this.getNode(group, itemID);
+                HipoNode node = this.getNode(group, itemID);                
                 groupNodes.put(itemID, node);
             }
         }

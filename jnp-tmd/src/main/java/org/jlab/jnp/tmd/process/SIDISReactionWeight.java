@@ -6,8 +6,8 @@
 package org.jlab.jnp.tmd.process;
 
 import java.util.Map;
-import org.jlab.jhep.math.matrix.MatrixStore;
-import org.jlab.jhep.utils.options.OptionParser;
+import org.jlab.jnp.foam.IMCFunc;
+import org.jlab.jnp.math.matrix.MatrixStore;
 import org.jlab.jnp.physics.PhysicsEvent;
 import org.jlab.jnp.physics.reaction.PhaseSpace;
 import org.jlab.jnp.physics.reaction.PhysicsReaction;
@@ -17,15 +17,21 @@ import org.jlab.jnp.processes.SIDIS;
 import org.jlab.jnp.processes.SIDISEventGenerator;
 import org.jlab.jnp.reader.EventWriter;
 import org.jlab.jnp.reader.LundWriter;
+import org.jlab.jnp.utils.data.ArrayUtils;
+import org.jlab.jnp.utils.options.OptionParser;
 
 /**
  *
  * @author gavalian
  */
-public class SIDISReactionWeight implements ReactionWeight {
+public class SIDISReactionWeight implements ReactionWeight,IMCFunc {
     double alpha = 1.0/137.0;
     
     MatrixStore matrixStore = new MatrixStore();
+    private PhaseSpace    phaseSpace = new PhaseSpace();
+    private SIDISEventGenerator generator =  new SIDISEventGenerator();
+    private SIDISPhysicsObservables physObservables = new SIDISPhysicsObservables();
+    
     
     //SparseMatrix matrix = null;
     public SIDISReactionWeight(){
@@ -47,6 +53,10 @@ public class SIDISReactionWeight implements ReactionWeight {
         double  f2 = y*y/(2.0*(1.0-eps));
         double  f3 = (1.0 + gamma*gamma/(2.0*xb));
         return f1*f2*f3;
+    }
+    
+    public void setPhaseSpace(PhaseSpace ps){
+        phaseSpace = ps.copy();
     }
     
     public double getFuu(){
@@ -72,14 +82,42 @@ public class SIDISReactionWeight implements ReactionWeight {
         axis[1] = ps.get("q2");
         axis[2] = ps.get("z");
         axis[3] = ps.get("pt");
-        double fuut   = this.matrixStore.getMatrix("FUUT").evaluate(0, axis);
-        double fuucos_bm = this.matrixStore.getMatrix("FUUcos_bm").evaluate(0, axis);
-        double fuucos_cahn = this.matrixStore.getMatrix("FUUcos_cahn").evaluate(0, axis);
+        
+        double fuut = physObservables.getValue("FUUT", ps);
+        
+        //double fuut   = this.matrixStore.getMatrix("FUUT").evaluate(0, axis);
+        //double fuucos_bm = this.matrixStore.getMatrix("FUUcos_bm").evaluate(0, axis);
+        //double fuucos_cahn = this.matrixStore.getMatrix("FUUcos_cahn").evaluate(0, axis);
         //System.out.println(" factor = " + kin + "   = " + fuu_factor + "  FUUT = " + fuut + " FUU cos"
         // + fuucos);
-        double fuucos = fuucos_bm + fuucos_cahn;
-        double cross = pt*kin*(fuut + fuu_factor*fuucos*Math.cos(phi));
+        //double fuucos = fuucos_bm + fuucos_cahn;
+        double cross = pt*kin*fuut;        
+        //System.out.println(String.format(" KIN = %.8f FUUT = %.5f", cross,fuut));
+
         return cross;
+    }
+    
+    public double getKinematicFactor(Map<String, Double> ps){
+        return 1.0;
+    }
+    
+    @Override
+    public int getNDim() {
+        return 6;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+       @Override
+    public double getWeight(double[] par) {
+        phaseSpace.setUnit(par);        
+        double weight = this.getWeight(phaseSpace.getMap());
+        PhysicsEvent event = generator.createEvent(phaseSpace.getMap());
+        if(event.getParticleList().count()<2) {
+            //System.out.println(" weight = zero");
+            weight = 0.0;
+        }
+        //System.out.println(ArrayUtils.getString(par, "%.5f", " ") + " weight = " + weight);
+        return weight;
     }
     
     public static void main(String[] args){
@@ -157,4 +195,8 @@ public class SIDISReactionWeight implements ReactionWeight {
         }
         writer.close();
     }
+
+   
+
+ 
 }

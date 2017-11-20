@@ -60,9 +60,29 @@ public class HipoGroup {
      * @return HipoNode
      */
     public HipoNode getNode(String name){
-        if(groupSchema==null) return null;
+        if(groupSchema==null){
+            System.out.println("[HipoGroup::getNode] ** error ** the group "
+                    + " does not have a schema");
+            return null;
+        }
         Schema.SchemaEntry entry = this.groupSchema.getEntry(name);
-        if(entry==null) return null;
+        if(entry==null){
+            int groupid = groupSchema.getGroup();
+            System.out.println("[HipoGroup::getNode] ** error ** the group with id="
+                    +groupid+" has no entry with name=\'"+name+ "\'");
+            return null;
+        }
+        
+        if(groupNodes.containsKey(entry.getId())==false){
+            int groupid = groupSchema.getGroup();
+            System.out.println("[HipoGroup::getNode] ** error ** the group with schema=" +  
+                    groupSchema.getName() + ", id="
+                    +groupid+", with name=\'"+name+ "\' has no entry with item="+entry.getId() +
+            " items in the group=" + this.groupNodes.size());
+            System.out.println(groupSchema.toString());
+            this.show();
+            return null;
+        }
         return this.groupNodes.get(entry.getId());
     }
     /**
@@ -75,6 +95,10 @@ public class HipoGroup {
             nodes.add(entry.getValue());
         }
         return nodes;
+    }
+    
+    public Map<Integer,HipoNode>  getNodesMap(){
+        return this.groupNodes;
     }
     
     public int getMaxSize(){

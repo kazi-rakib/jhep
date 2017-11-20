@@ -22,7 +22,6 @@ import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.data.HipoNode;
 import org.jlab.jnp.hipo.data.HipoNodeBuilder;
 import org.jlab.jnp.hipo.io.HipoReader;
-import org.jlab.jnp.hipo.io.HipoRecord;
 import org.jlab.jnp.hipo.io.HipoWriter;
 import org.jlab.jnp.hipo.schema.Schema;
 import org.jlab.jnp.hipo.schema.SchemaFactory;
@@ -42,7 +41,7 @@ public class SparseMatrixReader {
     }
     
     public static void exportMatrix(String textFile, String hipoFile){
-        
+        /*
         String jsonString = FileUtils.readFileAsString(textFile, "#!", true);
         HipoWriter writer = new HipoWriter();
         //writer.setCompressionType(3);
@@ -89,14 +88,16 @@ public class SparseMatrixReader {
         writer.writeEvent(dataEvent);
         
         writer.close();
-        matrix.show();        
+        matrix.show();        */
     }
     
     
     public static SparseMatrix readHipoMatrix(String filename){
+        SparseMatrix  matrix = new SparseMatrix();
+        /*
         HipoReader reader = new HipoReader();
         reader.open(filename);
-        SparseMatrix  matrix = new SparseMatrix();
+
         HipoRecord headerRecord = reader.getHeaderRecord();
         System.out.println(" # EVENTS in RECORD : " + headerRecord.getEventCount());
         SchemaFactory factory = reader.getSchemaFactory();
@@ -152,7 +153,7 @@ public class SparseMatrixReader {
                 matrix.getMatrixMap().put(sindex, vector);
             }            
         }
-        matrix.show();
+        matrix.show();*/
         return matrix;
     }
     
@@ -227,6 +228,7 @@ public class SparseMatrixReader {
     
     
     public static void writeSparseMatrix(SparseMatrix matrix, String filename){
+        /*
         HipoWriter writer = new HipoWriter();
         //writer.setCompressionType(3);
         SchemaFactory factory  = new SchemaFactory();
@@ -285,12 +287,12 @@ public class SparseMatrixReader {
         
         writer.writeEvent(dataEvent);
         
-        writer.close();
+        writer.close();*/
     }
     
     
     public static SparseMatrix readSparseMatrix(String filename){
-        HipoReader reader = new HipoReader();
+        /*HipoReader reader = new HipoReader();
         reader.open(filename);
         
         //SparseMatrix  matrix = new SparseMatrix();
@@ -350,7 +352,8 @@ public class SparseMatrixReader {
         
         //matrix.show();
         //matrix.printContent();
-        return matrix;
+        return matrix;*/
+        return null;
     }
     
     public static void main(String[] args){

@@ -146,40 +146,40 @@ public class HipoNode {
         if(type==HipoNodeType.BYTE){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8d", getByte(i)));
+                str.append(String.format(" %9d", getByte(i)));
             }
         }
         
         if(type==HipoNodeType.SHORT){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8d", getShort(i)));
+                str.append(String.format(" %9d", getShort(i)));
             }
         }
         
         if(type==HipoNodeType.INT){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8d", getInt(i)));
+                str.append(String.format(" %9d", getInt(i)));
             }
         }
         if(type==HipoNodeType.LONG){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8d", getLong(i)));
+                str.append(String.format(" %9d", getLong(i)));
             }
         }
         if(type==HipoNodeType.FLOAT){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8.5f", getFloat(i)));
+                str.append(String.format(" %9.4f", getFloat(i)));
             }
         }
         
         if(type==HipoNodeType.DOUBLE){
             int ndata = getDataSize();
             for(int i = 0; i < ndata; i++){
-                str.append(String.format(" %8.5f", getDouble(i)));
+                str.append(String.format(" %9.4f", getDouble(i)));
             }
         }
         

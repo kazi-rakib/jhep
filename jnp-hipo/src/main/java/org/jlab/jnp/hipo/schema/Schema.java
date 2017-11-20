@@ -147,6 +147,7 @@ public class Schema {
     }
     
     public void copy(Schema schema){
+        this.group = schema.getGroup();
         this.nameEntries.clear();
         this.idEntries.clear();
         for(Map.Entry<Integer,SchemaEntry> entry : schema.schemaEntries().entrySet()){

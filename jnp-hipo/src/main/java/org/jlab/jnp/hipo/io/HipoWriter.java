@@ -144,6 +144,7 @@ public class HipoWriter {
                     + filename);
         } else {
             if(this.schemaFactory.getSchemaList().isEmpty()){
+                System.out.println("[HipoWriter] ---> Schema factory is empty.");
                 writer.open(filename);
                 HipoLogo.showLogo();
             } else {

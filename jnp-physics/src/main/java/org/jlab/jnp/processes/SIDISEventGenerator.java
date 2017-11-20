@@ -155,6 +155,9 @@ public class SIDISEventGenerator implements ReactionGenerator {
     }
     
     public static void main(String[] args){
+        
+  
+        /*
         Map<String,Double> ps = new HashMap<String,Double>();
         ps.put("E", 10.6);
         ps.put("q2", 2.0);
@@ -210,6 +213,6 @@ public class SIDISEventGenerator implements ReactionGenerator {
         
         Vector3 pi_d = q.vect().cross(piLab.vect());
         double dot = pi_d.dot(y)/pi_d.mag();
-        System.out.println("USIN cross theta angle = " + Math.acos(dot));
+        System.out.println("USIN cross theta angle = " + Math.acos(dot));*/
     }
 }

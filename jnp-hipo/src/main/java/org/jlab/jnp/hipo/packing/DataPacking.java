@@ -41,7 +41,7 @@ public class DataPacking {
     
     
     public DataPacking(){
-        byte[] buffer = new byte[256];
+       /* byte[] buffer = new byte[256];
         packedBuffer = ByteBuffer.wrap(buffer);
         packedBuffer.order(ByteOrder.LITTLE_ENDIAN);
         try {
@@ -49,7 +49,7 @@ public class DataPacking {
             outStreamRaw = new RandomAccessFile("data_file_pulses_raw.bin", "rw");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DataPacking.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
     
     public final void setReservedBytes(int res){
@@ -133,7 +133,31 @@ public class DataPacking {
             System.out.print(String.format("%4d ",dp[i]));
         }
         System.out.println();
+    }    
+    
+    /**
+     * pack the pulse into the buffer starting from position given
+     * by offset.
+     * @param buffer byte buffer to pack the array in
+     * @param pulse pulse to pack
+     * @param offset offset in the byte buffer 
+     */
+    public void pack(ByteBuffer buffer, short[] pulse, int offset){
+        CompactPulseSegment segment = new CompactPulseSegment();
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.limit(buffer.capacity());
+        int n_segments = pulse.length/16;
+        int position   = offset;
+        int size       = 0;
+        for(int i = 0; i < n_segments; i++){
+            segment.processSegment(pulse, i);
+            int length = segment.packToBuffer(buffer, position);
+            position  += length;
+            size      += length;
+        }
+        buffer.limit(position);
     }
+    
     
     public void pack(short[] pulse){
         
@@ -180,7 +204,7 @@ public class DataPacking {
     public void close(){
         try {
             this.outStream.close();
-            this.outStreamRaw.close();;
+            this.outStreamRaw.close();
         } catch (IOException ex) {
             Logger.getLogger(DataPacking.class.getName()).log(Level.SEVERE, null, ex);
         }

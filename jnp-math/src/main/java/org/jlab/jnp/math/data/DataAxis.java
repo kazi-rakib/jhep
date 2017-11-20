@@ -137,6 +137,15 @@ public class DataAxis {
         }
     }
     
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(String.format("%12s : ", name));
+        str.append(String.format("bins : %5d , ", this.bins));
+        str.append(String.format("min : %9.5f , ", this.min));
+        str.append(String.format("max : %9.5f", this.max));        
+        return str.toString();
+    }
     
     public static void main(String[] args){
         DataAxis axis = new DataAxis(40,1.0,20.0);

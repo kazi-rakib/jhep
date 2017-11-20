@@ -131,6 +131,13 @@ public class PhaseSpace {
         return collection;
     }
     
+    public void getValues(double[] values){
+        int i = 0;
+        for(Map.Entry<String,DimensionSpace> entry : this.params.entrySet()){
+            values[i] = entry.getValue().getValue();
+            i++;
+        }
+    }
     public List<PhaseSpace> divide(){
         List<PhaseSpace> collection = new ArrayList<PhaseSpace>();
         Set<String> keys = this.params.keySet();
@@ -139,6 +146,24 @@ public class PhaseSpace {
             collection.addAll(list);
         }*/
         return collection;
+    }
+    
+    
+    public void setUnit(double[] pars){
+        int icounter = 0;
+        for(Map.Entry<String,DimensionSpace> entry : this.params.entrySet()){
+            entry.getValue().setValueUnit(pars[icounter]);
+            icounter++;
+        }
+
+    }
+    
+    public void getUnit(double[] pars){
+        int icounter = 0;
+        for(Map.Entry<String,DimensionSpace> entry : this.params.entrySet()){
+            pars[icounter] = entry.getValue().getValueUnit();
+            icounter++;
+        }
     }
     
     @Override

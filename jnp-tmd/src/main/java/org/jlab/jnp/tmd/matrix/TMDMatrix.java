@@ -5,9 +5,10 @@
  */
 package org.jlab.jnp.tmd.matrix;
 
-import org.jlab.jhep.math.matrix.SparseMatrix;
-import org.jlab.jhep.math.matrix.SparseMatrixReader;
-import org.jlab.jhep.utils.options.OptionParser;
+import org.jlab.jnp.math.matrix.SparseMatrix;
+import org.jlab.jnp.math.matrix.SparseMatrixReader;
+import org.jlab.jnp.utils.options.OptionParser;
+
 
 /**
  *

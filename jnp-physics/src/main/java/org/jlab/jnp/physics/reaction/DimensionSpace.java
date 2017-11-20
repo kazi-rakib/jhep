@@ -109,7 +109,7 @@ public class DimensionSpace {
     
     public void   setValue(double value){ this.dimValue = value;}
     
-    public void setValueNormalized(double value){
+    public void setValueUnit(double value){
         if(value<0.0||value>1.0){
             System.out.println("error: normalized value has to be 0.0-1.0");
         } else {
@@ -118,6 +118,11 @@ public class DimensionSpace {
     }
     
     public double getValue() { return this.dimValue;}
+    
+    public double getValueUnit(){ 
+        return (dimValue-dimMinimum)/(dimMaximum-dimMinimum);
+    }
+    
     public double getMin() { return this.dimMinimum;}
     public double getMax() { return this.dimMaximum;}
     

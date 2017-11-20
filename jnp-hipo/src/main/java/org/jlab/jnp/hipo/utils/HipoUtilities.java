@@ -101,6 +101,32 @@ public class HipoUtilities {
     
     public static void filterFile(String outputFile, List<String> inputFiles, HipoEventFilter filter){
         
+        HipoWriter writer = new HipoWriter();
+        writer.setCompressionType(2);
+        
+        HipoReader reader = new HipoReader();
+        reader.open(inputFiles.get(0));
+        SchemaFactory   inputFactory = reader.getSchemaFactory();
+        SchemaFactory  outputFactory = filter.getSchemaFactory(inputFactory);
+        
+        writer.appendSchemaFactory(inputFactory);
+        
+        writer.open(outputFile);
+        reader.close();
+        for(int i = 0; i < inputFiles.size(); i++){
+            System.out.println("[FILTER] ---> openning file : " + inputFiles.get(i));
+            reader = new HipoReader();
+            reader.open(inputFiles.get(i));
+            while(reader.hasNext()==true){
+                HipoEvent event = reader.readNextEvent();
+                if(filter.isValid(event)==true){
+                    HipoEvent outEvent = filter.getEvent(event);
+                    writer.writeEvent(outEvent);
+                }
+            }
+            reader.close();
+        }
+        writer.close();
     }
     
     

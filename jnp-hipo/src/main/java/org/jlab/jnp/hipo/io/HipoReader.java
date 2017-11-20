@@ -116,13 +116,19 @@ public class HipoReader {
         
     }
     public static void main(String[] args){
+        
         HipoReader reader = new HipoReader();
-        reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324_v5_c2.hipo");
+        reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324.hipo");
+        //+ "/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324_v5_c2.hipo");
         int nevents = reader.getEventCount();
         System.out.println(" N# = " + nevents);
-//        HipoEvent event = reader.readEvent(1);      
-        for(int i = 0; i < nevents; i++){
-            HipoEvent event = reader.readEvent(i);
+        //        HipoEvent event = reader.readEvent(1);      
+        //for(int i = 0; i < nevents; i++){
+        int icounter = 0;
+         while(reader.hasNext()==true){
+             HipoEvent event = reader.readNextEvent();
+             System.out.println(" reading event " + icounter);
+             icounter++;
         }
         //reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324_v5_c2.hipo");
     }

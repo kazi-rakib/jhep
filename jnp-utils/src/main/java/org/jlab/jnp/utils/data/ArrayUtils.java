@@ -7,6 +7,7 @@ package org.jlab.jnp.utils.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +52,48 @@ public class ArrayUtils {
             list.add(tokens[i].trim());
         }
         return list;
+    }
+    
+    public static String getString(double[] array, String format, String separator){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < array.length; i++){
+           if(i!=0) str.append(separator);
+           str.append(String.format(format, array[i]));
+        }
+        return str.toString();
+    }
+    
+    public static String getString(double[] array, String separator){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < array.length; i++){
+           if(i!=0) str.append(separator);
+           str.append(array[i]);
+        }
+        return str.toString();
+    }
+    
+    
+    public static String getMapString(Map<String,Double> map, String format, String separator){
+         StringBuilder str = new StringBuilder();
+         int i = 0;
+         for(Map.Entry<String,Double> entry : map.entrySet()){
+             if(i!=0) str.append(separator);
+             str.append(String.format(format,entry.getValue()));
+             i++;
+         }
+         return str.toString();
+    }
+    
+    public static String getMapStringWithKey(Map<String,Double> map, String format, String separator){
+         StringBuilder str = new StringBuilder();
+         int i = 0;
+         for(Map.Entry<String,Double> entry : map.entrySet()){
+             if(i!=0) str.append(separator);
+             str.append(entry.getKey()).append(" = ");
+             str.append(String.format(format,entry.getValue()));
+             i++;
+         }
+         return str.toString();
     }
     
     public static void main(String[] args){

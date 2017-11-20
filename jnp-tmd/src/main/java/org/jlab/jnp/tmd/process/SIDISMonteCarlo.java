@@ -5,7 +5,6 @@
  */
 package org.jlab.jnp.tmd.process;
 
-import org.jlab.jhep.utils.options.OptionParser;
 import org.jlab.jnp.physics.PhysicsEvent;
 import org.jlab.jnp.physics.reaction.PhaseSpace;
 import org.jlab.jnp.physics.reaction.PhysicsReaction;
@@ -13,6 +12,7 @@ import org.jlab.jnp.processes.SIDIS;
 import org.jlab.jnp.processes.SIDISEventGenerator;
 import org.jlab.jnp.reader.EventWriter;
 import org.jlab.jnp.reader.LundWriter;
+import org.jlab.jnp.utils.options.OptionParser;
 
 /**
  *

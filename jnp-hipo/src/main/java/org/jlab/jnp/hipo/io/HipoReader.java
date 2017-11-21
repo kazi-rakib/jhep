@@ -97,6 +97,9 @@ public class HipoReader {
         }
         return null;
     }
+    
+    
+    
     public HipoEvent readEvent(int index){
         byte[] event;
         try {

@@ -13,6 +13,7 @@ import org.jlab.jnp.hipo.data.HipoEventFilter;
 import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.hipo.io.HipoWriter;
+import org.jlab.jnp.hipo.schema.Schema;
 
 import org.jlab.jnp.hipo.schema.SchemaFactory;
 import org.jlab.jnp.utils.options.OptionParser;
@@ -65,6 +66,10 @@ public class HipoUtilities {
         }
         
         System.out.println(" STATISTICS: EVENT COUNT = " + nevents);
+
+        System.out.printf("%36s | %12s | %12s | %8s | %10s\n","name","count",
+                    "rows","freq","row freq");
+        
         for(Map.Entry<String,Integer> entry : bankList.entrySet()){
             
             int nrows = bankRows.get(entry.getKey());
@@ -74,7 +79,7 @@ public class HipoUtilities {
             System.out.printf("%36s | %12d | %12d | %8.2f | %10.2f\n",entry.getKey(),entry.getValue(),
                     nrows,bankFreq,rowFreq);
         }
-        
+        System.out.println("\n\n");
     }
     
     public static void compressFile(String inputFile, String outputFile, int compression){
@@ -137,6 +142,14 @@ public class HipoUtilities {
         int  nevents  = reader.getEventCount();
         System.out.println(String.format("%14s : %d", "RECORDS",nrecords));
         System.out.println(String.format("%14s : %d", "EVENTS",nevents));
+        SchemaFactory factory = reader.getSchemaFactory();
+        if(factory!=null){
+            for(Schema schema : factory.getSchemaList()){
+                System.out.println(String.format("%32s : %8d : %8d ", schema.getName(),
+                        schema.getGroup(), schema.getEntries()));
+            }
+            //factory.show();
+        }
         reader.close();
     }
     
@@ -149,6 +162,7 @@ public class HipoUtilities {
         parser.getOptionParser("-filter").addRequired("-l", "list of banks to write out (i.e. 11234:2345:65)");
         
         parser.addCommand("-info", "print information about the file");
+        parser.addCommand("-stats", "print statistics about the file");
         
         parser.parse(args);
         
@@ -167,6 +181,11 @@ public class HipoUtilities {
         if(parser.getCommand().compareTo("-info")==0){
              List<String>  inputFiles = parser.getOptionParser("-info").getInputList();
              HipoUtilities.printFileInfo(inputFiles.get(0));
+         }
+        
+        if(parser.getCommand().compareTo("-stats")==0){
+             List<String>  inputFiles = parser.getOptionParser("-stats").getInputList();
+             HipoUtilities.processRunInfo(inputFiles.get(0));
          }
         /*
         OptionParser parser = new OptionParser();

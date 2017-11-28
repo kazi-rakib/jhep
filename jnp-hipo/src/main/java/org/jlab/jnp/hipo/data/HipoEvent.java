@@ -81,6 +81,31 @@ public class HipoEvent {
         this.eventSchemaFactory = factory;
     }
     /**
+     * sets the event schema factory to the argument factory.
+     * @param factory schema factory for the event
+     */
+    public void setSchemaFactory(SchemaFactory factory){
+        this.eventSchemaFactory = factory;
+    }
+    /**
+     * sets the schema factory for the event. If the isCopy flag
+     * is true, then the the copy of the schema factory will be created
+     * for the event. If the copy is requested, this class is blocked 
+     * (synchronized) until the copy is done. Call this method if
+     * thread safety is required.
+     * @param factory schema factory for the event
+     * @param isCopy flag to use a copy
+     */
+    public void setSchemaFactory(SchemaFactory factory, boolean isCopy){
+        if(isCopy==true){
+            synchronized(this){
+                this.eventSchemaFactory.copy(factory);
+            }
+        } else {
+            this.eventSchemaFactory = factory;
+        }
+    }
+    /**
      * Add a single node to the event.
      * @param node HipoNode to add to the event.
      */

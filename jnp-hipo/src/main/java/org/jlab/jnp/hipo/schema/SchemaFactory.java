@@ -41,23 +41,37 @@ public class SchemaFactory {
     public SchemaFactory(){
         
     }
-    
-    public void addSchema(Schema schema) throws Exception{
+    /**
+     * add schema to the factory. no warning messages will be printed.
+     * @param schema schema to add to the factory
+     */
+    public void addSchema(Schema schema){
+        addSchema(schema,false);
+    }
+    /**
+     * add schema to the factory, the warning flag indicates weather
+     * warning messages will be printed if there are duplicate schemas.
+     * @param schema schema to add to the factory
+     * @param warning flag to set printout to true or false
+     */
+    public void addSchema(Schema schema, boolean warning){
+        
         if(this.schemaStore.containsKey(schema.getName())==true){            
-            System.out.println("[SchemaFactory] ---> warning : schema with name "+
+           if(warning==true) System.out.println("[SchemaFactory] ---> warning : schema with name "+
                     schema.getName() + " already exists.");
             if(this.overrideMode==false){
-                System.out.println("[SchemaFactory] ---> warning : new schema "+
+                if(warning==true)  System.out.println("[SchemaFactory] ---> warning : new schema "+
                         " is not added");
-                //return;
+                return;
             }
-            throw new Exception("Schema already exists");
+            //throw new Exception("Schema already exists");
         }
+        
         if(schemaStoreGroups.containsKey(schema.getGroup())==true){
-            System.out.println("[SchemaFactory] ---> warning : schema with group id "+
+            if(warning==true) System.out.println("[SchemaFactory] ---> warning : schema with group id "+
                     schema.getGroup() + " already exists.");
             if(this.overrideMode==false){
-                System.out.println("[SchemaFactory] ---> warning : new schema "+
+                if(warning==true) System.out.println("[SchemaFactory] ---> warning : new schema "+
                         " is not added");
                 return;
             }
@@ -66,11 +80,19 @@ public class SchemaFactory {
         this.schemaStoreGroups.put(schema.getGroup(), schema);
     }
     
-        
+    /**
+     * Checks if the schema with given name exists in the factory.
+     * @param name name for the schema
+     * @return ture if it exists, and false if it does not
+     */
     public boolean hasSchema(String name){
         return this.schemaStore.containsKey(name);
     }
-    
+    /**
+     * checks the schema by group number if it exists in the factory.
+     * @param group group id
+     * @return true if it exists, and false if it does not
+     */
     public boolean hasSchema(int group){
         return this.schemaStoreGroups.containsKey(group);
     }
@@ -103,7 +125,7 @@ public class SchemaFactory {
         return factory;
     }
     
-    public synchronized void copy(SchemaFactory factory){
+    public void copy(SchemaFactory factory){
         this.schemaStore.clear();
         this.schemaStoreGroups.clear();
         for(Map.Entry<Integer,Schema> entry : factory.schemaStoreGroups.entrySet()){

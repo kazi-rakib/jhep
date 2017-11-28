@@ -326,11 +326,19 @@ public class HipoWriter {
     }
     
     public void defineSchema(String name, int group, String format){
-        this.schemaFactory.addSchema(new Schema(name,group,format));
+        try {
+            this.schemaFactory.addSchema(new Schema(name,group,format));
+        } catch (Exception ex) {
+            Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void defineSchema(Schema schema){
-        this.schemaFactory.addSchema(schema);
+        try {
+            this.schemaFactory.addSchema(schema);
+        } catch (Exception ex) {
+            Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     /**
      * Returns the Schema factory of the writer.

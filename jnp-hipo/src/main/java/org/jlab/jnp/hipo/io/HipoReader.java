@@ -52,10 +52,15 @@ public class HipoReader {
                         //System.out.println(node.getString());
                         Schema schema = new Schema();
                         schema.setFromText(node.getString());
-                        schemaFactory.addSchema(schema);
-                        //System.out.println(" found schema : " + schema.getName());
-                        //System.out.println(schema.toString());
-                        //System.out.println(schema.getText());
+                        
+                        try {
+                            schemaFactory.addSchema(schema);
+                            //System.out.println(" found schema : " + schema.getName());
+                            //System.out.println(schema.toString());
+                            //System.out.println(schema.getText());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
                 System.out.println("[READER] ---> total number of schema loaded " + schemaFactory.getSchemaList().size());

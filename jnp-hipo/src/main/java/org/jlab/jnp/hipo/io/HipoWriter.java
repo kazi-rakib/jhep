@@ -8,6 +8,8 @@ package org.jlab.jnp.hipo.io;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jlab.coda.hipo.HeaderType;
 import org.jlab.coda.hipo.RecordOutputStream;
 import org.jlab.coda.hipo.Writer;
@@ -42,7 +44,11 @@ public class HipoWriter {
      * @param schema schema to add to the factory
      */
     public void defineSchema(Schema schema){
-        schemaFactory.addSchema(schema);
+        try {
+            schemaFactory.addSchema(schema);
+        } catch (Exception ex) {
+            Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     /**
      * Appends the schema factory to the existing schema factory.
@@ -50,7 +56,11 @@ public class HipoWriter {
      */
     public void appendSchemaFactory(SchemaFactory factory){
         for(Schema schema: factory.getSchemaList()){
-            schemaFactory.addSchema(schema);
+            try {
+                schemaFactory.addSchema(schema);
+            } catch (Exception ex) {
+                Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     /**
@@ -61,7 +71,11 @@ public class HipoWriter {
      * @param format schema format (example "pid/I:px/F:py/F:pz/F"}
      */
     public void defineSchema(String name, int group, String format){
-        this.schemaFactory.addSchema(new Schema(name,group,format));
+        try {
+            this.schemaFactory.addSchema(new Schema(name,group,format));
+        } catch (Exception ex) {
+            Logger.getLogger(HipoWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     /**
      * Read given directory, and parse all JSON files construct Schemas

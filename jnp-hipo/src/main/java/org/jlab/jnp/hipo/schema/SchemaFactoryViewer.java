@@ -6,6 +6,8 @@
 package org.jlab.jnp.hipo.schema;
 
 import java.awt.BorderLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -39,18 +41,22 @@ public class SchemaFactoryViewer extends JPanel {
     
     
     public static void main(String[] args){
-        JFrame frame = new JFrame();
-        SchemaFactoryViewer scViewer = new SchemaFactoryViewer();
-        Schema schema = new Schema("mc::event" , 32111, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
-        Schema schemadata = new Schema("data::event" , 32211, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
-        SchemaFactory factory = new SchemaFactory();
-        
-        factory.addSchema(schema);
-        factory.addSchema(schemadata);
-        
+        try {
+            JFrame frame = new JFrame();
+            SchemaFactoryViewer scViewer = new SchemaFactoryViewer();
+            Schema schema = new Schema("mc::event" , 32111, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
+            Schema schemadata = new Schema("data::event" , 32211, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:parent/B:status/B");
+            SchemaFactory factory = new SchemaFactory();
+            
+            factory.addSchema(schema);
+            factory.addSchema(schemadata);
+            
 //        scViewer.setSchema(schema);
-        frame.add(scViewer);
-        frame.pack();
-        frame.setVisible(true);
+frame.add(scViewer);
+frame.pack();
+frame.setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(SchemaFactoryViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

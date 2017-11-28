@@ -42,15 +42,16 @@ public class SchemaFactory {
         
     }
     
-    public void addSchema(Schema schema){
-        if(this.schemaStore.containsKey(schema.getName())==true){
+    public void addSchema(Schema schema) throws Exception{
+        if(this.schemaStore.containsKey(schema.getName())==true){            
             System.out.println("[SchemaFactory] ---> warning : schema with name "+
                     schema.getName() + " already exists.");
             if(this.overrideMode==false){
                 System.out.println("[SchemaFactory] ---> warning : new schema "+
                         " is not added");
-                return;
+                //return;
             }
+            throw new Exception("Schema already exists");
         }
         if(schemaStoreGroups.containsKey(schema.getGroup())==true){
             System.out.println("[SchemaFactory] ---> warning : schema with group id "+
@@ -93,16 +94,24 @@ public class SchemaFactory {
     public SchemaFactory copy(){
         SchemaFactory factory = new SchemaFactory();
         for(Map.Entry<String,Schema> entry : this.schemaStore.entrySet()){
-            factory.addSchema(entry.getValue());
+            try {
+                factory.addSchema(entry.getValue());
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return factory;
     }
     
-    public void copy(SchemaFactory factory){
+    public synchronized void copy(SchemaFactory factory){
         this.schemaStore.clear();
         this.schemaStoreGroups.clear();
         for(Map.Entry<Integer,Schema> entry : factory.schemaStoreGroups.entrySet()){
-            this.addSchema(entry.getValue());
+            try {
+                this.addSchema(entry.getValue());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     /**
@@ -116,7 +125,11 @@ public class SchemaFactory {
         this.schemaStoreGroups.clear();
         for(String item : descriptors){
             if(this.schemaStore.containsKey(item)==true){
-                this.addSchema(this.schemaStore.get(item));
+                try {
+                    this.addSchema(this.schemaStore.get(item));
+                } catch (Exception ex) {
+                    Logger.getLogger(SchemaFactory.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -126,7 +139,11 @@ public class SchemaFactory {
         this.schemaStoreGroups.clear();
         for(String item : descriptors){
             if(this.schemaStore.containsKey(item)==true){
-                this.addSchema(this.schemaStore.get(item));
+                try {
+                    this.addSchema(this.schemaStore.get(item));
+                } catch (Exception ex) {
+                    Logger.getLogger(SchemaFactory.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         /*for(Map.Entry<Integer,Schema> entry : factory.schemaStoreGroups.entrySet()){
@@ -136,9 +153,12 @@ public class SchemaFactory {
     }
     
     public void show(){
+        int counter = 0;
         for(Map.Entry<Integer,Schema> entry : this.schemaStoreGroups.entrySet()){
-            System.out.println(" NAME = " + entry.getValue().getName() + " GROUP = " + entry.getValue().getGroup());
-            System.out.println(entry.getValue().toString());
+            System.out.println(String.format("%4d : %48s | %12d |",counter, entry.getValue().getName(),
+                   entry.getValue().getGroup()));
+            counter++;
+            //System.out.println(entry.getValue().toString());
         }
     }
     /**
@@ -152,7 +172,11 @@ public class SchemaFactory {
         //System.out.println(" SCHEMA FACTORY EVENT SIZE = " + schemaGroup.size());
         for(Map.Entry<Integer,HipoNode> items : schemaGroup.entrySet()){
             Schema schema = new Schema(items.getValue().getString());
-            this.addSchema(schema);
+            try {
+                this.addSchema(schema);
+            } catch (Exception ex) {
+                Logger.getLogger(SchemaFactory.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     /**
@@ -222,7 +246,11 @@ public class SchemaFactory {
         this.schemaStoreGroups.clear();
         List<Schema> dirSchemas = this.readSchemaDirectory(directory);
         for(Schema schema : dirSchemas){
-            this.addSchema(schema);
+            try {
+                this.addSchema(schema);
+            } catch (Exception ex) {
+                Logger.getLogger(SchemaFactory.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -233,7 +261,11 @@ public class SchemaFactory {
         if(fullPath!=null){
             List<Schema> dirSchemas = this.readSchemaDirectory(fullPath);
             for(Schema schema : dirSchemas){
-                this.addSchema(schema);
+                try {
+                    this.addSchema(schema);
+                } catch (Exception ex) {
+                    Logger.getLogger(SchemaFactory.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -303,12 +335,22 @@ public class SchemaFactory {
     }
     
     public static void main(String[] args){
+        
         SchemaFactory factory = new SchemaFactory();
-        System.setProperty("CLAS12DIR", "/Users/gavalian/Work/Software/Release-4a.0.0/COATJAVA/coatjava");
+        System.setProperty("CLAS12DIR", "/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava");
+        SchemaFactory factory2 = new SchemaFactory();
+        
         factory.initFromDirectory("CLAS12DIR","etc/bankdefs/hipo");
+        factory2.initFromDirectory("CLAS12DIR","etc/bankdefs/hipo");
+        
+        
+        factory.show();
+        
+        factory2.copy(factory);
+
 //.readSchemaDirectory("/Users/gavalian/Work/Software/Release-4a.0.0/COATJAVA/coatjava/etc/bankdefs/hipo");
         //factory.show();
-        
+        /*
         HipoEvent event = new HipoEvent(factory);
         
         HipoGroup group = factory.getSchema("ECAL::clusters").createGroup(5);
@@ -321,6 +363,7 @@ public class SchemaFactory {
         
         event.writeGroup(group);
         event.show();
+        */
         /*
         SchemaFactory factory = new SchemaFactory();
         factory.addSchema(new Schema("{1302,FTOF::dgtz}[1,px,FLOAT][2,py,FLOAT][3,pz,FLOAT]"));

@@ -8,6 +8,8 @@ package org.jlab.jnp.hipo.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jlab.jnp.hipo.schema.Schema;
 import org.jlab.jnp.hipo.schema.SchemaFactory;
 
@@ -47,7 +49,11 @@ public class HipoEventFilter {
         for(Schema schema : factory.getSchemaList()){
             Integer grp = schema.getGroup();
             if(this.groupsOutput.contains(grp)==true){
-                filtered.addSchema(schema);
+                try {
+                    filtered.addSchema(schema);
+                } catch (Exception ex) {
+                    System.out.println("Schema not added");
+                }
             }
         }
         return filtered;

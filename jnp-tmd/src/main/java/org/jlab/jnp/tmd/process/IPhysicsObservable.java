@@ -6,6 +6,7 @@
 package org.jlab.jnp.tmd.process;
 
 import java.util.Map;
+import org.jlab.jnp.math.data.Parameters;
 
 /**
  *
@@ -14,4 +15,5 @@ import java.util.Map;
 public interface IPhysicsObservable {
     public String getName();
     public double getValue(Map<String,Double> ps);
+    public Parameters getParameters();
 }

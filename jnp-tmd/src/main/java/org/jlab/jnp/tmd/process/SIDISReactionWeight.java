@@ -25,6 +25,7 @@ import org.jlab.jnp.utils.options.OptionParser;
  * @author gavalian
  */
 public class SIDISReactionWeight implements ReactionWeight,IMCFunc {
+    
     double alpha = 1.0/137.0;
     
     MatrixStore matrixStore = new MatrixStore();
@@ -38,6 +39,9 @@ public class SIDISReactionWeight implements ReactionWeight,IMCFunc {
 
     }
     
+    public SIDISPhysicsObservables getObservables(){
+        return physObservables;
+    }
     
     public final void loadResources(){
         matrixStore.readSparseMatrix(  "FUUT", "etc/data/FUUT_h.hipo");
@@ -120,6 +124,7 @@ public class SIDISReactionWeight implements ReactionWeight,IMCFunc {
         return weight;
     }
     
+
     public static void main(String[] args){
         
         OptionParser parser = new OptionParser("sidis-generator");

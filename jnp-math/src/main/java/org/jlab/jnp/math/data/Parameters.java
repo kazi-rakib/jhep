@@ -86,6 +86,7 @@ public class Parameters {
         String group_start = group_name + ":";
         Parameters  result = new Parameters(group_name);
         for(Map.Entry<String,Parameter> entry : parameters.entrySet()){
+            System.out.println("Parameter name = " + entry.getKey() + " starts with = " + entry.getKey().startsWith(group_name));
             if(entry.getKey().startsWith(group_name)==true){
                 String parname = entry.getKey().substring(group_start.length(), entry.getKey().length());
                 Parameter par = new Parameter();
@@ -100,7 +101,8 @@ public class Parameters {
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder();
-        System.out.println(String.format("******* PARAMETER SET (%s) *******",getName()));
+        System.out.println(String.format("******* PARAMETER SET (%s) ******* SIZE = %d",
+                getName(),this.parameters.size()));
         for(Map.Entry<String,Parameter> entry : parameters.entrySet()){
             str.append(entry.getValue().toString()).append("\n");
         }

@@ -100,6 +100,28 @@ public class TextFileReader {
         return array;
     }
     
+    public double[] getAsDoubleArray(){
+        double[] array = new double[entryTokens.size()];
+        for(int i =0; i < array.length; i++){
+            try {
+                array[i] = Double.parseDouble(entryTokens.get(i));
+            } catch(Exception e){
+                System.out.println("[TextReader] ** error ** can not convert "
+                + entryTokens.get(i) + " to integer");
+                array[i] = 0;
+            }
+        }
+        return array;
+    }
+    
+    public double[] getAsDoubleArray(int start, int length){
+        double[] array = new double[length];
+        for(int i = 0; i < array.length; i++){
+            array[i] = Double.parseDouble(entryTokens.get(i+start));
+        }
+        return array;
+    }
+    
     public int[]   getAsIntArray(){
         int[] array = new int[entryTokens.size()];
         for(int i =0; i < array.length; i++){

@@ -50,6 +50,27 @@ public class MCFoam {
         }
     }
     
+    
+    private void calculateIntegral(){
+        long   totalThrown = 0L;
+        long successThrown = 0L;
+        double[] values = new double[mcFunction.getNDim()];
+        MCell cell = this.mcCells.get(0);
+        for(int i = 0; i < 300000; i++){
+            cell.random(values);
+            double weight = mcFunction.getWeight(values);
+            double fraction = weight/cell.getWeight();
+            double sample = Math.random();
+            totalThrown++;
+            if(sample<fraction){
+                successThrown++;
+            }
+
+        }
+        double integral = ((double) successThrown)/totalThrown;
+        System.out.println(" INTEGRAL = " + integral);
+    }
+    
     public void divide(int ndivisions){
         
     }
@@ -102,6 +123,7 @@ public class MCFoam {
             System.out.println(" EXPLORATION OF CELL " + i);
             System.out.println(mcCells.get(i));
         }
+        this.calculateIntegral();
     }
     
     public static void main(String[] args){

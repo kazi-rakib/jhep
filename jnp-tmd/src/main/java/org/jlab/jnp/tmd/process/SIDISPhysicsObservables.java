@@ -65,12 +65,12 @@ public class SIDISPhysicsObservables  {
         private final Parameters params = new Parameters("FUUT");
         
         public PhysicsObservableFUUT(){
-            params.addParameter("av_kt", 0.33, 0.0, 1.0);
-            params.addParameter("av_pt2", 0.16, 0.0, 1.0);
-            params.addParameter("c_mx_power", 3.00, 0.0, 5.0);
-            params.addParameter("c_x_power", -1.313, -5.0, 5.0);
-            params.addParameter("c_z_const", 0.8, 0.0, 1.0);
-            params.addParameter("mz_power", 2.0,0.0,6.0);
+            params.addParameter("av_kt", 0.33, 0.05, 0.4);
+            params.addParameter("av_pt2", 0.16, 0.05, 0.4);
+            params.addParameter("c_mx_power", 3.00, 2.0, 5.0);
+            params.addParameter("c_x_power", -1.313, -2.0, -1.0);
+            params.addParameter("c_z_const", 0.8, 0.5, 1.0);
+            params.addParameter("mz_power", 2.0,1.0,4.0);
         }
         
         @Override

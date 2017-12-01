@@ -152,7 +152,7 @@ public class SIDISStudio  extends JPanel implements ActionListener {
         foam.init();
         double[] unitValues = new double[space.getKeys().size()];
         double[] physValues = new double[space.getKeys().size()];
-        for(int i = 0; i < 500000; i++){
+        for(int i = 0; i < 5000; i++){
                         
             foam.getRandom(unitValues);
             space.setUnit(unitValues);

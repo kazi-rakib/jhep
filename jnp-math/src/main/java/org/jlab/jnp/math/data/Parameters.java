@@ -61,6 +61,15 @@ public class Parameters {
     
     public Map<String,Parameter> getParameters(){ return parameters;}
     
+    public double[] getAsArray(){
+        double[] result = new double[parameters.size()];
+        int counter = 0;
+        for(Map.Entry<String,Parameter> entry : parameters.entrySet()){
+            result[counter] = entry.getValue().getValue();
+            counter++;
+        }
+        return result;
+    }
     /**
      * adds all parameters in the passes array to the current array with 
      * names changes as parameters(name):parameter(name)
@@ -96,6 +105,12 @@ public class Parameters {
             }
         }
         return result;
+    }
+    
+    public void setRandom(){
+        for(Map.Entry<String,Parameter> entry : parameters.entrySet()){
+            entry.getValue().setRandom();
+        }
     }
     
     @Override

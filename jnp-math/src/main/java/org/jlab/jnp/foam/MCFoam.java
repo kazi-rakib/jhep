@@ -118,6 +118,7 @@ public class MCFoam {
     }
     
     public void init(){
+        
         for(int i = 0; i < this.mcCells.size(); i++){
             this.exploreCellWeight(mcCells.get(i), mcFunction, 10000);
             System.out.println(" EXPLORATION OF CELL " + i);

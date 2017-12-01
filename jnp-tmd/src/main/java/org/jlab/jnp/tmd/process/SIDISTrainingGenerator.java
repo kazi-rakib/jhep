@@ -21,7 +21,7 @@ public class SIDISTrainingGenerator {
     private SIDISReactionWeight cross = new SIDISReactionWeight();
     private PhaseSpace reactionSpace = new PhaseSpace();
     private int        numberOfEvents = 1000;
-    private String     outputFileName = "data_sample_20x20.txt";
+    private String     outputFileName = "data_sample_10x10.txt";
     private TextFileWriter outputStream = new TextFileWriter();
     private double[]        trainingInput = null;
     private double[]       trainingOutput = null;
@@ -58,13 +58,13 @@ public class SIDISTrainingGenerator {
         Parameters pars = cross.getObservables().getParameters();
         pars.setRandom();
         
-        this.trainingOutput = pars.getAsArray();
+        this.trainingOutput = pars.getAsUnitArray();
         
         System.out.println(pars);
         cross.getObservables().setParameters(pars);
         H2F h2_PTZ = new H2F("h2_PTZ",20,0.0,1.0,20,0.0,1.0);
         
-        MCFoam foam = new MCFoam(this.cross);        
+        MCFoam foam = new MCFoam(this.cross);   
         foam.init();
         
         double[] unitValues = new double[reactionSpace.getKeys().size()];
@@ -77,8 +77,13 @@ public class SIDISTrainingGenerator {
             h2_PTZ.fill(reactionSpace.getDimension("pt").getValue(),reactionSpace.getDimension("z").getValue());
         }
         this.trainingInput = new double[h2_PTZ.getDataBufferSize()];
+        double max = 0.0;
         for(int i = 0; i < trainingInput.length; i++){
             trainingInput[i] = h2_PTZ.getDataBufferBin(i);
+            if(trainingInput[i]>max) max = trainingInput[i];
+        }
+        for(int i = 0; i < trainingInput.length; i++){
+            trainingInput[i] = trainingInput[i]/max;
         }
         
         //System.out.println("DATA : " + ArrayUtils.getString(buffer, "%e", " "));
@@ -91,19 +96,19 @@ public class SIDISTrainingGenerator {
         PhaseSpace reactionPhaseSpace = new PhaseSpace();
         
         reactionPhaseSpace.add("E", 11.0,11.0);
-        reactionPhaseSpace.add("q2", 1.0,1.2);
+        reactionPhaseSpace.add("q2", 1.0,1.1);
         reactionPhaseSpace.add("xb", 0.15,0.2);
         reactionPhaseSpace.add("z", 0.0,1.0);
         reactionPhaseSpace.add("pt", 0.0,3.0);
         reactionPhaseSpace.add("phi", -Math.PI,Math.PI);
         
         generator.setPhaseSpace(reactionPhaseSpace);
-        generator.setNumberOfEvents(20000);
+        generator.setNumberOfEvents(200000);
         
         /*for(int i = 0; i < 5; i ++){
             generator.generateSample();
         }*/
-        generator.generateSamples(1);
+        generator.generateSamples(100);
         
     }
 }

@@ -30,9 +30,10 @@ public class SIDISTrainer {
     
     public void train(){
         MultiLayerPerceptron myMlPerceptron = new MultiLayerPerceptron(
-                TransferFunctionType.GAUSSIAN, 400, 300,200,100, 6);
+                TransferFunctionType.SIGMOID, 400, 20, 6);
         myMlPerceptron.getLearningRule().setMaxIterations(400000);
         myMlPerceptron.getLearningRule().setLearningRate(0.2);
+        myMlPerceptron.getLearningRule().setMaxError(0.001);
                 
         SIDISTrainer.iterationCounter = 0;
         myMlPerceptron.addListener(new NeuralNetworkEventListener(){
@@ -71,7 +72,6 @@ public class SIDISTrainer {
                 double[] output = reader.getAsDoubleArray(400, 6);
                 System.out.println(ArrayUtils.getString(input, " "));
                 System.out.println(ArrayUtils.getString(output, " "));
-
                 trainingSet.addRow(input, output);
                 counter++;
             } else {
@@ -83,7 +83,7 @@ public class SIDISTrainer {
     
     public static void main(String[] args){
         SIDISTrainer trainer = new SIDISTrainer();
-        trainer.createTrainingSet("data_sample_20x20.txt");
+        trainer.createTrainingSet("data_sample_10x10.txt");
         trainer.train();
     }
 }

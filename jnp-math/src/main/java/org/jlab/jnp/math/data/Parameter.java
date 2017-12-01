@@ -65,6 +65,12 @@ public class Parameter {
     public double getMin(){ return min;}
     public double getMax(){ return max;}
     public double getValue(){ return value;}
+    
+    public double getUnitValue(){
+        double dist = value - min;
+        return dist/(max-min);
+    }
+    
     public String getName(){ return name;}
     
     public double getRandom(){

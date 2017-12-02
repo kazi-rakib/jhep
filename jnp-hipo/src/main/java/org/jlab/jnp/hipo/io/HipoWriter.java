@@ -6,8 +6,11 @@
 package org.jlab.jnp.hipo.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jlab.coda.hipo.HeaderType;
@@ -156,12 +159,21 @@ public class HipoWriter {
         if(this.outputFileExits(filename)==true){
             System.out.println("[HIPO-WRITER] ** error ** the output file already exists : " 
                     + filename);
-        } else {
-            if(this.schemaFactory.getSchemaList().isEmpty()){
+            System.out.println("[HIPO-WRITER] ** warning ** attempt to delete the file : " 
+                    + filename);
+            try {
+                Files.delete(Paths.get(filename));
+                System.out.println("[HIPO-WRITER] ** warning ** delete successful "); 
+            } catch (IOException ex) {
+                System.out.println("*** HIPOWRITER *** error deleting file : " + filename);
+            }
+            
+        } 
+        if(this.schemaFactory.getSchemaList().isEmpty()){
                 System.out.println("[HipoWriter] ---> Schema factory is empty.");
                 writer.open(filename);
                 HipoLogo.showLogo();
-            } else {
+        } else {
                 RecordOutputStream recDictionary = this.createSchemaRecord();
                 recDictionary.getHeader().setCompressionType(0);
                 //System.out.println("compression type = " + recDictionary.getHeader().getCompressionType());
@@ -178,8 +190,7 @@ public class HipoWriter {
                 System.out.println("[HipoWriter] ---> schmea dictionary written with " 
                         + this.schemaFactory.getSchemaList().size() + " entries.");
                 System.out.println("[HipoWriter] ---> compression type "  );
-            }
-        }
+        }        
     }
     /**
      * Check if the output file exists.

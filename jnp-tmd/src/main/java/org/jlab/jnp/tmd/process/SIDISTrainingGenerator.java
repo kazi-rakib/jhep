@@ -108,7 +108,7 @@ public class SIDISTrainingGenerator {
         /*for(int i = 0; i < 5; i ++){
             generator.generateSample();
         }*/
-        generator.generateSamples(100);
+        generator.generateSamples(2000);
         
     }
 }

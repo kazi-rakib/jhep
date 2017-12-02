@@ -70,7 +70,26 @@ public class Parameters {
         }
         return result;
     }
-    
+    /**
+     * set the values of the parameters based on unit values [0-1]
+     * @param array array containing normalized values
+     */
+    public void setAsUnitArray(double[] array){
+        if(array.length!=parameters.size()){
+            System.out.println("[Parameters] ** error ** there is mismatch in the number of parameters.");
+            return;
+        }
+        int counter = 0;
+        for(Map.Entry<String,Parameter> entry : parameters.entrySet()){
+             entry.getValue().setUnitValue(array[counter]);
+            counter++;
+        }
+    }
+    /**
+     * returns the array with parameters in unit range [0-1], the value
+     * is mapped to the 0-1 range.
+     * @return array containing unit values
+     */
     public double[] getAsUnitArray(){
         double[] result = new double[parameters.size()];
         int counter = 0;

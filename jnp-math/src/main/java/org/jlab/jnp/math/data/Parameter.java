@@ -71,6 +71,11 @@ public class Parameter {
         return dist/(max-min);
     }
     
+    public void setUnitValue(double unitValue){
+        double offset = (max-min)*unitValue;
+        value = min + offset;
+    }
+    
     public String getName(){ return name;}
     
     public double getRandom(){

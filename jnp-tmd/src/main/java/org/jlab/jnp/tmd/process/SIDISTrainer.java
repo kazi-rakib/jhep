@@ -19,7 +19,8 @@ import org.jlab.jnp.utils.data.ArrayUtils;
 public class SIDISTrainer {
     
     public static int iterationCounter = 0;
-    public static int iterationCounterPrintout = 1000;
+    public static int iterationCounterPrintout = 10000;
+    public static long iterationTotalEvents = 0L;
     
     private DataSet trainingSet = null;
     
@@ -31,19 +32,21 @@ public class SIDISTrainer {
     public void train(){
         MultiLayerPerceptron myMlPerceptron = new MultiLayerPerceptron(
                 TransferFunctionType.SIGMOID, 400, 20, 6);
-        myMlPerceptron.getLearningRule().setMaxIterations(400000);
+        //myMlPerceptron.getLearningRule().setMaxIterations(40);
         myMlPerceptron.getLearningRule().setLearningRate(0.2);
-        myMlPerceptron.getLearningRule().setMaxError(0.001);
-                
+        myMlPerceptron.getLearningRule().setMaxError(0.0001);
+        
         SIDISTrainer.iterationCounter = 0;
         myMlPerceptron.addListener(new NeuralNetworkEventListener(){
             @Override
             public void handleNeuralNetworkEvent(NeuralNetworkEvent nne) {
                 double error = myMlPerceptron.getLearningRule().getErrorFunction().getTotalError();
+                
                 SIDISTrainer.iterationCounter++;
-                if(SIDISTrainer.iterationCounter>SIDISTrainer.iterationCounterPrintout){
-                    System.out.println("iteration : " + SIDISTrainer.iterationCounter + " error = " + error);
+                if(SIDISTrainer.iterationCounter>=SIDISTrainer.iterationCounterPrintout){
+                    System.out.println("iteration : " + SIDISTrainer.iterationTotalEvents + " error = " + error);
                     SIDISTrainer.iterationCounter = 0;
+                    SIDISTrainer.iterationTotalEvents++;
                 }
                 //System.out.println(myMlPerceptron);
                 //System.out.println("event happened, type = " + nne.getEventType());                
@@ -52,6 +55,8 @@ public class SIDISTrainer {
         myMlPerceptron.learn(trainingSet);
         double error = myMlPerceptron.getLearningRule().getErrorFunction().getTotalError();
         System.out.println("error = " + error);
+        
+        myMlPerceptron.save("TMD_NN_20x20.nnet");
     }
     
     public void createTrainingSet(String filename){
@@ -61,7 +66,8 @@ public class SIDISTrainer {
         reader.open(filename);
         int counter = 0;
         int   lines = 0;
-        while(reader.readNext()==true){
+        int max = 400;
+        while(reader.readNext()==true&&counter<max){
             lines++;
             int size = reader.entrySize();
             if(size>=406){

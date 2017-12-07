@@ -74,10 +74,12 @@ public class HipoReader {
     }
     
     public int getEventCount(){
+        if(reader==null) return 0;
         return reader.getEventCount();
     }
     
     public boolean hasNext(){
+        if(reader==null) return false;
         return reader.hasNext();
     }
     

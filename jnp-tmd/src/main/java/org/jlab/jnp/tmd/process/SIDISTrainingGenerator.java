@@ -5,6 +5,8 @@
  */
 package org.jlab.jnp.tmd.process;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.jlab.groot.data.H2F;
 import org.jlab.jnp.foam.MCFoam;
 import org.jlab.jnp.math.data.Parameters;
@@ -25,6 +27,8 @@ public class SIDISTrainingGenerator {
     private TextFileWriter outputStream = new TextFileWriter();
     private double[]        trainingInput = null;
     private double[]       trainingOutput = null;
+    
+    private Map<Integer,double[]> trainingData = new HashMap<Integer,double[]>();
     
     public SIDISTrainingGenerator(){
         
@@ -85,13 +89,19 @@ public class SIDISTrainingGenerator {
         for(int i = 0; i < trainingInput.length; i++){
             trainingInput[i] = trainingInput[i]/max;
         }
+        this.trainingData.put(1, trainingInput);
+        this.trainingData.put(2, trainingOutput);
         
         //System.out.println("DATA : " + ArrayUtils.getString(buffer, "%e", " "));
         //System.out.println("PARS : " + ArrayUtils.getString(parValues, "%e", " "));        
     }
     
+    public Map<Integer,double[]> getMap(){
+        return this.trainingData;
+    }
     
     public static void main(String[] args){
+        
         SIDISTrainingGenerator generator = new SIDISTrainingGenerator();
         PhaseSpace reactionPhaseSpace = new PhaseSpace();
         

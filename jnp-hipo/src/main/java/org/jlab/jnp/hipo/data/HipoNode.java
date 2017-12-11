@@ -23,7 +23,7 @@ public class HipoNode {
     private int            headerLength = 8;
     private int  headerLengthDataOffset = 6;
     private int     hederTypeDataOffset = 2;
-       
+    
     
     public HipoNode(int group, int item, HipoNodeType type, int length){
         createNode(group, item, type, length);

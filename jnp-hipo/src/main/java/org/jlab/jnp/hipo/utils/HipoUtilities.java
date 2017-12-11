@@ -82,6 +82,29 @@ public class HipoUtilities {
         System.out.println("\n\n");
     }
     
+    public static void mergeFiles(String outputFile, List<String> inputFiles, int compression){
+        HipoReader reader = new HipoReader();
+        reader.open(inputFiles.get(0));
+        SchemaFactory factory = reader.getSchemaFactory();
+        
+        HipoWriter writer = new HipoWriter();
+        writer.appendSchemaFactory(factory);
+        writer.open(outputFile);
+        
+        reader.close();
+        
+        for(String inFile : inputFiles){
+            System.out.println("[MERGE] ---> openning file : " + inFile);
+            reader.open(inFile);
+            while(reader.hasNext()==true){
+                HipoEvent event = reader.readNextEvent();
+                writer.writeEvent(event);
+            }
+            reader.close();
+        }
+        writer.close();
+    }
+    
     public static void compressFile(String inputFile, String outputFile, int compression){
         HipoReader reader = new HipoReader();
         reader.open(inputFile);
@@ -164,6 +187,10 @@ public class HipoUtilities {
         parser.addCommand("-info", "print information about the file");
         parser.addCommand("-stats", "print statistics about the file");
         
+        parser.addCommand("-merge", "merge HIPO files");
+        parser.getOptionParser("-merge").addRequired("-o", "output file name");
+        parser.getOptionParser("-merge").addOption("-c", "2","compression type");
+
         parser.parse(args);
         
         if(parser.getCommand().compareTo("-filter")==0){
@@ -187,6 +214,13 @@ public class HipoUtilities {
              List<String>  inputFiles = parser.getOptionParser("-stats").getInputList();
              HipoUtilities.processRunInfo(inputFiles.get(0));
          }
+        
+        if(parser.getCommand().compareTo("-merge")==0){
+            List<String>  inputFiles = parser.getOptionParser("-merge").getInputList();
+            String output = parser.getOptionParser("-merge").getOption("-o").stringValue();
+            int    compression = parser.getOptionParser("-merge").getOption("-c").intValue();
+            HipoUtilities.mergeFiles(output, inputFiles, compression);
+        }
         /*
         OptionParser parser = new OptionParser();
         parser.addOption("-info", "0");

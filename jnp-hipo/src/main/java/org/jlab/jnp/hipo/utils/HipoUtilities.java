@@ -157,6 +157,14 @@ public class HipoUtilities {
         writer.close();
     }
     
+    public static void dumpFile(String filename){
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        while(reader.hasNext()==true){
+            HipoEvent event = reader.readNextEvent();
+            event.showNodes();
+        }
+    }
     
     public static void printFileInfo(String filename){
         HipoReader reader = new HipoReader();
@@ -191,6 +199,9 @@ public class HipoUtilities {
         parser.getOptionParser("-merge").addRequired("-o", "output file name");
         parser.getOptionParser("-merge").addOption("-c", "2","compression type");
 
+        
+        parser.addCommand("-dump", "dump the file on the screen");
+        
         parser.parse(args);
         
         if(parser.getCommand().compareTo("-filter")==0){
@@ -220,6 +231,11 @@ public class HipoUtilities {
             String output = parser.getOptionParser("-merge").getOption("-o").stringValue();
             int    compression = parser.getOptionParser("-merge").getOption("-c").intValue();
             HipoUtilities.mergeFiles(output, inputFiles, compression);
+        }
+        
+        if(parser.getCommand().compareTo("-dump")==0){
+            List<String>  inputFiles = parser.getOptionParser("-dump").getInputList();
+            HipoUtilities.dumpFile(inputFiles.get(0));
         }
         /*
         OptionParser parser = new OptionParser();

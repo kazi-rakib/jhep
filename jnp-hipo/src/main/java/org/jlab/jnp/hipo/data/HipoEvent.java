@@ -167,32 +167,35 @@ public class HipoEvent {
         //eventIndex.clear();
         this.groupsIndex.clear();
         int counter = 0;
-        
-        while((position+NODE_HEADER_LENGTH)<capacity){
-            
-            short group = eventBuffer.getShort( position    );
-            //System.out.println(" group = " + group);
-            byte  item  = eventBuffer.get(      position + 2);
-            byte  type  = eventBuffer.get(      position + 3);
-            int   size  = eventBuffer.getInt(   position + 4);
-            //System.out.println( counter + " : position = " + );
-            NodeIndexList  idx = new NodeIndexList(item,position,size);            
-            idx.setType(type);
-            Integer groupInt = (int) group;            
-            
-            if(this.groupsIndex.containsKey(groupInt)==false){
-                //System.out.println("--> adding group " + groupInt);
-                this.groupsIndex.put( groupInt, new GroupNodeIndexList(group));
+        try {
+            while((position+NODE_HEADER_LENGTH)<=capacity){
+                
+                short group = eventBuffer.getShort( position    );
+                //System.out.println(" group = " + group);
+                byte  item  = eventBuffer.get(      position + 2);
+                byte  type  = eventBuffer.get(      position + 3);
+                int   size  = eventBuffer.getInt(   position + 4);
+                //System.out.println( counter + " : position = " + );
+                NodeIndexList  idx = new NodeIndexList(item,position,size);            
+                idx.setType(type);
+                Integer groupInt = (int) group;            
+                
+                if(this.groupsIndex.containsKey(groupInt)==false){
+                    //System.out.println("--> adding group " + groupInt);
+                    this.groupsIndex.put( groupInt, new GroupNodeIndexList(group));
+                }
+                
+                this.groupsIndex.get(groupInt).addNodeIndex(idx);
+                //HipoNodeIndex index = new HipoNodeIndex();
+                //index.nodeGroup  = group;
+                //index.nodeItem   = item;
+                //index.nodeOffset = position;
+                //index.nodeLength = size;            
+                //eventIndex.add(index);
+                position += NODE_HEADER_LENGTH + size;
             }
-            
-            this.groupsIndex.get(groupInt).addNodeIndex(idx);
-            //HipoNodeIndex index = new HipoNodeIndex();
-            //index.nodeGroup  = group;
-            //index.nodeItem   = item;
-            //index.nodeOffset = position;
-            //index.nodeLength = size;            
-            //eventIndex.add(index);
-            position += NODE_HEADER_LENGTH + size;
+        } catch (Exception e) {
+            //System.out.println("[]");
         }
     }
     
@@ -222,7 +225,9 @@ public class HipoEvent {
             List<HipoNode> nodes = group.getNodes();
             log.debug("adding group to the event. group id = "+group.getSchema().getGroup()+
                     " node count = " + nodes.size());
-            this.addNodes(nodes);
+            if(group.getMaxSize()>0){
+                this.addNodes(nodes);
+            }
         }
         this.updateNodeIndex();
     }

@@ -296,7 +296,7 @@ public class SchemaFactory {
         List<String> fileList = FileUtils.getFileListInDir(directory, ".json");
         List<Schema> dirScemas = new ArrayList<Schema>();
         for(String file : fileList){
-            System.out.println("[readSchemaDirectory] processing file -> " + file);
+            //System.out.println("[readSchemaDirectory] processing file -> " + file);
             List<Schema> fileSchemas = this.readSchemaFile(file);
             dirScemas.addAll(fileSchemas);
         }

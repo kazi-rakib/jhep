@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   event.h
  * Author: gavalian
  *
@@ -27,35 +27,37 @@ namespace hipo {
     private:
         std::vector<char> dataBuffer;
         std::map<int,int> eventNodes;
-        
+
         //void scanEvent();
-        
+
     public:
-        
+
         event();
         ~event();
-        
+
         void showInfo();
         void init(std::vector<char> &buffer);
-        int  getEventNode(int group, int item);
+        void init(const char *buffer, int size);
         
+        int  getEventNode(int group, int item);
+
         void appendNode(int group, int item, std::vector<int> &vec);
         void appendNode(int group, int item, std::vector<int16_t> &vec);
         void appendNode(int group, int item, std::vector<int8_t> &vec);
         void appendNode(int group, int item, std::vector<float> &vec);
         void appendNode(int group, int item, std::string &vec);
-        
+
         int   getNodeAddress(int group, int item);
         int   getNodeType(int address);
         int   getNodeLength(int address);
         int   getNodeSize(int address);
         char *getNodePtr(int address);
-        
+
         std::vector<int>    getInt(   int group, int item);
         std::vector<float>  getFloat( int group, int item);
-        
+
         //template<class T>   node<T> getNode();
-        
+
         void scanEvent();
         std::vector<char> getEventBuffer();
         void reset();
@@ -66,8 +68,7 @@ namespace hipo {
         en.setLength(4);
         en.setAddress(NULL);
         return en;
-    } */   
+    } */
 }
 
 #endif /* EVENT_H */
-

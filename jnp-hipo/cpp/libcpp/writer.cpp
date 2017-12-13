@@ -47,28 +47,28 @@ namespace hipo {
     }
 
     void writer::writeRecord(hipo::record& record){
-        std::vector<char> recordVec = record.build();
-        outputStream.write(&recordVec[0],recordVec.size());
+      /*  std::vector<char> recordVec = record.build();
+        outputStream.write(&recordVec[0],recordVec.size());*/
     }
 
     void writer::writeEvent(hipo::event& event){
-        writerRecord.addEvent(event);
+        /*writerRecord.addEvent(event);*/
     }
 
     void writer::writeEvent(std::vector<char> &event){
-        writerRecord.addEvent(event);
+      /*  writerRecord.addEvent(event);
         if(writerRecord.getDataSize()>__MAX_RECORD_SIZE__){
             writeRecord(writerRecord);
             writerRecord.reset();
-        }
+        }*/
     }
 
     void writer::close(){
-        if(writerRecord.getEventCount()>0){
+      /*  if(writerRecord.getEventCount()>0){
             writeRecord(writerRecord);
             writerRecord.reset();
         }
-        outputStream.close();
+        outputStream.close();*/
     }
 
 

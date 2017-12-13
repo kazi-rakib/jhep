@@ -36,9 +36,9 @@ namespace hipo {
   void utils::printLogo(){
     std::cout << "************************************************" << std::endl;
     std::cout << "*         >=<         ---------------------    *" << std::endl;
-    std::cout << "*    ,.--'  ''-.      HIPO 2.0 I/O Library     *" << std::endl;
+    std::cout << "*    ,.--'  ''-.      HIPO 3.0 I/O Library     *" << std::endl;
     std::cout << "*    (  )  ',_.'      Jefferson National Lab   *" << std::endl;
-    std::cout << "*     Xx'xX           Date: 02/27/2016         *" << std::endl;
+    std::cout << "*     Xx'xX           Date: 10/27/2017         *" << std::endl;
     std::cout << "************************************************" << std::endl;
     std::cout << std::endl;
   }

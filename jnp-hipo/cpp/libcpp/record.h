@@ -17,23 +17,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
 
 #include "event.h"
 
 namespace hipo {
-
-    typedef struct {
-        long  recordPosition;
-        int   recordLength;
-        int   recordEvents;
-        int   recordDataOffset;
-        int   recordDataLength;
-        int   recordDataLengthUncompressed;
-        int   startEvent;
-        int   endEvent;
-    } hipoRecordIndex_t;
 
     typedef struct {
         int signatureString; // 1) identifier string is HREC (int = 0x43455248
@@ -43,32 +34,62 @@ namespace hipo {
         int numberOfEvents ; // 5) number of event, data buckets in DATA buffer
         int headerLength ; // 6) Length of the buffer represengin HEADER for the record
         int indexDataLength ; // 7) Length of the index buffer (in bytes)
+        int userHeaderLength; // user header length in bytes
+        int userHeaderLengthPadding; // the padding added to user header Length
+        int bitInfo;
         int compressionType;
-    } hipoRecordHeader_t;
+        int compressedLengthPadding;
+        int dataEndianness;
+    } recordHeader_t;
+
+    class data {
+      private:
+        const char  *data_ptr;
+        int          data_size;
+        int          data_endianness;
+        int          data_offset;
+
+      public:
+        data(){ data_ptr = NULL; data_size = 0;}
+        ~data(){ }
+
+        void setDataPtr(const char *__ptr){ data_ptr = __ptr;}
+        void setDataSize(int __size){ data_size = __size;}
+        void setDataOffset(int __offset) { data_offset = __offset;}
+        void setDataEndianness(int __endianness) { data_endianness = __endianness;}
+
+        const uint32_t   *getEvioPtr(){ return reinterpret_cast<const uint32_t *>(data_ptr);}
+        int         getEvioSize(){ return (int) data_size/4 ;}
+        const char *getDataPtr(){ return data_ptr;}
+        int         getDataSize(){ return data_size;}
+        int         getDataEndianness(){ return data_endianness;}
+        int         getDataOffset(){ return data_offset;}
+    };
 
     class record {
 
-    private:
+      private:
 
-        std::vector< std::vector<char> > eventBuffer;
+        //std::vector< std::vector<char> > eventBuffer;
+        std::vector<char>  recordHeaderBuffer;
+        recordHeader_t     recordHeader;
+
+        std::vector<char>  recordBuffer;
+
         char *getUncompressed(const char *data, int dataLength, int dataLengthUncompressed);
+        int   getUncompressed(const char *data, char *dest, int dataLength, int dataLengthUncompressed);
+        void  showBuffer(const char *data, int wrapping, int maxsize);
 
     public:
 
         record();
         ~record();
 
-        void  init(const char *data, int dataLength, int dataLengthUncompressed, const char *index, int indexLength);
+        void  readRecord(std::ifstream &stream, long position, int dataOffset);
         int   getEventCount();
-        void  addEvent(std::vector<char> &event);
-        void  addEvent(hipo::event &event);
-        int   getDataSize();
-        std::vector<char> build();
-        void  reset();
-        std::vector<char>   getEvent(int index);
-        hipo::event         getHipoEvent(int index);
-        void                readHipoEvent(hipo::event &event, int index);
-
+        void  readEvent( std::vector<char> &vec, int index);
+        void  readHipoEvent(hipo::event &event, int index);
+        void  getData(   hipo::data &data, int index);
     };
 }
 #endif /* HIPORECORD_H */

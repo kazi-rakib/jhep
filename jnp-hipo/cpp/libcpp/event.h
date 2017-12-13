@@ -38,7 +38,7 @@ namespace hipo {
         void showInfo();
         void init(std::vector<char> &buffer);
         void init(const char *buffer, int size);
-        
+
         int  getEventNode(int group, int item);
 
         void appendNode(int group, int item, std::vector<int> &vec);
@@ -53,8 +53,9 @@ namespace hipo {
         int   getNodeSize(int address);
         char *getNodePtr(int address);
 
-        std::vector<int>    getInt(   int group, int item);
-        std::vector<float>  getFloat( int group, int item);
+        std::vector<int>    getInt(    int group, int item);
+        std::vector<float>  getFloat(  int group, int item);
+        std::string         getString( int group, int item);
 
         //template<class T>   node<T> getNode();
 

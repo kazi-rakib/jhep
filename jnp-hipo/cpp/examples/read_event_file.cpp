@@ -41,11 +41,28 @@ int main(int argc, char** argv) {
     printf("-----> open file : %s\n",filename);
     hipo::reader reader;
     hipo::record record;
+    hipo::record dictionary;
+
 
     hipo::event  event;
 
     reader.open(filename);
     reader.showInfo();
+
+    reader.readHeaderRecord(dictionary);
+
+    printf(" DICTIONARY READ COUNT = %d\n",dictionary.getEventCount());
+
+
+    hipo::event  schema;
+    for(int d = 0; d < dictionary.getEventCount(); d++){
+        dictionary.readHipoEvent(schema,d);
+        printf("Dictionary event %d is read\n",d);
+        std::string schemaString = schema.getString(31111,1);
+        printf("schema : %s\n",schemaString.c_str());
+        //schema.showInfo();
+    }
+
 
     int nrecords = reader.getRecordCount();
 

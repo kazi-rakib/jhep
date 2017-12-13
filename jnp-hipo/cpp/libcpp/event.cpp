@@ -168,6 +168,24 @@ namespace hipo {
         return vector;;
     }
 
+    std::string  event::getString(int group, int item){
+        std::string result;
+        int position = getEventNode(group,item);
+        if(position>=0){
+            uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
+            uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));
+            uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
+            int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4]));
+            if(type==6){
+              char *string_ch = (char *) malloc(length+1);
+              std::memcpy(string_ch, &dataBuffer[position+8],length);
+              string_ch[length] = '\0';
+              result = string_ch;
+            }
+        }
+        return result;
+    }
+    
     std::vector<float>  event::getFloat( int group, int item){
         int position = getEventNode(group,item);
         std::vector<float> vector;

@@ -166,6 +166,12 @@ void  reader::readRecordIndex(){
     printf("total records = %d  index array = %d\n",icounter, (unsigned int) recordIndex.size());
 }
 
+void  reader::readHeaderRecord(hipo::record &record){
+    int offset  = header.headerLength * 4;
+    int rlenght = header.userHeaderLength;
+    record.readRecord(inputStream, offset, 0);
+}
+
 void  reader::readRecord(hipo::record &record, int index)
 {
     long position = recordIndex[index].recordPosition;

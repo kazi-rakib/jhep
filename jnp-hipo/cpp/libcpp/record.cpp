@@ -82,11 +82,14 @@ namespace hipo {
         for(int i = 0; i < recordBuffer.size(); i++) recordBuffer[i] = 0;
         //printf("****************** BEFORE padding = %d\n", compressedDataLengthPadding);
         //showBuffer(&recordBuffer[0], 10, 200);
-
-        int unc_result = getUncompressed(compressedBuffer, (&recordBuffer[0]),
-				     dataBufferLengthBytes-compressedDataLengthPadding,
-					   decompressedLength);
-
+        if(recordHeader.compressionType==0){
+          printf("compression type = 0 data length = %d\n",decompressedLength);
+          memcpy((&recordBuffer[0]),compressedBuffer,decompressedLength);
+        } else {
+          int unc_result = getUncompressed(compressedBuffer, (&recordBuffer[0]),
+				      dataBufferLengthBytes-compressedDataLengthPadding,
+					         decompressedLength);
+        }
         //printf("******************\n");
         //showBuffer(&recordBuffer[0], 10, 200);
         //char *uncompressedBuffer  = getUncompressed(compressedBuffer,dataBufferLengthBytes,recordHeader.recordDataLength);
@@ -144,6 +147,7 @@ namespace hipo {
     void  record::readHipoEvent(hipo::event &event, int index){
           hipo::data event_data;
           getData(event_data,index);
+          //printf("reading event %d ptr=%X size=%d\n",index,(unsigned long) event_data.getDataPtr(),event_data.getDataSize());
           event.init(event_data.getDataPtr(), event_data.getDataSize());
     }
     /**

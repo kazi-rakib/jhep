@@ -124,6 +124,7 @@ namespace hipo {
         std::vector<recordIndex_t>      recordIndex;
         fileHeader_t                    header;
         hipo::utils                     hipoutils;
+
         bool    verifyFile();
         void    readHeader();
         void    readRecordIndex();
@@ -136,6 +137,7 @@ namespace hipo {
         void  open(const char *filename);
         void  readRecord(int index);
         void  readRecord(hipo::record &record, int index);
+        void  readHeaderRecord(hipo::record &record);
         int   getRecordCount();
         bool  isOpen();
         void  showInfo();

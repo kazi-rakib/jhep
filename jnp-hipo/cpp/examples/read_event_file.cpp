@@ -40,14 +40,29 @@ int main(int argc, char** argv) {
     }
     printf("-----> open file : %s\n",filename);
     hipo::reader reader;
+    hipo::record record;
+    hipo::record dictionary;
+
+
+    hipo::event  event;
+
     reader.open(filename);
     reader.showInfo();
 
-    hipo::node<int>       *pid = reader.getNode<int>(22,1);
-    hipo::node<float>      *px = reader.getNode<float>(22,2);
-    hipo::node<float>      *py = reader.getNode<float>(22,3);
-    hipo::node<float>      *pz = reader.getNode<float>(22,4);
-    hipo::node<int8_t> *charge = reader.getNode<int8_t>(22,8);
+    reader.readHeaderRecord(dictionary);
+
+    printf(" DICTIONARY READ COUNT = %d\n",dictionary.getEventCount());
+
+
+    hipo::event  schema;
+    for(int d = 0; d < dictionary.getEventCount(); d++){
+        dictionary.readHipoEvent(schema,d);
+        printf("Dictionary event %d is read\n",d);
+        std::string schemaString = schema.getString(31111,1);
+        printf("schema : %s\n",schemaString.c_str());
+        //schema.showInfo();
+    }
+
 
     int nrecords = reader.getRecordCount();
 
@@ -57,16 +72,28 @@ int main(int argc, char** argv) {
 
     int ecounter = 0;
     for(int i = 0; i < nrecords; i++){
-       reader.readRecord(i);
-       int nevents = reader.getEventCount();
+       reader.readRecord(record,i);
+       int nevents = record.getEventCount();
+       printf(" RECORD # %d has %d events\n", i, nevents);
        for(int k = 0; k < nevents; k++){
+         record.readHipoEvent(event,k);
+         std::vector<int> vecR = event.getInt(11,1);
+         std::vector<int> vecE = event.getInt(11,2);
+         for(int s = 0; s < vecR.size(); s++){
+           printf("RUN %d %d\n", vecR[s], vecE[s]);
+         }
+         std::vector<float> vecT = event.getFloat(20711,6);
+         for(int e = 0; e < vecT.size(); e++){
+           printf("%12.5f ",vecT[e]);
+         }
+         printf("\n");
          //printf("-----> reading event # %d\n",ecounter);
-         reader.readEvent(k);
+         /*reader.readEvent(k);
          int size = px->getLength();
          for(int s = 0; s < size; s++){
            printf(" %8d %8.3f %8.3f %8.3f %2d\n",pid->getValue(s),
                   px->getValue(s),py->getValue(s),pz->getValue(s),charge->getValue(s));
-         }
+         }*/
          //printf("\n");
          ecounter++;
        }

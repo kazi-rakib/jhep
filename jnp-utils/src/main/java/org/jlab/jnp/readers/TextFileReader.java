@@ -122,6 +122,14 @@ public class TextFileReader {
         return array;
     }
     
+    public float[] getAsFloatArray(int start, int length){
+        float[] array = new float[length];
+        for(int i = 0; i < array.length; i++){
+            array[i] = Float.parseFloat(entryTokens.get(i+start));
+        }
+        return array;
+    }
+    
     public int[]   getAsIntArray(){
         int[] array = new int[entryTokens.size()];
         for(int i =0; i < array.length; i++){

@@ -71,7 +71,7 @@ public class SIDISTrainer {
             lines++;
             int size = reader.entrySize();
             if(size>=406){
-                double[]  input = reader.getAsDoubleArray(0, 400);
+                double[]  input = reader.getAsDoubleArray(0, 400);                
                 /*for(int i = 0; i < input.length; i++){
                     input[i] = input[i]/8000.0;
                 }*/

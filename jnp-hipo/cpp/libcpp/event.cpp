@@ -22,6 +22,12 @@ namespace hipo {
         scanEvent();
     }
 
+    void event::init(const char *buffer, int size){
+        dataBuffer.resize(size);
+        std::memcpy(&dataBuffer[0],buffer,size);
+        scanEvent();
+    }
+
     void event::appendNode(int group, int item, std::string& vec){
         int     size = dataBuffer.size();
         int datasize = vec.length();
@@ -125,24 +131,23 @@ namespace hipo {
         return -1;
     }
     std::vector<long>    event::getLong(   int group, int item){
-        int position = getEventNode(group,item);
-        std::vector<long> vector;
-        if(position>=0){
-            uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
-            uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));
-            uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
-            int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4]));
-            if(type==8){
-                int    iter = length;
-                for(int i = 0; i < iter; i++){
-                    long *ptr = reinterpret_cast<long *>(&dataBuffer[position + 8 + i*8]);
-                    vector.push_back( (long) *ptr);
-                }
-            }
-        }
-        return vector;
-    }
-
+      int position = getEventNode(group,item);
+          std::vector<long> vector;
+          if(position>=0){
+              uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
+              uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));
+              uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
+              int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4]));
+              if(type==8){
+  	        int    iter = length;
+  		for(int i = 0; i < iter; i++){
+                      long *ptr = reinterpret_cast<long *>(&dataBuffer[position + 8 + i*8]);
+                      vector.push_back( (long) *ptr);
+                  }
+              }
+          }
+          return vector;
+      }
     std::vector<int>    event::getInt(   int group, int item){
         int position = getEventNode(group,item);
         std::vector<int> vector;
@@ -178,6 +183,24 @@ namespace hipo {
 
         }
         return vector;;
+    }
+
+    std::string  event::getString(int group, int item){
+        std::string result;
+        int position = getEventNode(group,item);
+        if(position>=0){
+            uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
+            uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));
+            uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
+            int     length = *(reinterpret_cast<int*>(&dataBuffer[position+4]));
+            if(type==6){
+              char *string_ch = (char *) malloc(length+1);
+              std::memcpy(string_ch, &dataBuffer[position+8],length);
+              string_ch[length] = '\0';
+              result = string_ch;
+            }
+        }
+        return result;
     }
 
     std::vector<float>  event::getFloat( int group, int item){
@@ -217,7 +240,9 @@ namespace hipo {
 
     void event::scanEvent(){
         eventNodes.clear();
-        int position = 8;
+        //int position = 8;
+        int position = 16;
+
         while(position+8<dataBuffer.size()){
             uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
             uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));

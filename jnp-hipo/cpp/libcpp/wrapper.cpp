@@ -1,5 +1,6 @@
 #include <iostream>
 #include "reader.h"
+#include "event.h"
 
 hipo::reader hipo_FORT_Reader;
 hipo::record hipo_FORT_Record;
@@ -27,7 +28,8 @@ extern "C" {
 
   void hipo_read_event_(int *n_event){
       int event_index = (*n_event) - 1;
-      hipo_FORT_Record.readHipoEvent(hipo_FORT_Event,event_index);
+      std::vector<char> record_event;
+      hipo_FORT_Record.readEvent(record_event,event_index);
   }
 
   void hipo_read_node_float_(int *group, int *item, int *nread, float *buffer){

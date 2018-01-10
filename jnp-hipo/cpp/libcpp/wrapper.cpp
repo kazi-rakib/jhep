@@ -4,6 +4,7 @@
 
 hipo::reader hipo_FORT_Reader;
 hipo::record hipo_FORT_Record;
+hipo::record hipo_FORT_Record_Dictionary;
 hipo::event  hipo_FORT_Event;
 
 extern "C" {
@@ -12,11 +13,35 @@ extern "C" {
     char *buffer = (char *) malloc(length+1);
     memcpy(buffer,filename,length);
     buffer[length] = '\0';
-    printf("FORTRAN opening file : %s\n", buffer);
+    printf("[FORTRAN] opening file : %s\n", buffer);
     hipo_FORT_Reader.open(buffer);
     hipo_FORT_Reader.showInfo();
+    hipo_FORT_Reader.readHeaderRecord(hipo_FORT_Record_Dictionary);
+    int dictionary_event_count = hipo_FORT_Record_Dictionary.getEventCount();
+    printf("[FORTRAN] dictionary length %d\n",dictionary_event_count);
     *nrecords = hipo_FORT_Reader.getRecordCount();
     free(buffer);
+  }
+
+  void get_dict_length_(int *len){
+     *len = hipo_FORT_Record_Dictionary.getEventCount();
+  }
+
+  void read_schema_(int *order, int *max_char, int *str_Length, char *entry, int entryLength){
+      int i = *order;
+      hipo::event  schema;
+      hipo_FORT_Record_Dictionary.readHipoEvent(schema,i);
+      std::string schemaString = schema.getString(31111,1);
+      int length = schemaString.length();
+      //printf("schema %d (%d) : %s \n",i,length,schemaString.c_str());
+      for(int k = 0; k < length; k++){
+          entry[k] = schemaString[k];
+      }
+      int max = *max_char;
+      for(int j = length; j < max; j++){
+        entry[j] = ' ';
+      }
+      *str_Length = length;
   }
 
   void hipo_read_record_(int *record, int *n_events){

@@ -101,6 +101,9 @@ public class CliModuleManager {
         }
         return true;
     }
+    
+    
+    
     /**
      * if command was not found in the dictionary, prints out the statement.
      * @param command 

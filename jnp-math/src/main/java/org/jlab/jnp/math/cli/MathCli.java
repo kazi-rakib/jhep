@@ -8,6 +8,7 @@ package org.jlab.jnp.math.cli;
 import java.io.IOException;
 import org.jlab.jnp.cli.main.CliLogo;
 import org.jlab.jnp.cli.main.CliModuleManager;
+import org.jlab.jnp.readers.TextFileReader;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -23,16 +24,32 @@ import org.jline.terminal.TerminalBuilder;
  * @author gavalian
  */
 public class MathCli {
+    
+    
+    public static void executeScript(CliModuleManager mm,String script){
+        TextFileReader reader = new TextFileReader();
+        reader.open(script);
+        while(reader.readNext()==true){
+            String line = reader.getString();
+            System.out.println("EXECUTING : " + line);
+            mm.execute(line);
+
+        }
+    }
+    
      public static void main(String[] args) throws IOException {
         //ConsoleReader reader = new ConsoleReader();
         CliLogo.printLogo();
         
         CliModuleManager cliMain = new CliModuleManager();
-        cliMain.initModule("org.jlab.jhep.cli.test.SystemCommands");
-        cliMain.initModule("org.jlab.jhep.math.cli.MatrixCli");
+        cliMain.initModule("org.jlab.jnp.cli.test.SystemCommands");
+        cliMain.initModule("org.jlab.jnp.math.cli.MatrixCli");
+        cliMain.initModule("org.jlab.jnp.math.cli.NtupleCli");
+        cliMain.initModule("org.jlab.jnp.math.cli.HistogramCli");
+        cliMain.initModule("org.jlab.jnp.math.cli.CanvasCli");
         
-                System.out.println("\n");
-        String prompt = "jhep-cli> ";
+        System.out.println("\n");
+        String prompt = "\033[33mjhep-cli\033[0m> ";
             String rightPrompt = null;
         TerminalBuilder builder = TerminalBuilder.builder();
         StringsCompleter completer = cliMain.getCompleter();//new StringsCompleter("hist/read", "hist/plot", "hist/show");
@@ -63,7 +80,14 @@ public class MathCli {
                 
                 if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit") || 
                         line.equalsIgnoreCase("bye")) {
+                    
                     break;
+                }
+                
+                
+                if(line.startsWith("exec")==true){
+                    String[] tokens = line.split("\\s+");
+                    MathCli.executeScript(cliMain, tokens[1]);
                 }
                 
                 if(line.equalsIgnoreCase("help")==true){
@@ -81,5 +105,6 @@ public class MathCli {
                 //cliMain.printMessageUnrecognizedCommand(line);
         }
         System.out.println("\n Bye-bye...\n");
+        System.exit(0);
      }
 }

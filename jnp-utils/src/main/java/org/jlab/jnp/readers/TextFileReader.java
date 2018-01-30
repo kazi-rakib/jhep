@@ -86,6 +86,15 @@ public class TextFileReader {
         return true;
     }
     
+    public String getString(){
+        StringBuilder str = new StringBuilder();
+        for(int i =0; i < this.entryTokens.size(); i++){
+            if(i!=0) str.append(" ");
+            str.append(entryTokens.get(i));
+        }
+        return str.toString();
+    }
+    
     public short[]   getAsShortArray(){
         short[] array = new short[entryTokens.size()];
         for(int i =0; i < array.length; i++){

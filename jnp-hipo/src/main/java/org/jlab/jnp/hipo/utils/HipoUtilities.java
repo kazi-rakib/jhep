@@ -25,6 +25,33 @@ import org.jlab.jnp.utils.options.OptionStore;
  */
 public class HipoUtilities {
     
+    
+    public static void benchmarkProcess(String filename, int mode){
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int nevents  = reader.getEventCount();
+        int nbanksRead = 0;
+        
+        long start_time = System.currentTimeMillis();
+        for(int i = 0; i < nevents; i++){
+            HipoEvent event = reader.readEvent(i);
+            if(mode>0){
+                List<String> eventGroups = event.getGroupList();
+                for(String bank : eventGroups){
+                    HipoGroup group = event.getGroup(bank);
+                    nbanksRead++;
+                }
+            }
+        }
+        long end_time = System.currentTimeMillis();
+        
+        long duration = end_time - start_time;
+        int  processTime = (int) (( (double) duration)/1000.0 );
+        System.out.println("processed events -> " + nevents + "  time -> " + processTime + " sec");
+        System.out.println("processed banks  -> " + nbanksRead);
+        System.out.println(String.format("average time -> %d evt/sec",nevents/processTime));
+    }
+    
     public static void processRunInfo(String filename){
         
         System.out.println("----> debugging : " + filename);
@@ -199,6 +226,8 @@ public class HipoUtilities {
         parser.getOptionParser("-merge").addRequired("-o", "output file name");
         parser.getOptionParser("-merge").addOption("-c", "2","compression type");
 
+        parser.addCommand("-test", " run speed benchmark test");
+        parser.getOptionParser("-test").addOption("-m", "0","speed test mode (0 - read events, 1 - read all banks)");
         
         parser.addCommand("-dump", "dump the file on the screen");
         
@@ -236,6 +265,11 @@ public class HipoUtilities {
         if(parser.getCommand().compareTo("-dump")==0){
             List<String>  inputFiles = parser.getOptionParser("-dump").getInputList();
             HipoUtilities.dumpFile(inputFiles.get(0));
+        }
+        
+        if(parser.getCommand().compareTo("-test")==0){
+            List<String>  inputFiles = parser.getOptionParser("-test").getInputList();
+            HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
         }
         /*
         OptionParser parser = new OptionParser();

@@ -50,6 +50,98 @@ public class SIDISPhysicsObservables  {
             entry.getValue().getParameters().copyFrom(obs_par);
         }
     }
+    /**
+     * Observable class for function f1(x)
+     */
+    public class PhysicsObservable_f1x implements IPhysicsObservable {
+        
+        private final Parameters params = new Parameters("f1x");
+        
+        public PhysicsObservable_f1x(){
+            params.addParameter("c1", 3.0, 1.0, 5.0);
+            params.addParameter("c2", -1.313, -3.0, -1.0);
+        }
+        
+        @Override
+        public String getName() {
+            return "f1x";
+        }
+
+        @Override
+        public double getValue(Map<String, Double> ps) {
+            double x = ps.get("xb");
+            double result = Math.pow(1-x, params.getParameter("c1").getValue())*
+                    Math.pow(x, params.getParameter("c2").getValue());
+            return result;
+        }
+
+        @Override
+        public Parameters getParameters() {
+            return params;
+        }
+        
+    }
+    /**
+     * Observable class for function D1(z)
+     */
+    public class PhysicsObservable_D1z implements IPhysicsObservable {
+        
+        private final Parameters params = new Parameters("D1z");
+        
+        public PhysicsObservable_D1z(){
+            params.addParameter("c4", 0.8, 0.5, 1.0);
+            params.addParameter("c5", 2.0, 1.0, 3.0);
+        }
+        
+        @Override
+        public String getName() {
+            return "D1z";
+        }
+
+        @Override
+        public double getValue(Map<String, Double> ps) {
+            double z = ps.get("z");
+            double result = params.getParameter("c4").getValue()*
+                    Math.pow(1-z, params.getParameter("c5").getValue());
+            return result;
+        }
+
+        @Override
+        public Parameters getParameters() {
+            return params;
+        }
+        
+    }
+    
+    public class PhysicsObservable_k2t implements IPhysicsObservable {
+        
+        private final Parameters params = new Parameters("k2t");
+        
+        public PhysicsObservable_k2t(){
+            params.addParameter("c6", 0.8, 0.5, 1.0);
+            params.addParameter("c7", 2.0, 1.0, 3.0);
+            params.addParameter("c8", 2.0, 1.0, 3.0);
+        }
+        
+        @Override
+        public String getName() {
+            return "D1z";
+        }
+
+        @Override
+        public double getValue(Map<String, Double> ps) {
+            double z = ps.get("z");
+            double result = params.getParameter("c4").getValue()*
+                    Math.pow(1-z, params.getParameter("c5").getValue());
+            return result;
+        }
+
+        @Override
+        public Parameters getParameters() {
+            return params;
+        }
+        
+    }
     
     public class PhysicsObservableFUUT implements IPhysicsObservable {
         

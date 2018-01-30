@@ -84,6 +84,22 @@ public class ArrayUtils {
          return str.toString();
     }
     
+    public static float[] asFloats(double[] array){
+        float[] result = new float[array.length];
+        for(int i = 0; i < array.length; i++){
+            result[i] = (float) array[i];
+        }
+        return result;
+    }
+    
+    public static double[] asDoubles(float[] array){
+        double[] result = new double[array.length];
+        for(int i = 0; i < array.length; i++){
+            result[i] = array[i];
+        }
+        return result;
+    }
+    
     public static String getMapStringWithKey(Map<String,Double> map, String format, String separator){
          StringBuilder str = new StringBuilder();
          int i = 0;

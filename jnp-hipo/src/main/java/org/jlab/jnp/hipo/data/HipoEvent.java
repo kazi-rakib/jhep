@@ -33,7 +33,7 @@ public class HipoEvent {
     private SchemaFactory    eventSchemaFactory = new SchemaFactory();
     
     
-    private final Logger                log = LoggerFactory.getLogger(HipoEvent.class);
+    private static final Logger                log = LoggerFactory.getLogger(HipoEvent.class);
     
     public HipoEvent(){
         byte[] header = new byte[EVENT_HEADER_LENGTH];
@@ -247,7 +247,8 @@ public class HipoEvent {
             if(schema.getEntries()!=nodes.size()){
                 log.error("loading schema ["+schema.getName()+"] with entries = " + schema.getEntries() 
                         + ". Nodes read = " + nodes.size());
-                this.showNodes();
+// Modified by Gagik       
+//this.showNodes();
             }
             return new HipoGroup(nodes,schema);
         }
@@ -390,6 +391,17 @@ public class HipoEvent {
     }
     
     public SchemaFactory  getSchemaFactory(){ return this.eventSchemaFactory;}
+    
+    public List<String> getGroupList(){
+        List<String> groups = new ArrayList<String>();
+        for(Map.Entry<Integer,GroupNodeIndexList> entry : this.groupsIndex.entrySet()){
+            Schema               schema = this.getSchemaFactory().getSchema(entry.getKey());
+            if(schema!=null){
+                groups.add(schema.getName());
+            }
+        }
+        return groups;
+    }
     
     public List<HipoGroup>  getGroups(){
         List<HipoGroup> groups = new ArrayList<HipoGroup>();

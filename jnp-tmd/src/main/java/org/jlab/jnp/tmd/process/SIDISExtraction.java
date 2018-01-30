@@ -73,8 +73,8 @@ public class SIDISExtraction {
         for(int i = 0; i < 500; i++){
             generator.generateSample();
             Map<Integer,double[]> map = generator.getMap();
-            double[] result = extraction.result(map.get(1));
-            extraction.fill(result, map.get(2));
+            //double[] result = extraction.result(map.get(1));
+           // extraction.fill(result, map.get(2));
         }
     }
 }

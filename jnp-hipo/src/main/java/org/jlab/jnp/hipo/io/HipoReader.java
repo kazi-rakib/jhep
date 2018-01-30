@@ -28,6 +28,19 @@ public class HipoReader {
         //reader = new Reader();
     }
     
+    
+    public RecordInputStream getUserHeaderRecord(){
+        ByteBuffer userHeader = reader.readUserHeader();
+        RecordInputStream userRecord = new RecordInputStream();
+        try {
+            userRecord.readRecord(userHeader, 0);
+            return userRecord;
+        } catch (HipoException ex) {
+            Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     public void open(String filename){
         reader = new Reader(filename,true);
         //System.out.println(" HAS FIRST EVENT = " + reader.hasFirstEvent() + "  dictionary " + reader.hasDictionary());
@@ -51,8 +64,7 @@ public class HipoReader {
                         HipoNode    node = event.getNode(HipoWriter.SCHEMA_GROUP, HipoWriter.SCHEMA_ITEM);
                         //System.out.println(node.getString());
                         Schema schema = new Schema();
-                        schema.setFromText(node.getString());
-                        
+                        schema.setFromText(node.getString());                        
                         try {
                             schemaFactory.addSchema(schema);
                             //System.out.println(" found schema : " + schema.getName());

@@ -5,6 +5,9 @@
  */
 package org.jlab.jnp.tmd.process;
 
+import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.readers.TextFileReader;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.events.NeuralNetworkEvent;
@@ -31,12 +34,13 @@ public class SIDISTrainer {
     
     public void train(){
         MultiLayerPerceptron myMlPerceptron = new MultiLayerPerceptron(
-                TransferFunctionType.SIGMOID, 400, 20, 6);
+                TransferFunctionType.SIGMOID, 1000, 20, 6);
         //myMlPerceptron.getLearningRule().setMaxIterations(40);
         myMlPerceptron.getLearningRule().setLearningRate(0.2);
         myMlPerceptron.getLearningRule().setMaxError(0.0001);
         
         SIDISTrainer.iterationCounter = 0;
+
         myMlPerceptron.addListener(new NeuralNetworkEventListener(){
             @Override
             public void handleNeuralNetworkEvent(NeuralNetworkEvent nne) {
@@ -52,15 +56,36 @@ public class SIDISTrainer {
                 //System.out.println("event happened, type = " + nne.getEventType());                
             }
         });
+        System.out.println(" STARTING TRAINING ");
         myMlPerceptron.learn(trainingSet);
         double error = myMlPerceptron.getLearningRule().getErrorFunction().getTotalError();
         System.out.println("error = " + error);
         
-        myMlPerceptron.save("TMD_NN_20x20.nnet");
+        myMlPerceptron.save("TMD_NN_10x10x10.nnet");
+    }
+    public void createTrainingSet(String filename, int nInput, int nOutput){
+        trainingSet = new DataSet(nInput,nOutput);
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int counter = 0;
+        while(reader.hasNext()==true){
+            HipoEvent event = reader.readNextEvent();
+            HipoNode   nodeInput = event.getNode(200, 1);
+            HipoNode  nodeOutput = event.getNode(200, 2);
+            
+            double[]  tr_in = nodeInput.getDouble();
+            double[] tr_out = nodeOutput.getDouble();
+            trainingSet.addRow(tr_in, tr_out);
+            counter++;
+        }
+        System.out.println(" LOADED TRANING SAMPLES = " + counter);
     }
     
     public void createTrainingSet(String filename){
+
         trainingSet = new DataSet(400,6);
+        
+        
         TextFileReader reader = new TextFileReader();
         reader.setSeparator(",");
         reader.open(filename);
@@ -88,8 +113,9 @@ public class SIDISTrainer {
     }
     
     public static void main(String[] args){
+        String inputFile = args[0];
         SIDISTrainer trainer = new SIDISTrainer();
-        trainer.createTrainingSet("data_sample_10x10.txt");
+        trainer.createTrainingSet(inputFile,1000,6);
         trainer.train();
     }
 }

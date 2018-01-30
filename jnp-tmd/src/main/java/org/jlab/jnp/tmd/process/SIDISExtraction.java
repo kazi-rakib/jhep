@@ -10,7 +10,12 @@ import java.util.List;
 import java.util.Map;
 import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.ui.TCanvas;
+import org.jlab.jnp.hipo.data.HipoEvent;
+import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.physics.reaction.PhaseSpace;
+import org.jlab.jnp.readers.TextFileWriter;
+import org.jlab.jnp.utils.data.ArrayUtils;
 import org.neuroph.core.NeuralNetwork;
 
 /**
@@ -25,9 +30,32 @@ public class SIDISExtraction {
     private TCanvas    canvas  = null;
     
     public SIDISExtraction(){
-        loadedMlPerceptron = NeuralNetwork.createFromFile("etc/data/TMD_20x20.nnet");
+        loadedMlPerceptron = NeuralNetwork.createFromFile("TMD_NN_10x10x10.nnet");
     }
     
+    public void process(String filename){
+        TextFileWriter writer = new TextFileWriter();
+        writer.open("ntuple.data");
+        
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        for(int i = 0; i < reader.getEventCount(); i++){
+            HipoEvent event = reader.readEvent(i);
+            HipoNode  node  = event.getNode(200, 2);
+            HipoNode  nodeInput  = event.getNode(200, 1);
+            double[]  data  = node.getDouble();
+            double[] dataInput = nodeInput.getDouble();
+            String    dataString = ArrayUtils.getString(data, " ");
+            System.out.println(i + " " + dataString);
+            loadedMlPerceptron.setInput(dataInput);
+            loadedMlPerceptron.calculate();
+            double[] dataOutput = loadedMlPerceptron.getOutput();
+            String    outputString = ArrayUtils.getString(dataOutput, " ");
+            System.out.println(i + " " + outputString);
+            writer.writeString(dataString + " " + outputString);
+        }
+        writer.close();
+    }
     public double[] result(double[] inputData){
         loadedMlPerceptron.setInput(inputData);
         loadedMlPerceptron.calculate();
@@ -55,6 +83,10 @@ public class SIDISExtraction {
     }
     
     public static void main(String[] args){
+        
+        SIDISExtraction extraction = new SIDISExtraction();
+        extraction.process("sidis_training_set.hipo");
+        /*
         SIDISTrainingGenerator generator = new SIDISTrainingGenerator();
         PhaseSpace reactionPhaseSpace = new PhaseSpace();
         
@@ -75,6 +107,6 @@ public class SIDISExtraction {
             Map<Integer,double[]> map = generator.getMap();
             //double[] result = extraction.result(map.get(1));
            // extraction.fill(result, map.get(2));
-        }
+        }*/
     }
 }

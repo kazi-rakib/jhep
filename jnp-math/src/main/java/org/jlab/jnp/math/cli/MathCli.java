@@ -10,6 +10,7 @@ import org.jlab.jnp.cli.main.CliLogo;
 import org.jlab.jnp.cli.main.CliModuleManager;
 import org.jlab.jnp.readers.TextFileReader;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.Parser;
@@ -47,6 +48,7 @@ public class MathCli {
         cliMain.initModule("org.jlab.jnp.math.cli.NtupleCli");
         cliMain.initModule("org.jlab.jnp.math.cli.HistogramCli");
         cliMain.initModule("org.jlab.jnp.math.cli.CanvasCli");
+        cliMain.initModule("org.jlab.jnp.math.cli.VectorCli");
         
         System.out.println("\n");
         String prompt = "\033[33mjhep-cli\033[0m> ";

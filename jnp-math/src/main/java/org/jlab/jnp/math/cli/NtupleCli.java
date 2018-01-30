@@ -132,9 +132,7 @@ public class NtupleCli {
                DataStudio.getInstance().getCanvasStore().put("1", canvas);
            }
            DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(h2);
-        }
-        
-        
+        }                
     }
     
 }

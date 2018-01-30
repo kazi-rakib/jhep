@@ -5,7 +5,9 @@
  */
 package org.jlab.jnp.math.cli;
 
+import java.util.Map;
 import org.jlab.groot.data.H1F;
+import org.jlab.groot.data.IDataSet;
 import org.jlab.groot.studio.DataStudio;
 import org.jlab.groot.tree.TreeFile;
 import org.jlab.jnp.cli.base.CliCommand;
@@ -25,5 +27,20 @@ public class HistogramCli {
         H1F h1 = new H1F("H",bins,xmin,xmax);
         DataStudio.getInstance().getDataSetStore().put(id, h1);
     }
-        
+    @CliCommand(command="list", info="list histograms",
+            defaults={},
+            descriptions={})
+    public void list(){
+        Map<Integer,IDataSet> store = DataStudio.getInstance().getDataSetStore();
+        for(Map.Entry<Integer,IDataSet> entry : store.entrySet()){
+            System.out.println(String.format("%12s : SIZE = %8d", entry.getKey(),entry.getValue().getDataSize(0)));
+        }
+    }
+    @CliCommand(command="plot", info="plot histograms",
+            defaults={"10","!"},
+            descriptions={"histogram id","plot options"})
+    public void plot(int hid, String options){
+        IDataSet ds = DataStudio.getInstance().getDataSetStore().get(hid);
+        DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds, options);
+    }
 }

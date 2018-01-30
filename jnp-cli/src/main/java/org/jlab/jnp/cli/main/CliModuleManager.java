@@ -103,7 +103,11 @@ public class CliModuleManager {
     }
     
     
-    
+    public void help(String system){
+        if(this.commands.containsKey(system)==true){
+            commands.get(system).help();
+        }
+    }
     /**
      * if command was not found in the dictionary, prints out the statement.
      * @param command 

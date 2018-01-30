@@ -31,11 +31,16 @@ public class SIDISTrainer {
         
     }
     
+    public void check(){
+        
+    }
     
     public void train(){
         MultiLayerPerceptron myMlPerceptron = new MultiLayerPerceptron(
                 TransferFunctionType.SIGMOID, 1000, 20, 6);
-        //myMlPerceptron.getLearningRule().setMaxIterations(40);
+        
+        myMlPerceptron.getLearningRule().setMaxIterations(56000);
+        
         myMlPerceptron.getLearningRule().setLearningRate(0.2);
         myMlPerceptron.getLearningRule().setMaxError(0.0001);
         

@@ -30,7 +30,7 @@ public class SIDISExtraction {
     private TCanvas    canvas  = null;
     
     public SIDISExtraction(){
-        loadedMlPerceptron = NeuralNetwork.createFromFile("TMD_NN_10x10x10.nnet");
+        loadedMlPerceptron = NeuralNetwork.createFromFile("TMD_NN_10x10x10_iter_5600.nnet");
     }
     
     public void process(String filename){

@@ -24,6 +24,7 @@ public class SIDISTrainer {
     public static int iterationCounter = 0;
     public static int iterationCounterPrintout = 10000;
     public static long iterationTotalEvents = 0L;
+    private int        maxIterations = 5000;
     
     private DataSet trainingSet = null;
     
@@ -35,11 +36,15 @@ public class SIDISTrainer {
         
     }
     
+    public void setMaxIterations(int miter){
+        this.maxIterations = miter;
+    }
+    
     public void train(){
         MultiLayerPerceptron myMlPerceptron = new MultiLayerPerceptron(
-                TransferFunctionType.SIGMOID, 1000, 20, 6);
+                TransferFunctionType.SIGMOID, 1000, 100, 5);
         
-        myMlPerceptron.getLearningRule().setMaxIterations(56000);
+        myMlPerceptron.getLearningRule().setMaxIterations(this.maxIterations);
         
         myMlPerceptron.getLearningRule().setLearningRate(0.2);
         myMlPerceptron.getLearningRule().setMaxError(0.0001);
@@ -119,8 +124,11 @@ public class SIDISTrainer {
     
     public static void main(String[] args){
         String inputFile = args[0];
+        Integer maxIterations  = Integer.parseInt(args[1]);
+        
         SIDISTrainer trainer = new SIDISTrainer();
-        trainer.createTrainingSet(inputFile,1000,6);
+        trainer.setMaxIterations(maxIterations);
+        trainer.createTrainingSet(inputFile,1000,5);
         trainer.train();
     }
 }

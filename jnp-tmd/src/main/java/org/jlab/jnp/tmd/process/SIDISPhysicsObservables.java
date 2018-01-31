@@ -161,7 +161,7 @@ public class SIDISPhysicsObservables  {
             params.addParameter("av_pt2", 0.16, 0.05, 0.4);
             params.addParameter("c_mx_power", 3.00, 2.0, 5.0);
             params.addParameter("c_x_power", -1.313, -2.0, -1.0);
-            params.addParameter("c_z_const", 0.8, 0.5, 1.0);
+            //params.addParameter("c_z_const", 0.8, 0.5, 1.0);
             params.addParameter("mz_power", 2.0,1.0,4.0);
         }
         
@@ -176,7 +176,9 @@ public class SIDISPhysicsObservables  {
             
             double f1x = Math.pow((1.0-x), params.getParameter("c_mx_power").getValue())*
                     Math.pow(x,params.getParameter("c_x_power").getValue());
-            double d1z = params.getParameter("c_z_const").getValue()*
+            //double d1z = params.getParameter("c_z_const").getValue()*
+            //        Math.pow(1-z, params.getParameter("mz_power").getValue());
+            double d1z = 0.8*
                     Math.pow(1-z, params.getParameter("mz_power").getValue());
             double av_pth = z*z*params.getParameter("av_kt").getValue() + 
                     params.getParameter("av_pt2").getValue();

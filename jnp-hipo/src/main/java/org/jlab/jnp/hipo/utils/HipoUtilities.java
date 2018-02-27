@@ -164,7 +164,7 @@ public class HipoUtilities {
         SchemaFactory   inputFactory = reader.getSchemaFactory();
         SchemaFactory  outputFactory = filter.getSchemaFactory(inputFactory);
         
-        writer.appendSchemaFactory(inputFactory);
+        writer.appendSchemaFactory(outputFactory);
         
         writer.open(outputFile);
         reader.close();

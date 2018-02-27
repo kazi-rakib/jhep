@@ -5,6 +5,11 @@
  */
 package org.jlab.jnp.cli.main;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jlab.jnp.cli.base.CliClass;
+import org.jline.reader.History;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 /**
@@ -22,11 +28,45 @@ public class CliModuleManager {
     
     List<String> completerCommands = new ArrayList<String>();
     Map<String,CliClass>  commands = new LinkedHashMap<String,CliClass>();
+    List<String>          history  = new ArrayList<String>();
+    
     
     public CliModuleManager(){
         
     }
     
+    public String historyFile(){
+        String homeDir = System.getenv("HOME");
+        StringBuilder str = new StringBuilder();
+        str.append(homeDir).append("/").append(".jnp_history");
+        return str.toString();
+    }
+    
+    /*public History getHistory(){
+        History h = new History();
+        
+    }*/
+    public void loadHistory(){
+        String historyFile = historyFile();
+        File f = new File(historyFile);
+        if(f.exists()==false){
+            System.out.println("[CLI] history file does not exist : " + historyFile);
+        } else {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(historyFile));
+                String line = br.readLine();
+
+                while(line!=null){
+                    this.history.add(line);
+                    line = br.readLine();
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(CliModuleManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(CliModuleManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     /**
      * Initializes the module with given class name.
      * @param clazz_name 

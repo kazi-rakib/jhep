@@ -5,6 +5,7 @@
  */
 package org.jlab.jnp.tmd.process;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.jlab.groot.data.H1F;
@@ -15,6 +16,8 @@ import org.jlab.jnp.foam.MCFoam;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoNode;
 import org.jlab.jnp.hipo.io.HipoWriter;
+import org.jlab.jnp.hipo.task.HipoRunnable;
+import org.jlab.jnp.hipo.task.HipoTaskProcess;
 import org.jlab.jnp.math.data.Parameters;
 import org.jlab.jnp.physics.reaction.PhaseSpace;
 import org.jlab.jnp.readers.TextFileWriter;
@@ -24,7 +27,7 @@ import org.jlab.jnp.utils.data.ArrayUtils;
  *
  * @author gavalian
  */
-public class SIDISTrainingGenerator {
+public class SIDISTrainingGenerator extends HipoRunnable {
     
     private SIDISReactionWeight cross = new SIDISReactionWeight();
     private PhaseSpace reactionSpace = new PhaseSpace();
@@ -129,6 +132,15 @@ public class SIDISTrainingGenerator {
         return this.trainingData;
     }
     
+    @Override
+    public void processEvent(HipoEvent event) {
+        this.generateSample();
+        event.reset();
+        HipoNode  nodeInput = new HipoNode(200,1,this.trainingData.get(1));
+        HipoNode nodeOutput = new HipoNode(200,2,this.trainingData.get(2));
+        event.addNodes(Arrays.asList(nodeInput,nodeOutput));
+    }
+    
     public static void main(String[] args){
         
         SIDISTrainingGenerator generator = new SIDISTrainingGenerator();
@@ -141,14 +153,21 @@ public class SIDISTrainingGenerator {
         reactionPhaseSpace.add("pt", 0.0,3.0);
         reactionPhaseSpace.add("phi", -Math.PI,Math.PI);
         
-        generator.setPhaseSpace(reactionPhaseSpace);
-        generator.setNumberOfEvents(200000);
+        HipoTaskProcess task = new HipoTaskProcess("test_4.hipo");
+        for(int i = 0; i < 8; i++){
+            SIDISTrainingGenerator generatorThread = new SIDISTrainingGenerator();
+            generatorThread.setPhaseSpace(reactionPhaseSpace);
+            generatorThread.setNumberOfEvents(200000);
+            task.addThread(generatorThread);
+        }
         
+        task.run(16);
         /*for(int i = 0; i < 5; i ++){
             generator.generateSample();
         }*/
         //generator.generateSample();
-        generator.generateSamples(2000);
+        //generator.generateSamples(2000);
+        
         
     }
 }

@@ -15,10 +15,12 @@ import java.util.List;
  * @author gavalian
  */
 public class EventSelector {
+    
     private final ArrayList<ParticleSelector>  pSelectors = new ArrayList<ParticleSelector>();
     private String  selectorFormat = "";
     private final String  openBracket     = "[";
     private final String  closeBracket    = "]";
+    private String particleProperty       = "mass2";
     
     public EventSelector(){
         
@@ -52,6 +54,11 @@ public class EventSelector {
         }*/
     }
     
+    
+    public void setProperty(String prop){
+        this.particleProperty = prop;
+    }
+    
     public String getFormat(){
         return selectorFormat;
     }
@@ -70,6 +77,11 @@ public class EventSelector {
         } catch (ParticleNotFoundException e){
             return new Particle();
         }
+    }
+    
+    public double getValue(PhysicsEvent event){
+        Particle p = get(event);
+        return p.get(this.particleProperty);
     }
     
     public List getParticleList(PhysicsEvent event) throws ParticleNotFoundException{

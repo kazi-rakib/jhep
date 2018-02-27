@@ -74,18 +74,38 @@ public class CliCommandDescriptor {
     }
     
     public Object[] getInputs(String commandString){
+        //System.out.println("[DEBUG] String passed = [" + commandString + "]");
         String[] tokens = commandString.split("\\s+");
         Object[] objArray = new Object[converters.size()];
-        List<String> arguments = Arrays.asList(tokens);
+        //System.out.println("[DEBUG] Tokens Length = [" + tokens.length + "]");
+//        List<String> arguments = Arrays.asList(tokens);
         //arguments.remove(0);
+        List<String> arguments = new ArrayList<String>();
+        if(tokens.length==1&&tokens[0].length()<1){
+            
+        } else {
+            for(int i = 0; i < tokens.length; i++) arguments.add(tokens[i]);
+        }
         
         while(arguments.size()<this.converters.size()){
             arguments.add("!");
         }
+                
         for(int i = 0; i < objArray.length;i++){
             objArray[i] = converters.get(i).valueOf(arguments.get(i));
         }
+                
         return objArray;
+    }
+    
+    
+    public String getExcutionString(Object[] array){
+       StringBuilder str = new StringBuilder();
+       for(int i = 0; i < array.length; i++){
+           if(i!=0) str.append(" ");
+           str.append(array[i]);
+       }
+       return str.toString();
     }
     
     public void execute(Object clazz, String line){
@@ -103,5 +123,19 @@ public class CliCommandDescriptor {
         StringBuilder  str = new StringBuilder();
         
         return str.toString();
+    }
+    
+    public static void main(String[] args){
+        CliCommandDescriptor desc = new CliCommandDescriptor("math","add");
+        desc.addIntConverter(10);
+        desc.addIntConverter(560);
+        //desc.addStringConverter("!");
+        
+        Object[] array = desc.getInputs(" ");
+        System.out.println("LENGTH = " + array.length);
+        
+        for(int i = 0; i < array.length; i++){
+            System.out.println( i + " : " + array[i]);
+        }
     }
 }

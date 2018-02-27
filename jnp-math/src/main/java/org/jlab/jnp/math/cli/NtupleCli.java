@@ -51,6 +51,30 @@ public class NtupleCli {
         System.out.println("SCAN COMPLETE");
     }
     
+    @CliCommand(command="vector", info="read ntuple column into a vector",
+            defaults={"!","!","!"},
+            descriptions={"ntuple id with variable name","cut on variables", "vector name"})
+    public void vector(String ntid, String treeCut, String vecname){
+        
+        if(vecname.compareTo("!")==0){
+            System.out.println(" **** NTUPLE/VECTOR : error. must provide vector name.");
+            return;
+        }
+        int index = ntid.indexOf(".");
+        String   idString = ntid.substring(0, index);
+        String expression = ntid.substring(index+1, ntid.length());
+        System.out.println(" PLOTTING : " + idString + "  with " + expression);
+        String cutString = treeCut;
+        if(treeCut.compareTo("!")==0){
+            cutString = "";
+        }
+        DataVector vec = DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).getDataVector(expression, cutString);
+         System.out.println(" *** VECTOR/READ : adding a vector " + vecname + " with size " 
+                    + vec.getSize());
+            DataStudio.getInstance().getVectorStore().put(vecname, vec);
+        
+    }
+    
     @CliCommand(command="read", info="read text file into an ntuple",
             defaults={"!","!","!"},
             descriptions={"ntuple format (i.e x:y:z )","text file name", "output file name"})
@@ -76,9 +100,10 @@ public class NtupleCli {
     }
     
     @CliCommand(command="plot", info="plot Variable from the ntuple",
-            defaults={"10.x","!"},
-            descriptions={"ntuple ID with the variable name","cut to be applied to the leafs"})
-    public void plot(String id_withVariable, String treeCut){
+            defaults={"10.x","!","-1"},
+            descriptions={"ntuple ID with the variable name","cut to be applied to the leafs",
+            "number of events to run through"})
+    public void plot(String id_withVariable, String treeCut, Integer limit){
         int index = id_withVariable.indexOf(".");
         String   idString = id_withVariable.substring(0, index);
         String expression = id_withVariable.substring(index+1, id_withVariable.length());
@@ -90,7 +115,7 @@ public class NtupleCli {
         
         Integer ntID = Integer.parseInt(idString);
         if(expression.contains("%")==false){
-           DataVector vec = DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).getDataVector(expression, cutString);
+           DataVector vec = DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).getDataVector(expression, cutString,limit);
            H1F h1 = H1F.create("H1", 100, vec);
            h1.setTitle(expression +" (" + cutString + ")");
            if(DataStudio.getInstance().getCanvasStore().isEmpty()==true){
@@ -102,7 +127,7 @@ public class NtupleCli {
             String data = expression.replace("%", ":");
             System.out.println(" PLOTTING DATA : " + data + " CUT : " + cutString);
 
-            DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).scanTree(data, cutString, -1, true);
+            DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).scanTree(data, cutString, limit, true);
             List<DataVector>  vectors = 
                     DataStudio.getInstance().getNtupleStore().get(Integer.parseInt(idString)).getScanResults();
             

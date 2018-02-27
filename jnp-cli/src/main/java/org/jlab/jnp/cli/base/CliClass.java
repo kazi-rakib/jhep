@@ -122,6 +122,10 @@ public class CliClass {
         
         Object[] array   = desc.getInputs(arguments);
         Class[]  args    = desc.getMethodInputs();
+        
+        String argumentLine = desc.getExcutionString(array);
+        System.out.println("EXECUTE : " + argumentLine);
+        System.out.println(" OBJECTS = " + array.length);
         //System.out.println(" LENGTH = " + args.length);
         try {
             Method method = this.cliClazz.getClass().getDeclaredMethod(command, args);

@@ -43,12 +43,15 @@ public class MathCli {
         CliLogo.printLogo();
         
         CliModuleManager cliMain = new CliModuleManager();
+        //FileHistory history = new FileHistory();
+        
         cliMain.initModule("org.jlab.jnp.cli.test.SystemCommands");
         cliMain.initModule("org.jlab.jnp.math.cli.MatrixCli");
         cliMain.initModule("org.jlab.jnp.math.cli.NtupleCli");
         cliMain.initModule("org.jlab.jnp.math.cli.HistogramCli");
         cliMain.initModule("org.jlab.jnp.math.cli.CanvasCli");
         cliMain.initModule("org.jlab.jnp.math.cli.VectorCli");
+        cliMain.initModule("org.jlab.jnp.math.cli.ReactionCli");
         
         System.out.println("\n");
         String prompt = "\033[33mjhep-cli\033[0m> ";
@@ -64,6 +67,7 @@ public class MathCli {
                     .parser(parser)
                     .build();
         
+        reader.setVariable(LineReader.HISTORY_FILE, cliMain.historyFile());
         while (true) {
             
                 String line = null;

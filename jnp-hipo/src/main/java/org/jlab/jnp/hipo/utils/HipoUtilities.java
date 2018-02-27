@@ -193,6 +193,37 @@ public class HipoUtilities {
         }
     }
     
+    public static void splitFile(String inputFile, String outputFile, Integer maxEvents){
+        HipoReader reader = new HipoReader();
+        reader.open(inputFile);
+        SchemaFactory   inputFactory = reader.getSchemaFactory();
+        
+        Integer    nFile = 0;
+        Integer iCounter = 0;
+        String outFile = outputFile + "." + nFile.toString();
+        HipoWriter writer = new HipoWriter();
+        writer.setCompressionType(2);
+        writer.appendSchemaFactory(inputFactory);
+        writer.open(outFile);
+        while(reader.hasNext()){
+            HipoEvent event = reader.readNextEvent();
+            writer.writeEvent(event);
+            iCounter++;
+            if(iCounter>=maxEvents){
+                writer.close();
+                nFile++;
+                iCounter = 0;
+                outFile = outputFile + "." + nFile.toString();
+                writer = new HipoWriter();
+                writer.setCompressionType(2);
+                writer.appendSchemaFactory(inputFactory);
+                writer.open(outFile);
+                System.out.println("[SPLIT] ---> opened file : " + outFile);
+            }
+        }
+        writer.close();
+    }
+    
     public static void printFileInfo(String filename){
         HipoReader reader = new HipoReader();
         reader.open(filename);
@@ -231,7 +262,20 @@ public class HipoUtilities {
         
         parser.addCommand("-dump", "dump the file on the screen");
         
+        parser.addCommand("-split", "split the file to smaller chanks");
+        parser.getOptionParser("-split").addRequired("-n", "number of events in the file");
+        parser.getOptionParser("-split").addRequired("-i", "input file name");
+        parser.getOptionParser("-split").addRequired("-o", "output file pattern");
+        
         parser.parse(args);
+        
+        
+        if(parser.getCommand().compareTo("-split")==0){
+            String  outputF = parser.getOptionParser("-split").getOption("-o").stringValue();
+            String  inputF  = parser.getOptionParser("-split").getOption("-i").stringValue();
+            Integer nEvents = parser.getOptionParser("-split").getOption("-n").intValue();
+            HipoUtilities.splitFile(inputF, outputF, nEvents);
+        }
         
         if(parser.getCommand().compareTo("-filter")==0){
             

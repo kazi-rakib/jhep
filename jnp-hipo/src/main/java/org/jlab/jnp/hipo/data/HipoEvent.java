@@ -31,7 +31,7 @@ public class HipoEvent {
     //List<HipoNodeIndex>   eventIndex = new ArrayList<HipoNodeIndex>();    
     Map<Integer,GroupNodeIndexList>  groupsIndex = new HashMap<Integer,GroupNodeIndexList>();
     private SchemaFactory    eventSchemaFactory = new SchemaFactory();
-    
+    private Map<Integer,Integer> nodesMap = new HashMap<Integer,Integer>();
     
     private static final Logger                log = LoggerFactory.getLogger(HipoEvent.class);
     
@@ -166,6 +166,8 @@ public class HipoEvent {
         
         //eventIndex.clear();
         this.groupsIndex.clear();
+        //nodesMap.clear();
+        
         int counter = 0;
         try {
             while((position+NODE_HEADER_LENGTH)<=capacity){
@@ -179,6 +181,9 @@ public class HipoEvent {
                 NodeIndexList  idx = new NodeIndexList(item,position,size);            
                 idx.setType(type);
                 Integer groupInt = (int) group;            
+                Integer offset   = position;
+                
+                //nodesMap.put(groupInt, offset);
                 
                 if(this.groupsIndex.containsKey(groupInt)==false){
                     //System.out.println("--> adding group " + groupInt);
@@ -186,6 +191,7 @@ public class HipoEvent {
                 }
                 
                 this.groupsIndex.get(groupInt).addNodeIndex(idx);
+                
                 //HipoNodeIndex index = new HipoNodeIndex();
                 //index.nodeGroup  = group;
                 //index.nodeItem   = item;

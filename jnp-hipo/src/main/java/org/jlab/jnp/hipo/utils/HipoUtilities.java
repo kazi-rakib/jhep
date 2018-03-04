@@ -46,10 +46,10 @@ public class HipoUtilities {
         long end_time = System.currentTimeMillis();
         
         long duration = end_time - start_time;
-        int  processTime = (int) (( (double) duration)/1000.0 );
-        System.out.println("processed events -> " + nevents + "  time -> " + processTime + " sec");
+        double  processTime =  (( (double) duration)/1000.0 );
+        System.out.println("processed events -> " + nevents + "  time -> " + String.format("%.2f", processTime) + " sec");
         System.out.println("processed banks  -> " + nbanksRead);
-        System.out.println(String.format("average time -> %d evt/sec",nevents/processTime));
+        System.out.println(String.format("average time -> %f evt/sec",nevents/processTime));
     }
     
     public static void processRunInfo(String filename){
@@ -154,10 +154,10 @@ public class HipoUtilities {
         writer.close();*/
     }
     
-    public static void filterFile(String outputFile, List<String> inputFiles, HipoEventFilter filter){
+    public static void filterFile(String outputFile, List<String> inputFiles, HipoEventFilter filter, int compression){
         
         HipoWriter writer = new HipoWriter();
-        writer.setCompressionType(2);
+        writer.setCompressionType(compression);
         
         HipoReader reader = new HipoReader();
         reader.open(inputFiles.get(0));
@@ -249,6 +249,7 @@ public class HipoUtilities {
         parser.getOptionParser("-filter").addRequired("-o", "output file name");
         parser.getOptionParser("-filter").addRequired("-e", "list of banks that should exist for event to be valid (i.e. 1234:7656:45)");
         parser.getOptionParser("-filter").addRequired("-l", "list of banks to write out (i.e. 11234:2345:65)");
+        parser.getOptionParser("-filter").addOption("-c", "2","compression type");
         
         parser.addCommand("-info", "print information about the file");
         parser.addCommand("-stats", "print statistics about the file");
@@ -283,11 +284,11 @@ public class HipoUtilities {
             List<Integer>    exBanks = parser.getOptionParser("-filter").getOption("-e").intArrayValue();
             List<Integer>   outBanks = parser.getOptionParser("-filter").getOption("-l").intArrayValue();
             List<String>  inputFiles = parser.getOptionParser("-filter").getInputList();
-            
+            Integer      compression = parser.getOptionParser("-filter").getOption("-c").intValue();
             HipoEventFilter   filter = new HipoEventFilter();
             filter.addRequired( exBanks );
             filter.addOutput(  outBanks );
-            HipoUtilities.filterFile(output, inputFiles, filter);
+            HipoUtilities.filterFile(output, inputFiles, filter,compression);
         }
         if(parser.getCommand().compareTo("-info")==0){
              List<String>  inputFiles = parser.getOptionParser("-info").getInputList();

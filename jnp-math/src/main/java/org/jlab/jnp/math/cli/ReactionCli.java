@@ -5,6 +5,8 @@
  */
 package org.jlab.jnp.math.cli;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,9 +27,25 @@ import org.jlab.jnp.detector.EventSelectors;
  */
 @CliSystem(system="reaction",info="Physics Reaction Utilities")
 public class ReactionCli {
+    
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintStream printStream = null;// new PrintStream(baos);
+    PrintStream printStreamOut = null;
+    
     private Map<Integer,EventSelectors> reactionSelectors = new HashMap<Integer,EventSelectors>();
     
+    public ReactionCli(){
+        printStream = new PrintStream(baos);
+        printStreamOut = System.out;
+    }
     
+    private void redirectOutput(){
+        System.setOut(this.printStream);
+    }
+    
+    private void restoreOutput(){
+        System.setOut(this.printStreamOut);
+    }
     @CliCommand(command="create", info="create a reaction",
             defaults={"10","11:X+:X-:Xn","6.4"},
             descriptions={"reaction ID","event filter","beam energy"})
@@ -41,8 +59,11 @@ public class ReactionCli {
     @CliCommand(command="file", info="set file for the reaction",
             defaults={"10","input.hipo"},
             descriptions={"reaction ID","file name"})
-    public void file(int id, String filename){        
+    public void file(int id, String filename){
+        this.redirectOutput();
         this.reactionSelectors.get(id).setFile(filename);
+        this.restoreOutput();
+        System.out.println(" ***** REACTION/FILE opened file : " + filename);
     }
     
     @CliCommand(command="particle", info="set file for the reaction",
@@ -73,6 +94,13 @@ public class ReactionCli {
                 "limit on number of events","number of bins"}
     )    
     public void plot(String idString, String cut, int limit, int nbins){
+        
+        
+        this.redirectOutput();
+        if(DataStudio.getInstance().getCanvasStore().containsKey("1")==false){
+            TCanvas canvas = new TCanvas("c1",500,500);
+               DataStudio.getInstance().getCanvasStore().put("1", canvas);
+        }
         
         List<String> dataArgs = this.decouple(idString);
         
@@ -114,6 +142,7 @@ public class ReactionCli {
                DataStudio.getInstance().getCanvasStore().put("1", canvas);
            }
            DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(h2);
+           this.restoreOutput();
         }
         
     }

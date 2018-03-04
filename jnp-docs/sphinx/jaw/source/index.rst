@@ -16,9 +16,10 @@ Command Line Interface
 .. toctree::
    :maxdepth: 1
 
+   chapters/getting_started
    chapters/vector_utils
    chapters/ntuple_utils
-
+   chapters/reaction_utils
 
 Indices and tables
 ==================

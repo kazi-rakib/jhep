@@ -14,4 +14,4 @@ MALLOC_ARENA_MAX=1; export MALLOC_ARENA_MAX
 # memory
 #---------------------------------------------------------
 JAVA_OPTIONS="-Xmx1024m -Xms1024m"
-java $JAVA_OPTIONS -cp "$SCRIPT_DIR/target/jnp-math-1.0-SNAPSHOT-jar-with-dependencies.jar" org.jlab.jnp.math.cli.MathCli $*
+java $JAVA_OPTIONS -cp "$SCRIPT_DIR/lib/jaw-0.8.jar" org.jlab.jnp.math.cli.MathCli $*

@@ -36,11 +36,13 @@ public class HistogramCli {
             System.out.println(String.format("%12s : SIZE = %8d", entry.getKey(),entry.getValue().getDataSize(0)));
         }
     }
+    
     @CliCommand(command="plot", info="plot histograms",
             defaults={"10","!"},
             descriptions={"histogram id","plot options"})
     public void plot(int hid, String options){
         IDataSet ds = DataStudio.getInstance().getDataSetStore().get(hid);
-        DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds, options);
+        //DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds, options);
+        DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds);
     }
 }

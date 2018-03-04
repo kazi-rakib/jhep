@@ -6,6 +6,8 @@
 package org.jlab.jnp.math.cli;
 
 import java.io.IOException;
+import org.jlab.groot.studio.DataStudio;
+import org.jlab.groot.ui.TCanvas;
 import org.jlab.jnp.cli.main.CliLogo;
 import org.jlab.jnp.cli.main.CliModuleManager;
 import org.jlab.jnp.readers.TextFileReader;
@@ -32,7 +34,7 @@ public class MathCli {
         reader.open(script);
         while(reader.readNext()==true){
             String line = reader.getString();
-            System.out.println("EXECUTING : " + line);
+            //System.out.println("EXECUTING : " + line);
             mm.execute(line);
 
         }
@@ -41,6 +43,10 @@ public class MathCli {
      public static void main(String[] args) throws IOException {
         //ConsoleReader reader = new ConsoleReader();
         CliLogo.printLogo();
+        
+        TCanvas canvas = new TCanvas("c1",500,500);
+        DataStudio.getInstance().getCanvasStore().put("1", canvas);
+        
         
         CliModuleManager cliMain = new CliModuleManager();
         //FileHistory history = new FileHistory();
@@ -54,7 +60,7 @@ public class MathCli {
         cliMain.initModule("org.jlab.jnp.math.cli.ReactionCli");
         
         System.out.println("\n");
-        String prompt = "\033[33mjhep-cli\033[0m> ";
+        String prompt = "\033[33mjaw\033[0m> ";
             String rightPrompt = null;
         TerminalBuilder builder = TerminalBuilder.builder();
         StringsCompleter completer = cliMain.getCompleter();//new StringsCompleter("hist/read", "hist/plot", "hist/show");
@@ -68,6 +74,8 @@ public class MathCli {
                     .build();
         
         reader.setVariable(LineReader.HISTORY_FILE, cliMain.historyFile());
+        
+        
         while (true) {
             
                 String line = null;
@@ -106,6 +114,7 @@ public class MathCli {
                         //cliMain.printSystemHelp(tokens[1]);
                     }
                 }
+                
                 cliMain.execute(line);
                 //System.out.println(line);
                 //cliMain.printMessageUnrecognizedCommand(line);

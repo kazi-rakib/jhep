@@ -17,6 +17,20 @@ the command below.
    prompt> cd jaw-0.8
    prompt> ./jaw.sh
 
-Once 
+Once distribution is downloaded a sample data file from CLAS12 2.2 GeV run
+can be obtained:
+
+.. code-block:: bash
+
+   prompt> wget http://userweb.jlab.org/~gavalian/software/clasrun_2475.hipo.2
+
+With the file downloaded, user can run examples provided in the package.
+
+.. code-block:: bash
+
+   prompt>./jaw.sh
+   jaw> exec examples/analysis.kumac
+
+
    
 

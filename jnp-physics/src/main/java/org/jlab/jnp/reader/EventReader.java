@@ -10,9 +10,12 @@ import java.util.Objects;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.data.HipoNodeType;
 import org.jlab.jnp.hipo.io.HipoReader;
+import org.jlab.jnp.pdg.PDGDatabase;
 import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.physics.Particle;
+import org.jlab.jnp.physics.ParticleList;
 import org.jlab.jnp.physics.PhysicsEvent;
 import org.jlab.jnp.physics.map.BaseMapProducer;
 import org.jlab.jnp.processes.SIDIS;
@@ -126,6 +129,55 @@ public class EventReader {
         }
         return true;
     }
+    
+    
+    public static PhysicsEvent  createPhysicsEvent(ParticleList list){
+        int count = list.count();
+        PhysicsEvent event = new PhysicsEvent();
+        for(int i = 0; i < count; i++) event.addParticle(list.get(i));
+        return event;
+    }
+    
+    public static ParticleList readParticleList(HipoEvent event, String bankname){
+        ParticleList plist = new ParticleList();
+        if(event.hasGroup(bankname)==true){
+            HipoGroup group = event.getGroup(bankname);
+            int nrows = group.getMaxSize();
+            for(int i = 0; i < nrows; i++){
+                int   pid = 0;
+                if(group.getNode("pid").getType()==HipoNodeType.INT){
+                    pid = group.getNode("pid").getInt(i);
+                }
+                if(group.getNode("pid").getType()==HipoNodeType.SHORT){
+                    pid = group.getNode("pid").getShort(i);
+                }
+                
+                if(PDGDatabase.hasParticleById(pid)==true){
+                    Particle part = new Particle(pid,
+                            group.getNode("px").getFloat(i),
+                            group.getNode("py").getFloat(i),
+                            group.getNode("pz").getFloat(i),
+                            group.getNode("vx").getFloat(i),
+                            group.getNode("vy").getFloat(i),
+                            group.getNode("vz").getFloat(i)
+                    );
+                    plist.add(part);
+                } else {
+                    Particle part = new Particle();
+                    part.initParticleWithMass(0.135, 
+                            group.getNode("px").getFloat(i),
+                            group.getNode("py").getFloat(i),
+                            group.getNode("pz").getFloat(i),
+                            group.getNode("vx").getFloat(i),
+                            group.getNode("vy").getFloat(i),
+                            group.getNode("vz").getFloat(i));
+                    plist.add(part);
+                }                
+            }
+        }
+        return plist;
+    }
+    
     
     public static void main(String[] args){
         

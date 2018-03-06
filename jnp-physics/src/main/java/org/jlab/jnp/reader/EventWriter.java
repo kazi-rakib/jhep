@@ -54,13 +54,22 @@ public class EventWriter {
     
     public void writeEvent(PhysicsEvent event, PhysicsEvent mcevent){
         hipoEvent.reset();
+        boolean writingEvent = false;
         if(mcevent!=null){
             if(mcevent.getParticleList().count()>0){
                 appendMcEvent(mcevent);
+                writingEvent = true;
             }
         }
         
+        if(event!=null){
+            if(event.getParticleList().count()>0){
+                appendDataEvent(event);
+                writingEvent = true;
+            }
+        }
         
+        if(writingEvent==true) write();
     }
     
     public void appendMcEvent(PhysicsEvent event){

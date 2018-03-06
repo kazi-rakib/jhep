@@ -52,6 +52,17 @@ public class EventWriter {
         
     }
     
+    public void writeEvent(PhysicsEvent event, PhysicsEvent mcevent){
+        hipoEvent.reset();
+        if(mcevent!=null){
+            if(mcevent.getParticleList().count()>0){
+                appendMcEvent(mcevent);
+            }
+        }
+        
+        
+    }
+    
     public void appendMcEvent(PhysicsEvent event){
         SchemaFactory factory = hipoEvent.getSchemaFactory();
         if(factory.hasSchema("mc::event")==true){

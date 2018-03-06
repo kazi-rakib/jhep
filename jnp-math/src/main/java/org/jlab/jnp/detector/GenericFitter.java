@@ -17,7 +17,8 @@ import org.jlab.jnp.physics.PhysicsEvent;
  */
 public class GenericFitter {
     private double energy = 11.0;
-    private String stringParticleBank = "REC::Particle";
+    private String  stringParticleBank = "REC::Particle";
+    private String stringGeneratedBank = "MC::Particle";
     
     public GenericFitter(){
         
@@ -35,15 +36,22 @@ public class GenericFitter {
                 Float.isNaN(group.getNode("pz").getFloat(row))) return false;
         return true;
     }
+    
     public void readEvent(HipoEvent event, PhysicsEvent physEvent){
+        
         physEvent.clear();
+        physEvent.getGeneratedParticleList().clear();
+        
         physEvent.setBeamParticle(new Particle(11,0.0,0.0,energy));
         physEvent.setTargetParticle(new Particle(2212,0.0,0.0,0.0));
         
         if(event.hasGroup(this.stringParticleBank)==true){
+            
+            //System.out.println(" BANK EXISTS ");
             HipoGroup group = event.getGroup(this.stringParticleBank);
 
             int rows = group.getMaxSize();
+            //System.out.println(" ROWS = " + rows);
             for(int i = 0; i < rows; i++){
                 if(checkVectors(group,i)==true){
                     Particle p = new Particle();
@@ -69,6 +77,30 @@ public class GenericFitter {
                 physEvent.addParticle(p);
                 }
             }
+            
         }
+        
+        if(event.hasGroup(stringGeneratedBank)==true){
+            HipoGroup group = event.getGroup(stringGeneratedBank);
+            int nrows = group.getMaxSize();
+
+            for(int i = 0; i < nrows; i++){
+                Particle p = new Particle();
+                int pid = group.getNode("pid").getInt(i);
+                if(PDGDatabase.hasParticleById(pid)==true){
+                    p.initParticle(pid, 
+                            group.getNode("px").getFloat(i),
+                            group.getNode("py").getFloat(i),
+                            group.getNode("pz").getFloat(i),
+                            group.getNode("vx").getFloat(i),
+                            group.getNode("vy").getFloat(i),
+                            group.getNode("vz").getFloat(i)
+                            );
+                    physEvent.getGeneratedParticleList().add(p);
+                }
+            }
+        }
+        //System.out.println(" RECONSTRUCTED = \n" + physEvent.toLundString());
+        //System.out.println(" GENERATED = \n" + physEvent.getGeneratedParticleList().toLundString());
     }
 }

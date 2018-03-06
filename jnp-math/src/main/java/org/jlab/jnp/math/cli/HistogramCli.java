@@ -45,4 +45,26 @@ public class HistogramCli {
         //DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds, options);
         DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds);
     }
+    
+    @CliCommand(command="divide", info="divide histograms",
+            defaults={"10","11","12"},
+            descriptions={"histogram id","plot options"})
+    public void divide(int hid, int hnom, int hdenom){
+        if(DataStudio.getInstance().getDataSetStore().containsKey(hid)==true){
+            System.out.println("**** ERROR : histogram " + hid + " already exists");
+            return;
+        }
+        if(DataStudio.getInstance().getDataSetStore().containsKey(hnom)==false||
+                DataStudio.getInstance().getDataSetStore().containsKey(hdenom)==false){
+            System.out.println("**** ERROR : histogram " + hdenom + " or " + hnom + " does not exist");
+            return;
+        }
+        H1F h1 = (H1F) DataStudio.getInstance().getDataSetStore().get(hnom);
+        H1F h2 = (H1F) DataStudio.getInstance().getDataSetStore().get(hdenom);
+        //DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(ds, options);
+        H1F hresult = new H1F("H1",h1.getXaxis().getNBins(),h1.getXaxis().min(), h1.getXaxis().max());
+        hresult.add(h1);
+        hresult.divide(h2);
+        DataStudio.getInstance().getDataSetStore().put(hid, hresult);
+    }
 }

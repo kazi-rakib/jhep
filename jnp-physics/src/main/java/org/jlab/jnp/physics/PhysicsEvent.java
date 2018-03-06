@@ -35,6 +35,10 @@ public class PhysicsEvent {
      */
     private final ParticleList  eventParticleList = new ParticleList();
     /**
+     * List of generated particles for the event.
+     */
+    private final ParticleList  generatedParticleList = new ParticleList();
+    /**
      * beam polarization vector. initialized in the positive Z-direction.
      */
     private final Vector3      beamPolarization = new Vector3(0.0,0.0,1.0);
@@ -166,6 +170,11 @@ public class PhysicsEvent {
     
     public ParticleList getParticleList(){
         return this.eventParticleList;
+    }
+    
+    
+    public  ParticleList getGeneratedParticleList(){
+        return this.generatedParticleList;
     }
     
     public void writeToEvent(HipoEvent hipoEvent){

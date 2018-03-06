@@ -56,6 +56,13 @@ public class ReactionCli {
         this.reactionSelectors.put(id, selector);
     }
     
+    @CliCommand(command="mcfilter", info="set filter for MC events",
+            defaults={"10","X+:X-:Xn"},
+            descriptions={"reaction ID","event filter"})
+    public void mcfilter(int id, String filter){
+        reactionSelectors.get(id).setMCFilter(filter);
+    }
+    
     @CliCommand(command="file", info="set file for the reaction",
             defaults={"10","input.hipo"},
             descriptions={"reaction ID","file name"})
@@ -89,14 +96,14 @@ public class ReactionCli {
     }
     
     @CliCommand(command="plot", info="set file for the reaction",
-            defaults={"10.ep", "!","-1","100"},
+            defaults={"10.ep", "!","-1","100","-10000","-10000","1000"},
             descriptions={"reaction id with variable name", "selection cut",
                 "limit on number of events","number of bins"}
     )    
-    public void plot(String idString, String cut, int limit, int nbins){
+    public void plot(String idString, String cut, int limit, int nbins, double min, double max, int hid){
         
         
-        this.redirectOutput();
+        //this.redirectOutput();
         if(DataStudio.getInstance().getCanvasStore().containsKey("1")==false){
             TCanvas canvas = new TCanvas("c1",500,500);
                DataStudio.getInstance().getCanvasStore().put("1", canvas);
@@ -118,7 +125,14 @@ public class ReactionCli {
             DataVector vec = reactionSelectors.get(rid).getDataVector(dataArgs.get(1),cutString, limit);
             System.out.println(" QUERY : Entries = " + vec.getSize() + " , Min = " + vec.getMin()
                     + " , Max = " + vec.getMax());
-            H1F h = H1F.create("H1", nbins, vec);
+            H1F h = null;
+            if(min<-9999||max<-999){
+                 h = H1F.create("H1", nbins, vec);
+            } else {
+                h = new H1F("H1",nbins,min,max);
+                h.fill(vec);
+            }
+            DataStudio.getInstance().getDataSetStore().put(hid, h);
             DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(h);
         } else {
             System.out.println(" PLOTTING 2D REACIONT VARIABLES " + dataArgs.get(1));
@@ -142,7 +156,7 @@ public class ReactionCli {
                DataStudio.getInstance().getCanvasStore().put("1", canvas);
            }
            DataStudio.getInstance().getCanvasStore().get("1").getCanvas().drawNext(h2);
-           this.restoreOutput();
+           //this.restoreOutput();
         }
         
     }

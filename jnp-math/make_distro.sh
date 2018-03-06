@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION=0.8
-
+rm -rf jaw-0.8.tar.gz
 mkdir -p jaw-$VERSION/lib
 cp target/jnp-math-1.0-SNAPSHOT-jar-with-dependencies.jar jaw-$VERSION/lib/jaw-$VERSION.jar
 cp jaw.sh jaw-$VERSION/.

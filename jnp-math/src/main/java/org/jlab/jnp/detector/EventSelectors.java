@@ -30,6 +30,7 @@ public class EventSelectors extends Tree {
     private DetectorEvent                detectorEvent = new DetectorEvent();
     private GenericFitter                fitter = new GenericFitter();
     private EventFilter                  filter = new EventFilter();
+    private EventFilter                  filterMC = new EventFilter("X+:X-:Xn");
     
     public EventSelectors(){
         super("PHYSICS");
@@ -73,6 +74,10 @@ public class EventSelectors extends Tree {
         this.filter.setFilter(options);
     }
     
+    public void setMCFilter(String options){
+        this.filterMC.setFilter(options);
+    }
+    
     @Override
     public int getEntries(){
         return eventReader.getEventCount();
@@ -83,7 +88,12 @@ public class EventSelectors extends Tree {
         
         HipoEvent event = eventReader.readEvent(entry);
         fitter.readEvent(event, detectorEvent.getPhysicsEvent());
-        if(filter.isValid(detectorEvent.getPhysicsEvent())==true){
+        
+        //System.out.println(" Entry read = " + entry);
+        //System.out.println(detectorEvent.getPhysicsEvent().toLundString());
+        if(filter.isValid(detectorEvent.getPhysicsEvent())==true&&
+                filterMC.checkFinalState(detectorEvent.getPhysicsEvent().getGeneratedParticleList())==true){
+            
             float[] data = new float[this.eventSelectors.size()];
             int counter = 0;
             for(Map.Entry<String,EventSelector> item : this.eventSelectors.entrySet()){
@@ -109,15 +119,19 @@ public class EventSelectors extends Tree {
     public static void main(String[] args){
         String inputFile = "/Users/gavalian/Work/Software/project-3a.0.0/Distribution/out_clas_002916_FILTERED_67.hipo";
         EventSelectors selector = new EventSelectors();
+        
         selector.setFile(inputFile);
         selector.setFilter("11:22:22:X+:X-:Xn");
         selector.setEnergy(11.0);
         
         //selector.addSelector("w2", "[b]+[t]-[11]","mass2");
         //selector.addSelector("pi0m", "[22,0]+[22,1]","mass2");
-        selector.addSelector("g1p","[22,0]","p");
-        selector.addSelector("g2p","[22,1]","p");
-        DataVector vec = selector.getDataVector("g1p", "");
+        selector.addSelector("epr","(11)","p");
+        selector.addSelector("epg","[11]","p");
+        
+        EventSelector gep = new EventSelector();
+        
+        DataVector vec = selector.getDataVector("epr", "");
         System.out.println(" QUERY : Entries = " + vec.getSize() + " , Min = " + vec.getMin()
                 + " , Max = " + vec.getMax());
         //DataVector vec = selector.getDataVector("pi0m", "");

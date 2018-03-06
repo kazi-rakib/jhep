@@ -168,6 +168,13 @@ public class ParticleSelector {
     public boolean getParticle(PhysicsEvent event, Particle p){                
         
         p.setParticleWithMass(0.0,(byte) 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        
+        if(this.particleSelectionType==ParticleSelector.TYPE_GENERATED){
+            if(event.getGeneratedParticleList().countByPid(particleID)<particleSkip) return false;
+            Particle  fromEvent = event.getGeneratedParticleList().getByPid(particleID, particleSkip);
+            p.copy(fromEvent);
+            return true;
+        }
         try {
             
             if(particleID==5000){
@@ -228,73 +235,92 @@ public class ParticleSelector {
         return false;
     }
     
+    private Particle getGeneratedParticle(PhysicsEvent event){
+        if(event.getGeneratedParticleList().countByPid(particleID)<particleSkip) return null;
+        Particle  fromEvent = event.getGeneratedParticleList().getByPid(particleID, particleSkip);
+        Particle npart =  new Particle(this.particleID,
+                        fromEvent.px(),
+                        fromEvent.py(),
+                        fromEvent.pz(),
+                        fromEvent.vertex().x(),                    
+                        fromEvent.vertex().y(),
+                        fromEvent.vertex().z()
+                );
+        if(this.particleSign<0) npart.vector().invert();
+        return npart;
+    }
+    
     public Particle getParticle(PhysicsEvent event){
+        
+        if(this.particleSelectionType==ParticleSelector.TYPE_GENERATED)
+            return this.getGeneratedParticle(event);
+        
+        
         try {
-        if(particleID==5000) return event.beamParticle();
-        if(particleID==5001) return event.targetParticle();        
-        
-        if(particleType.compareTo("-")==0){
-            Particle  fromEvent = event.getParticleByCharge(-1,particleSkip);
-            Particle npart =  new Particle(this.overrideParticleID,
-                    fromEvent.px(),
-                    fromEvent.py(),
-                    fromEvent.pz(),
-                    fromEvent.vertex().x(),                    
-                    fromEvent.vertex().y(),
-                    fromEvent.vertex().z()
-            );
-            if(this.particleSign<0) npart.vector().invert();
-            return npart;
+            if(particleID==5000) return event.beamParticle();
+            if(particleID==5001) return event.targetParticle();        
             
-        }
+            if(particleType.compareTo("-")==0){
+                Particle  fromEvent = event.getParticleByCharge(-1,particleSkip);
+                Particle npart =  new Particle(this.overrideParticleID,
+                        fromEvent.px(),
+                        fromEvent.py(),
+                        fromEvent.pz(),
+                        fromEvent.vertex().x(),                    
+                        fromEvent.vertex().y(),
+                        fromEvent.vertex().z()
+                );
+                if(this.particleSign<0) npart.vector().invert();
+                return npart;                
+            }
         
-        if(particleType.compareTo("+")==0){
-            Particle  fromEvent = event.getParticleByCharge(1,particleSkip);
-            Particle npart =  new Particle(this.overrideParticleID,
-                    fromEvent.px(),
-                    fromEvent.py(),
-                    fromEvent.pz(),
-                    fromEvent.vertex().x(),                    
-                    fromEvent.vertex().y(),
-                    fromEvent.vertex().z()
-            );
-            if(this.particleSign<0) npart.vector().invert();
-            return npart;
-        }
-        
-        if(particleType.compareTo("n")==0){
-            Particle  fromEvent = event.getParticleByCharge(0,particleSkip);
-            Particle npart =  new Particle(this.overrideParticleID,
-                    fromEvent.px(),
-                    fromEvent.py(),
-                    fromEvent.pz(),
-                    fromEvent.vertex().x(),                    
-                    fromEvent.vertex().y(),
-                    fromEvent.vertex().z()
-            );
-            if(this.particleSign<0) npart.vector().invert();
-            return npart;
+            if(particleType.compareTo("+")==0){
+                Particle  fromEvent = event.getParticleByCharge(1,particleSkip);
+                Particle npart =  new Particle(this.overrideParticleID,
+                        fromEvent.px(),
+                        fromEvent.py(),
+                        fromEvent.pz(),
+                        fromEvent.vertex().x(),                    
+                        fromEvent.vertex().y(),
+                        fromEvent.vertex().z()
+                );
+                if(this.particleSign<0) npart.vector().invert();
+                return npart;
+            }
             
-        }
-        
-        if(event.getParticleList().countByPid(particleID)<particleSkip) return null;
-        Particle  fromEvent = event.getParticleByPid(particleID, particleSkip);
-
-        if(this.overridePid==false){
-            Particle npart =  new Particle(this.particleID,
-                    fromEvent.px(),
-                    fromEvent.py(),
-                    fromEvent.pz(),
-                    fromEvent.vertex().x(),                    
-                    fromEvent.vertex().y(),
-                    fromEvent.vertex().z()
-            );
-            if(this.particleSign<0) npart.vector().invert();
-            return npart;
+            if(particleType.compareTo("n")==0){
+                Particle  fromEvent = event.getParticleByCharge(0,particleSkip);
+                Particle npart =  new Particle(this.overrideParticleID,
+                        fromEvent.px(),
+                        fromEvent.py(),
+                        fromEvent.pz(),
+                        fromEvent.vertex().x(),                    
+                        fromEvent.vertex().y(),
+                        fromEvent.vertex().z()
+                );
+                if(this.particleSign<0) npart.vector().invert();
+                return npart;
+                
+            }
             
-        }
+            if(event.getParticleList().countByPid(particleID)<particleSkip) return null;
+            Particle  fromEvent = event.getParticleByPid(particleID, particleSkip);
+            
+            if(this.overridePid==false){
+                Particle npart =  new Particle(this.particleID,
+                        fromEvent.px(),
+                        fromEvent.py(),
+                        fromEvent.pz(),
+                        fromEvent.vertex().x(),                    
+                        fromEvent.vertex().y(),
+                        fromEvent.vertex().z()
+                );
+                if(this.particleSign<0) npart.vector().invert();
+                return npart;
+                
+            }
         
-        Particle npart =  new Particle(this.overrideParticleID,
+            Particle npart =  new Particle(this.overrideParticleID,
                     fromEvent.px(),
                     fromEvent.py(),
                     fromEvent.pz(),
@@ -324,5 +350,9 @@ public class ParticleSelector {
         ParticleSelector selector = new ParticleSelector("-{211,2,2212}",3);
         //selector.parse("-(211,2,2212)");
         System.out.println(selector.toString());
+        
+        //selector.parse("[2212]");
+        ParticleSelector s2 = new ParticleSelector("{11,2}");
+        System.out.println(s2.toString());
     }
 }

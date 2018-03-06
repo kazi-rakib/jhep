@@ -1,0 +1,10 @@
+canvas/zone 2 2
+reaction/create 10 11:2212:X+:X-:Xn 2.2
+reaction/file   10 clasrun_2475.hipo.2
+reaction/particle 10 w2   [b]+[t]-[11] mass2
+reaction/particle 10 ephi [11]         phi
+reaction/particle 10 evz  [11]         vz
+reaction/plot     10.w2       w2>0.5
+reaction/plot     10.w2%ephi  w2>0.5
+reaction/plot     10.evz      evz>-10.0&&evz<10.0
+reaction/plot     10.evz%ephi evz>-10.0&&evz<10.0

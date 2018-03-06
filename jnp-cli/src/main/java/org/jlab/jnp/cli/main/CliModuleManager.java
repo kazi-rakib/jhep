@@ -128,6 +128,9 @@ public class CliModuleManager {
      * @return 
      */
     public boolean execute(String commandLine){
+        
+        if(commandLine.startsWith("#")||commandLine.startsWith("*")) return false;
+        
         String[] tokens = commandLine.trim().split("\\s+");
         if(tokens.length>0){
             if(tokens[0].contains("/")==true){

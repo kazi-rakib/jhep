@@ -1,0 +1,23 @@
+#****************************************************************
+# EXAMPLE SCRIPT TO BE USED WITH JAW (Java Analysis Workstation
+#****************************************************************
+# create a reaction with filter requireing an inclusive 
+# electron in the reconstructed events, and mc filter is set
+# to have an electron as well
+#****************************************************************
+reaction/create    10 11:X+:X-:Xn 11.0
+reaction/mcfilter  10 11:X+:X-:Xn
+#****************************************************************
+# attach a file to the reaction with id=10
+#****************************************************************
+reaction/file      10 generated_sidis.hipo
+#****************************************************************
+# create variables from electron momentum both from
+# reconstructed [11] and generated (11) event
+#****************************************************************
+reaction/particle  10 ep  [11] p
+reaction/particle  10 egp (11) p
+#****************************************************************
+# plot the resolution of electrong
+#****************************************************************
+reaction/plot      10.(ep-egp)/egp ! ! 120 -0.2 0.2 220

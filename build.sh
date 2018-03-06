@@ -59,8 +59,8 @@ then
   cd jnp-utils  ; mvn clean; cd -
   cd jnp-cli   ; mvn clean; cd -
   cd jnp-hipo  ; mvn clean; cd -
-  cd jnp-math  ; mvn clean; cd -
   cd jnp-physics  ; mvn clean; cd -
+  cd jnp-math  ; mvn clean; cd -
 fi
 #***********************************************************
 # BUILD LOCALLY without deploying the distribution
@@ -72,8 +72,8 @@ then
     cd jnp-utils ; mvn install; cd -
     cd jnp-cli   ; mvn install; cd -
     cd jnp-hipo  ; mvn install; cd -
-    cd jnp-math  ; mvn install; cd -
     cd jnp-physics  ; mvn install; cd -
+    cd jnp-math  ; mvn install; cd -
 fi
 #-----------------------------------------------------------
 # If the build command is activated maven install and 

@@ -83,8 +83,12 @@ public class ParticleList {
         return count;
     }
     
-    
-    
+    public void reset(){
+        int iter = count();
+        for(int i = 0; i < iter; i++){
+            particles.get(i).initParticle(0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);            
+        }
+    }
    
     /**
      * returns index-th particle from the list.

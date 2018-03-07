@@ -17,6 +17,7 @@ Command Line Interface
    :maxdepth: 1
 
    chapters/getting_started
+   chapters/hipo_utils
    chapters/vector_utils
    chapters/ntuple_utils
    chapters/reaction_utils

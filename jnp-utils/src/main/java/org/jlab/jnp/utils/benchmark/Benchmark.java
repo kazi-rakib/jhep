@@ -16,7 +16,9 @@ import java.util.TreeMap;
  * @author gavalian
  */
 public class Benchmark {
+    
     private final TreeMap<String,BenchmarkTimer> timerStore = new TreeMap<String,BenchmarkTimer>();
+    
     public Benchmark(){
         
     }
@@ -53,6 +55,39 @@ public class Benchmark {
             return timerStore.get(name);
         }
         return null;
+    }
+    /**
+     * Returns a string representing the time passed between startTime and
+     * endTime, given in milli-seconds. If the startTime is larger than end time
+     * they will be reversed.
+     * @param startTime milliseconds of time given by System 
+     * @param endTime milliseconds of time given by System
+     * @return pretty string for printout
+     */
+    public static String msecString(long startTime, long endTime){
+        if(endTime-startTime<0) return Benchmark.msecString(startTime-endTime);
+        return Benchmark.msecString(endTime-startTime);
+    }
+    /**
+     * Formats the milliseconds into a pretty string for printing. If the time
+     * exceeds 1000 ms, the string is returning seconds, if time exceeds 60 
+     * seconds minute:second string is returned.
+     * @param ms elapsed time in milli-seconds
+     * @return pretty string for printing.
+     */
+    public static String msecString(long ms){
+        if(ms>1000&&ms<60000){
+            double time = ms/1000.0;
+            return String.format("%.2f sec", time);
+        }
+        
+        if(ms>60000){
+            double time = ms/1000.0;
+            int minutes = (int) Math.floor(time/60.0);
+            int seconds = (int) Math.floor(time - minutes*60);
+            return String.format("%d:%d sec", minutes,seconds);
+        }        
+        return String.format("%l", ms);
     }
     
     @Override

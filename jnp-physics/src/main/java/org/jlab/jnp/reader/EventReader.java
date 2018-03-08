@@ -170,7 +170,7 @@ public class EventReader {
                             group.getNode("pz").getFloat(i),
                             group.getNode("vx").getFloat(i),
                             group.getNode("vy").getFloat(i),
-                            group.getNode("vz").getFloat(i));
+                            group.getNode("vz").getFloat(i));                    
                     plist.add(part);
                 }                
             }

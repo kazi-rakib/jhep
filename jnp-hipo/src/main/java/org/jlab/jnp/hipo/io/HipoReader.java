@@ -21,14 +21,25 @@ import org.jlab.jnp.hipo.schema.SchemaFactory;
  * @author gavalian
  */
 public class HipoReader {
-    Reader reader = null;
+
+    private      Reader reader = null;
+    private  boolean forceScan = true;
     private  final SchemaFactory  schemaFactory = new SchemaFactory();
     
     public HipoReader(){
         //reader = new Reader();
     }
     
-    
+    public HipoReader(boolean fs){
+        forceScan = fs;
+        //reader = new Reader();
+    }
+    /**
+     * Returns a record that is written in the header of the file.
+     * This is before the first record in the file. It is provided
+     * by the user when opening a file for writing.
+     * @return input stream containing user header record.
+     */
     public RecordInputStream getUserHeaderRecord(){
         ByteBuffer userHeader = reader.readUserHeader();
         RecordInputStream userRecord = new RecordInputStream();
@@ -40,9 +51,16 @@ public class HipoReader {
         }
         return null;
     }
-    
+    /**
+     * Open a file for reading. This method uses force scan, it reads through
+     * entire file and makes index of all records. Constructs full map of events
+     * inside of the file for random access.
+     * @param filename filename in HIPO format to open
+     */
     public void open(String filename){
-        reader = new Reader(filename,true);
+        long start_time = System.currentTimeMillis();        
+        reader = new Reader(filename,forceScan);
+        long end_time   = System.currentTimeMillis();
         //System.out.println(" HAS FIRST EVENT = " + reader.hasFirstEvent() + "  dictionary " + reader.hasDictionary());
         ByteBuffer userHeader = reader.readUserHeader();
         //System.out.println("[dictionary::open]  FIRST EVENT SIZE = " + userHeader.capacity());
@@ -50,12 +68,11 @@ public class HipoReader {
         //        + reader.getEventCount());
         //System.out.println("[Reader::Open] ---> number of records = " + reader.getRecordCount());
         if(userHeader.capacity()>56){
-            System.out.println("[READER] ---> initializing dictionary........");
+            //System.out.println("[READER] ---> initializing dictionary........");
             RecordInputStream userRecord = new RecordInputStream();
             try {
                 userRecord.readRecord(userHeader, 0);
-
-                System.out.println("[READER] ---> user header record event count " + userRecord.getEntries());
+                //System.out.println("[READER] ---> user header record event count " + userRecord.getEntries());
                 for(int i =0; i < userRecord.getEntries(); i++){
                     byte[] eventBytes = userRecord.getEvent(i);
                     HipoEvent  event = new HipoEvent(eventBytes);
@@ -75,26 +92,71 @@ public class HipoReader {
                         }
                     }
                 }
-                System.out.println("[READER] ---> total number of schema loaded " + schemaFactory.getSchemaList().size());
+                //System.out.println("[READER] ---> total number of schema loaded " + schemaFactory.getSchemaList().size());
             } catch (HipoException ex) {
                 Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        long openTime = end_time - start_time;
+         String outMessage = String.format("** reader-open ** records = %d, events = %d, schemas = %d, time = %d ms",
+                    reader.getRecordCount(), reader.getEventCount(), 
+                    schemaFactory.getSchemaList().size(), openTime);
+         System.out.println(outMessage);
     }
+    
+    /**
+     * Returns number of records in the file.
+     * @return 
+     */
+    public int getRecordCount(){
+        return reader.getRecordCount();
+    }
+    /**
+     * Reads the record with given index into the internal RecordInputStream.
+     * The global position in of last read event is not modified, so if getNextEvent()
+     * method is called the reader will reload the record that contains the event that
+     * is next to previously read event. 
+     * @param index record index in the file
+     * @return ture if successful or false if the read fails.
+     */
+    protected boolean readRecord(int index){
+        try {
+            return reader.readRecord(index);
+        } catch (HipoException ex) {
+            Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    /**
+     * returns Schema factory that was initialized from the file.
+     * @return schema for the file describing all bank structures
+     */
     public SchemaFactory getSchemaFactory(){
         return this.schemaFactory;
     }
-    
+    /**
+     * returns number of events in the file (for all the records).
+     * @return number of events
+     */
     public int getEventCount(){
         if(reader==null) return 0;
         return reader.getEventCount();
     }
-    
+    /**
+     * Checks to see if there are any events left in the file to be read.
+     * The position of last read event is stored in the reader.
+     * @return true if there are more events to read with getNextEvent().
+     */
     public boolean hasNext(){
         if(reader==null) return false;
         return reader.hasNext();
     }
-    
+    /**
+     * Returns the previous event in the event stream, the position is moved
+     * backwards, and when getNextEvent() is called, you'll get the event that
+     * was read before getPreviousEvent() call.
+     * @return HipoEvent with the dictionary from the file.
+     */
     public HipoEvent readPreviousEvent(){
         byte[] event;
         try {
@@ -105,7 +167,12 @@ public class HipoReader {
         }
         return null;
     }
-    
+    /**
+     * Reads the next event in the event stream, the position in the stream is
+     * incremented. Use hasEvent() method to check if there are events available
+     * before calling this method.
+     * @return HipoEvent with the dictionary from the file.
+     */
     public HipoEvent readNextEvent(){
          byte[] event;
         try {
@@ -116,9 +183,22 @@ public class HipoReader {
         }
         return null;
     }
-    
-    
-    
+    /**
+     * returns number of events inside the currently loaded record.
+     * NOTE: this is not the number of events in the file.
+     * @return number of events
+     */
+    protected int getRecordEventCount(){
+        return reader.getCurrentRecordStream().getEntries();
+    }
+    /**
+     * Reads an event with given index, the index is the absolute index of the 
+     * event in the file. To read relative event to the record, use 
+     * readRecordEvent(index) method. To find out number of events in the record
+     * use getRecordEventCount() method.
+     * @param index index of the event in the file
+     * @return HIPO event constructed from the index-th buffer.
+     */
     public HipoEvent readEvent(int index){
         byte[] event;
         try {
@@ -129,14 +209,31 @@ public class HipoReader {
         }
         return null;
     }
-    
-    public int getRecordCount(){
+    /**
+     * Reads an event with relative offset of index from the currently loaded
+     * record. To use this method, first use 
+     * readRecord(int rec);
+     * int count = getRecordEventCount();
+     * and the index variable has to be between 0-count.
+     * @param index
+     * @return HipoEvent with dictionary from the file
+     */
+    protected HipoEvent readRecordEvent(int index){
+        byte[] event;        
+        event = reader.getCurrentRecordStream().getEvent(index);
+        return new HipoEvent(event,schemaFactory);
+    }
+    /*  public int getRecordCount(){
         return reader.getRecordCount();
+    }*/
+    
+    /**
+     * Closes the file and disposes the reader object.
+     */
+    public void close(){
+       reader = null; 
     }
     
-    public void close(){
-        
-    }
     public static void main(String[] args){
         
         HipoReader reader = new HipoReader();

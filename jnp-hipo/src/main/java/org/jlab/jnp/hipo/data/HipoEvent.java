@@ -17,6 +17,7 @@ import org.jlab.jnp.hipo.schema.SchemaFactory;
 import org.jlab.jnp.utils.data.TextTable;
 import org.jlab.jnp.utils.log.Logger;
 import org.jlab.jnp.utils.log.LoggerFactory;
+import org.jlab.jnp.utils.maps.IntIntMap;
 
 
 /**
@@ -167,7 +168,7 @@ public class HipoEvent {
         //eventIndex.clear();
         this.groupsIndex.clear();
         //nodesMap.clear();
-        
+        //IntIntMap map = new IntIntMap();
         int counter = 0;
         try {
             while((position+NODE_HEADER_LENGTH)<=capacity){
@@ -183,14 +184,16 @@ public class HipoEvent {
                 Integer groupInt = (int) group;            
                 Integer offset   = position;
                 
+                //map.put(groupInt, position);
                 //nodesMap.put(groupInt, offset);
+                
                 
                 if(this.groupsIndex.containsKey(groupInt)==false){
                     //System.out.println("--> adding group " + groupInt);
                     this.groupsIndex.put( groupInt, new GroupNodeIndexList(group));
                 }
                 
-                this.groupsIndex.get(groupInt).addNodeIndex(idx);
+                this.groupsIndex.get(groupInt).addNodeIndex(idx);                
                 
                 //HipoNodeIndex index = new HipoNodeIndex();
                 //index.nodeGroup  = group;

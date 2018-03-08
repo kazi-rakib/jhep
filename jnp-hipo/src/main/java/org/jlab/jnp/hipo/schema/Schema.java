@@ -86,7 +86,7 @@ public class Schema {
     public int getEntries(){
         return this.idEntries.size();
     }
-    
+        
     public SchemaEntry  getEntry(String name){
         return this.nameEntries.get(name);
     }

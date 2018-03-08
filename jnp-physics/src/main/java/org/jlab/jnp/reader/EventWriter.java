@@ -34,7 +34,7 @@ public class EventWriter {
         writer.defineSchema("data::event", 32210, "pid/S:px/F:py/F:pz/F:vx/F:vy/F:vz/F:mass/F:beta/F:chi2pid/F:charge/B:parent/B:status/B");
         writer.defineSchema("data::detector", 32211, "id/I:pindex/S:x/F:y/F:z/F:path/F:time/F:energy/F");
         writer.setCompressionType(2);
-        writer.open(name);        
+        writer.open(name);
         hipoEvent = new HipoEvent(writer.getSchemaFactory());
     }
     

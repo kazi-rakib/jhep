@@ -100,11 +100,17 @@ public class NtupleCli {
         System.out.println("NTUPLE : --> number of entries : " + nentries);
     }
     
-    @CliCommand(command="plot", info="plot Variable from the ntuple",
+    /*@CliCommand(command="plot", info="plot Variable from the ntuple",
             defaults={"10.x","!","-1"},
             descriptions={"ntuple ID with the variable name","cut to be applied to the leafs",
             "number of events to run through"})
-    public void plot(String id_withVariable, String treeCut, Integer limit){
+    */
+    @CliCommand(command="plot", info="plot Variable from the ntuple",
+            defaults={"10.x","!","-1"},
+            descriptions={"ntuple ID with the variable name","cut to be applied to the leafs"
+                    ,"number of events to read"})
+    public void plot(String id_withVariable, String treeCut, int limit){
+        //int limit = -1;
         int index = id_withVariable.indexOf(".");
         String   idString = id_withVariable.substring(0, index);
         String expression = id_withVariable.substring(index+1, id_withVariable.length());

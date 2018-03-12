@@ -164,6 +164,7 @@ public class EventReader {
                     plist.add(part);
                 } else {
                     Particle part = new Particle();
+                    
                     part.initParticleWithMass(0.135, 
                             group.getNode("px").getFloat(i),
                             group.getNode("py").getFloat(i),

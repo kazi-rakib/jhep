@@ -211,7 +211,7 @@ public class HipoNode {
     public final HipoNodeType  getType(){
         int type = (int) nodeBuffer.get(3);
         return HipoNodeType.getType(type);
-    }    
+    }
     /**
      * returns offset of the data element in the ByteBuffer.
      * includes the header length and size of element type.

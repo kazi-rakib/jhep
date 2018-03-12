@@ -285,6 +285,10 @@ public class HipoEvent {
     }
     
     
+    public ByteBuffer getDataByteBuffer(){
+        return this.eventBuffer;
+    }
+    
     public void showNodes(){
         TextTable table = new TextTable("group:item:type:length","12:12:12:14");
         for(Map.Entry<Integer,GroupNodeIndexList>  entry : this.groupsIndex.entrySet()){

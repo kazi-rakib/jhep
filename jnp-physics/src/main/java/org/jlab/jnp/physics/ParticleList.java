@@ -6,6 +6,7 @@
 package org.jlab.jnp.physics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -135,6 +136,13 @@ public class ParticleList {
             }
         }
         return null;
+    }
+    /**
+     * Sorts particles according to their PID, and their momentum.
+     * The momentum will be in descending order. 
+     */
+    public void sort(){
+        Collections.sort(particles);
     }
     /**
      * returns LUND representation string of the list. For each particle

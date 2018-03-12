@@ -11,11 +11,13 @@ import java.util.Map;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoEventFilter;
 import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.hipo.io.HipoWriter;
 import org.jlab.jnp.hipo.schema.Schema;
 
 import org.jlab.jnp.hipo.schema.SchemaFactory;
+import org.jlab.jnp.utils.benchmark.Benchmark;
 import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.utils.options.OptionStore;
 
@@ -25,7 +27,11 @@ import org.jlab.jnp.utils.options.OptionStore;
  */
 public class HipoUtilities {
     
-    
+    public static void benchmarkProcessIter(String filename, int mode,int iter){
+        for(int i = 0; i < iter; i++){
+            HipoUtilities.benchmarkProcess(filename, mode);
+        }
+    }
     public static void benchmarkProcess(String filename, int mode){
         HipoReader reader = new HipoReader();
         reader.open(filename);
@@ -50,6 +56,46 @@ public class HipoUtilities {
         System.out.println("processed events -> " + nevents + "  time -> " + String.format("%.2f", processTime) + " sec");
         System.out.println("processed banks  -> " + nbanksRead);
         System.out.println(String.format("average time -> %f evt/sec",nevents/processTime));
+    }
+    
+    public static void benchmarkProcessVersionIter(String filename, int mode,int iter){
+        for(int i = 0; i < iter; i++){
+            HipoUtilities.benchmarkProcessVersion(filename, mode,iter);
+        }
+    }
+    
+    public static void benchmarkProcessVersion(String filename, int mode, int iter){
+        
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        DataEventHipo event = new DataEventHipo();
+        int nrecords = reader.getRecordCount();
+        int icounter = 0;
+        
+        for(int i = 0; i < iter; i++){            
+            long start_time = System.currentTimeMillis();
+            for(int rec = 0; rec < nrecords; rec++){
+                boolean status = reader.readRecord(rec+1);
+                //System.out.println(" record " + rec + "  status = " + status);
+                int nevents = reader.getRecordEventCount();
+                //System.out.println(" number of events = " + nevents);
+                for(int ev = 0; ev < nevents-1; ev++){
+                    reader.readRecordEvent(event, ev+1);
+                    //HipoEvent hipoevent = reader.readRecordEvent(ev);
+                    icounter++;
+                }
+            }
+            long   end_time = System.currentTimeMillis();
+            long  maxMemory = Runtime.getRuntime().maxMemory();
+            long usedMemory = Runtime.getRuntime().totalMemory();
+            long freeMemory = Runtime.getRuntime().freeMemory();
+            System.out.println("Events # " + icounter + 
+                    String.format("  memory =  %s / %s ", 
+                            Benchmark.bytesString(usedMemory-freeMemory) , 
+                            //Benchmark.bytesString(freeMemory) ,
+                            Benchmark.bytesString(usedMemory)) + 
+                    " time = " + Benchmark.msecString(start_time, end_time));
+        }
     }
     
     public static void processRunInfo(String filename){
@@ -314,7 +360,13 @@ public class HipoUtilities {
         
         if(parser.getCommand().compareTo("-test")==0){
             List<String>  inputFiles = parser.getOptionParser("-test").getInputList();
-            HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
+            if(parser.getOptionParser("-test").getOption("-m").intValue()>2){
+                //HipoUtilities.benchmarkProcessVersion(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
+                HipoUtilities.benchmarkProcessVersion(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue(),100);
+            } else {
+                //HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
+                HipoUtilities.benchmarkProcessIter(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue(),100);
+            }            
         }
         /*
         OptionParser parser = new OptionParser();

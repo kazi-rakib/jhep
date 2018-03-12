@@ -182,6 +182,7 @@ public class Schema {
         private String  name = "x";
         private Integer id   = 1;
         private HipoNodeType type = HipoNodeType.UNDEFINED;               
+        private int          hash = 0;
         
         public SchemaEntry(){
             
@@ -193,9 +194,19 @@ public class Schema {
           type = t;
         }
         
+        public SchemaEntry(String n, int i, HipoNodeType t, int h){
+          name = n;
+          id = i;
+          type = t;
+          hash = h;
+        }
+        
         public SchemaEntry copy(){
             return new SchemaEntry(name,id,type);
         }
+        
+        public final void setHash(int h) { hash = h;}
+        public final int  getHash(){return hash;}
         
         public void setName(String n) {name = n;}
         public void setId(Integer i) {id = i;}

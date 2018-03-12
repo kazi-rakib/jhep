@@ -10,9 +10,8 @@ SCRIPT_DIR=`dirname $0`
 #---------------------------------------------------------
 MALLOC_ARENA_MAX=1; export MALLOC_ARENA_MAX
 #---------------------------------------------------------
-# SET UP JAVA_OPTIONS With the max memory and starting
+# SET UP JAVA_OPTIONS With the max memory and starting 
 # memory
 #---------------------------------------------------------
-#JAVA_OPTIONS="-XX:+UseG1GC -Xmx1024m -Xms512m"
-JAVA_OPTIONS="-XX:+UseSerialGC -Xmx1024m -Xms512m"
-java $JAVA_OPTIONS -cp "$SCRIPT_DIR/target/jnp-hipo-1.0-SNAPSHOT-jar-with-dependencies.jar" org.jlab.jnp.hipo.utils.HipoUtilities $* 
+JAVA_OPTIONS="-Xmx1024m -Xms1024m"
+java $JAVA_OPTIONS -cp "$SCRIPT_DIR/lib/jaw-0.8.jar" org.jlab.jnp.reader.ReadClas12Events $*

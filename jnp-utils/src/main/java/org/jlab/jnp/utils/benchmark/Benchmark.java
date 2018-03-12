@@ -18,6 +18,9 @@ import java.util.TreeMap;
 public class Benchmark {
     
     private final TreeMap<String,BenchmarkTimer> timerStore = new TreeMap<String,BenchmarkTimer>();
+    private static final int KILO_BYTES = 1024;
+    private static final int MEGA_BYTES = 1024*1024;
+    private static final int GIGA_BYTES = 1024*1024*1024;    
     
     public Benchmark(){
         
@@ -55,6 +58,29 @@ public class Benchmark {
             return timerStore.get(name);
         }
         return null;
+    }
+    
+    public static String bytesString(long bytes){
+        
+        double value = 0.0;
+        
+        if(bytes<Benchmark.KILO_BYTES){
+            value = ((double) bytes);
+            return String.format("%.2f B", value);
+        }
+        
+        if(bytes<Benchmark.MEGA_BYTES){
+            value = ((double) bytes) /1024.0;
+            return String.format("%.2f KB", value);
+        }
+        
+        if(bytes<Benchmark.GIGA_BYTES){
+            value = ((double) bytes)/1024.0/1024.0;
+            return String.format("%.2f MB", value);
+        }
+        
+        value = ((double) bytes)/1024.0/1024.0/1024.0;
+        return String.format("%.2f GB", value);        
     }
     /**
      * Returns a string representing the time passed between startTime and

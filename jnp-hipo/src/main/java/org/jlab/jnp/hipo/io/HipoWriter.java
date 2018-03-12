@@ -31,15 +31,35 @@ public class HipoWriter {
     
     public static final int  SCHEMA_GROUP = 31111;
     public static final int   SCHEMA_ITEM = 1;
+    protected boolean      OVERWRITE_FILE = true;
     
     private Writer writer = null;
     private  final SchemaFactory  schemaFactory = new SchemaFactory();
+    
+    
+    public HipoWriter(String options){
+        writer = new Writer(HeaderType.HIPO_FILE, // this write HIPO in the 
+                // first bytes of the file
+                ByteOrder.LITTLE_ENDIAN,  // Use LITTLE_ENDIAN by default
+                1000000,  // Maximum number of events in each record
+                8*1024*1024);  // Maximum Size of the record buffer
+        writer.setCompressionType(2); // Compression type=2 (LZ4 - best)
+        // For faster compression use type=1
+        if(options.contains("CREATE")==true){
+            this.OVERWRITE_FILE = false;
+        }
+    }
     /**
      * default constructor
      */
     public HipoWriter(){
-        writer = new Writer(HeaderType.HIPO_FILE,ByteOrder.LITTLE_ENDIAN,10000,8*1024*1024);        
-        writer.setCompressionType(2);
+        writer = new Writer(HeaderType.HIPO_FILE, // this write HIPO in the 
+                                                  // first bytes of the file
+                ByteOrder.LITTLE_ENDIAN,  // Use LITTLE_ENDIAN by default
+                1000000,  // Maximum number of events in each record
+                8*1024*1024);  // Maximum Size of the record buffer
+        writer.setCompressionType(2); // Compression type=2 (LZ4 - best)
+                                      // For faster compression use type=1
     }
     /**
      * Adds a schema to the schema factory. by default the schema factory
@@ -145,6 +165,15 @@ public class HipoWriter {
         if(this.outputFileExits(filename)==true){
             System.out.println("[HIPO-WRITER] ** error ** the output file already exists : " 
                     + filename);
+            if(this.OVERWRITE_FILE==true){
+                System.out.println("[HIPO-WRITER] ** warning ** rewriting the file : " 
+                        + filename);
+                try {
+                    Files.delete(Paths.get(filename));
+                } catch (IOException ex) {
+                    System.out.println("[HIPO-WRITER] ** error ** failed deleting file : " + filename);
+                }
+            }
         } else {
             writer.open(filename, userHeader);
             HipoLogo.showLogo();
@@ -155,7 +184,7 @@ public class HipoWriter {
      * First checks if the file exists.
      * @param filename file name
      */
-    public final void open(String filename){        
+    public final void open(String filename){
         if(this.outputFileExits(filename)==true){
             System.out.println("[HIPO-WRITER] ** error ** the output file already exists : " 
                     + filename);
@@ -169,6 +198,7 @@ public class HipoWriter {
             }
             
         } 
+        
         if(this.schemaFactory.getSchemaList().isEmpty()){
                 System.out.println("[HipoWriter] ---> Schema factory is empty.");
                 writer.open(filename);

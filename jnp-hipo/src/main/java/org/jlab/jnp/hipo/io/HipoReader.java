@@ -119,7 +119,7 @@ public class HipoReader {
      * @param index record index in the file
      * @return ture if successful or false if the read fails.
      */
-    protected boolean readRecord(int index){
+    public boolean readRecord(int index){
         try {
             return reader.readRecord(index);
         } catch (HipoException ex) {
@@ -188,7 +188,7 @@ public class HipoReader {
      * NOTE: this is not the number of events in the file.
      * @return number of events
      */
-    protected int getRecordEventCount(){
+    public int getRecordEventCount(){
         return reader.getCurrentRecordStream().getEntries();
     }
     /**
@@ -218,10 +218,28 @@ public class HipoReader {
      * @param index
      * @return HipoEvent with dictionary from the file
      */
-    protected HipoEvent readRecordEvent(int index){
+    public HipoEvent readRecordEvent(int index){
         byte[] event;        
         event = reader.getCurrentRecordStream().getEvent(index);
         return new HipoEvent(event,schemaFactory);
+    }
+    
+    public void readRecordEvent(DataEventHipo event, int index){
+        try {
+            int dataSize = reader.getCurrentRecordStream().getEventLength(index);
+            if(dataSize<0) {
+                System.out.println(" ** error ** failed to read event # " + index);
+                return;
+            }
+            event.resize(dataSize);
+            
+            reader.getCurrentRecordStream().copyEvent(event.eventBuffer, 0, index);            
+            event.eventBuffer.putInt(event.EVENT_LENGTH_WORD_POSITION, dataSize);
+            event.updateIndex();
+        
+        } catch (HipoException ex) {
+            Logger.getLogger(HipoReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     /*  public int getRecordCount(){
         return reader.getRecordCount();
@@ -235,18 +253,44 @@ public class HipoReader {
     }
     
     public static void main(String[] args){
-        
+        String file = "/Users/gavalian/Work/Software/project-3a.0.0/Distribution/jnp/jnp-hipo/clasrun_2475.hipo.0";
         HipoReader reader = new HipoReader();
-        reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324.hipo");
+        reader.open(file);
+        //reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324.hipo");
         //+ "/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324_v5_c2.hipo");
         int nevents = reader.getEventCount();
         System.out.println(" N# = " + nevents);
         //        HipoEvent event = reader.readEvent(1);      
         //for(int i = 0; i < nevents; i++){
         int icounter = 0;
-         while(reader.hasNext()==true){
+         //while(reader.hasNext()==true){
+         
+         DataEventHipo dataEvent = new DataEventHipo();
+         
+         for(int i = 0; i < 1500; i++){
              HipoEvent event = reader.readNextEvent();
-             System.out.println(" reading event " + icounter);
+             ByteBuffer buff = event.getDataByteBuffer();
+             dataEvent.init(buff, 0, buff.capacity());
+             
+             //dataEvent.show();
+             int size = dataEvent.getSize(dataEvent.getHash(331,1));
+             System.out.print(" PID    : ");
+             for(int b = 0; b < size; b++){
+                 System.out.print(String.format("%8d", dataEvent.getInt(dataEvent.getHash(331,1), b)));
+
+             }
+             System.out.println(" ");
+             System.out.print(" CHARGE : ");
+             for(int b = 0; b < size; b++){
+                 System.out.print(String.format("%8d", dataEvent.getInt(dataEvent.getHash(331,8), b)));
+             }
+             System.out.println(" ");
+             System.out.print(" BETA   : ");
+             for(int b = 0; b < size; b++){
+                 System.out.print(String.format("%8.4f", dataEvent.getFloat(dataEvent.getHash(331,9), b)));
+             }
+             System.out.println(" ");
+             //System.out.println(" reading event " + icounter);
              icounter++;
         }
         //reader.open("/Users/gavalian/Work/Software/project-3a.0.0/Distribution/clas12-offline-software/coatjava/clas_000810_324_v5_c2.hipo");

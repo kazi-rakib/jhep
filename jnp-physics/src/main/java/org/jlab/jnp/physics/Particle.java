@@ -16,7 +16,7 @@ import org.jlab.jnp.pdg.PDGParticle;
  * @date   05/16/2015
  */
 
-public class Particle {
+public class Particle implements Comparable<Particle>{
 
     /**
      * Particle Lorentz Vector, momentum and time component (initialized with electron with zero momentum)
@@ -532,6 +532,39 @@ public class Particle {
         * BasicVector(docam.x(),docam.y(),docam.z());
         */
         return new Vector3();
+    }
+    /**
+     * Compares two particles complying with Comparable interface.
+     * The priority is given to charged particles over neutral.
+     * In case of two particles have same momentum priority is given
+     * to one with higher momentum.
+     * a negative int - if this lt that
+     * 0              - if this == that
+     * a positive int - if this gt that
+     * @param o object that this class is being compared to
+     * @return -1,0,1 depending how the object are compared
+     */
+    @Override
+    public int compareTo(Particle o) {
+        /**
+         * Always make sure that electron is set in the first position
+         */
+        if(this.pid()==11&&o.pid()!=11) return -1;
+        if(o.pid()==11&&this.pid()!=11) return  1;
+        /**
+         * For particles with same PID, sorting will happen on the basis
+         * of their momentum.
+         */
+        if(this.pid()==o.pid()){
+            if(Math.abs(o.p()-this.p())<0.00001) return 0;
+            return (o.p()>this.p())?-1:1;
+        }
+        /**
+         * For the rest of the particles, sorting is done according to
+         * their GEANT PID. Easier because GEANT ID's are positive numbers.
+         */
+        if(o.gid()==this.gid()) return 0;
+        return o.gid()>this.gid()?-1:1;
     }
     
 }

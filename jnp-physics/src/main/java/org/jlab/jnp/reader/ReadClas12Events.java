@@ -129,6 +129,11 @@ public class ReadClas12Events {
                 
                 if(writeStatus==true){
                     writer.writeEvent(dataEvent, mcEvent);
+                    System.out.println("------ BEFORE SORTING ----");
+                    System.out.println(dataEvent.toLundString());
+                    System.out.println("------ AFTER SORTING ----");
+                    dataEvent.getParticleList().sort();
+                    System.out.println(dataEvent.toLundString());
                     write_counter++;
                 }
             }

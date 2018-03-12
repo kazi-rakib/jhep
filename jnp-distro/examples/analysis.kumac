@@ -1,0 +1,27 @@
+#****************************************************************
+# EXAMPLE SCRIPT TO BE USED WITH JAW (Java Analysis Workstation
+#****************************************************************
+canvas/zone 2 2
+#****************************************************************
+# define a rection requiring to have at least one electron (11),
+# and at least one proton (2212) with any number of particles
+# to follow. Attach a file to the reaction
+#****************************************************************
+reaction/create 10 11:2212:X+:X-:Xn 2.2
+reaction/file   10 clasrun_2475.hipo.2
+#****************************************************************
+# Define a particle as combination of beam+target-electron
+# and read the particle property "mass2" (mass squared) into
+# variable with name w2. Similarly define variables that represent
+# phi angle of detected electron and z-vertex
+#****************************************************************
+reaction/particle 10 w2   [b]+[t]-[11] mass2
+reaction/particle 10 ephi [11]         phi
+reaction/particle 10 evz  [11]         vz
+#****************************************************************
+# Draw variables from the file with cuts.
+#****************************************************************
+reaction/plot     10.w2       w2>0.5
+reaction/plot     10.w2%ephi  w2>0.5
+reaction/plot     10.evz      evz>-10.0&&evz<10.0
+reaction/plot     10.evz%ephi evz>-10.0&&evz<10.0

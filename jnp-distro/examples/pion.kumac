@@ -1,0 +1,12 @@
+canvas/zone 2 1
+reaction/create 10 11:22:22:X+:X-:Xn 2.2
+reaction/file   10 clasrun_2475.hipo.2
+reaction/particle 10 pi0m   [22,0]+[22,1] mass
+reaction/particle 10 g1p    [22,0]        p
+reaction/particle 10 g2p    [22,1]        p
+reaction/particle 10 g1th   [22,0]        theta
+reaction/particle 10 g2th   [22,1]        theta
+reaction/plot     10.g1p%g2p   g1p>0.05&&g2p>0.05
+reaction/plot     10.g1th%g2th g1p>0.05&&g2p>0.05
+reaction/plot     10.(g1th-g2th)%g1p 
+reaction/plot     10.pi0m      pi0m<0.5

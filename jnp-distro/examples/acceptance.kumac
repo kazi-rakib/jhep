@@ -1,0 +1,42 @@
+#****************************************************************
+# EXAMPLE SCRIPT TO BE USED WITH JAW (Java Analysis Workstation
+#****************************************************************
+# FIRST Define a reaction that will accept any events from 
+# reconstructed bank an only events from MC that have 
+# electron (11) with any number of particles to follow.
+# define a variable from the event which is the momentum of
+# the electron. 
+# NOTE: MC particles are (11) while reconstructed [11]
+#****************************************************************
+reaction/create   10  X+:X-:Xn 11.0
+reaction/mcfilter 10  11:X+:X-:Xn
+reaction/particle 10  epp (11) p
+#****************************************************************
+# Attach a file to this reaction with id=10
+#****************************************************************
+reaction/file     10 generated_sidis.hipo
+#****************************************************************
+# now define a different reaction (id=11)where we set the filter 
+# for reconstructed events to have at least one electron, we
+# do not set mc filter, since we want all events.
+# again we define electron momentum variable from the event
+# and attach the same file to the reaction.
+#****************************************************************
+reaction/create   11 11:X+:X-:Xn 11.0
+reaction/file     11 generated_sidis.hipo
+reaction/particle 11 erp [11] p
+#****************************************************************
+# devide the canvas into 1 column and 3 rows for plotting.
+# then plot the variables into histograms with same bins, min
+# and max values (so they can be divided). The histogram will
+# have 120 bins from 1.0-8.0 and histogram id=220 and id=221
+# respectively. The ommitted parameters "!", are:
+# first one - the cuts (no cuts will be used)
+# second one - how many events to process (default = -1, 
+#              means the whole file)
+#****************************************************************
+canvas/zone 1 3
+reaction/plot 10.epp ! ! 120 1.0 8.0 220
+reaction/plot 11.erp ! ! 120 1.0 8.0 221
+histogram/divide 222 221 220
+histogram/plot 222

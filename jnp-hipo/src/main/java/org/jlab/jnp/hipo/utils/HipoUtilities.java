@@ -5,19 +5,18 @@
  */
 package org.jlab.jnp.hipo.utils;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoEventFilter;
 import org.jlab.jnp.hipo.data.HipoGroup;
-import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.hipo.io.HipoWriter;
 import org.jlab.jnp.hipo.schema.Schema;
 
 import org.jlab.jnp.hipo.schema.SchemaFactory;
-import org.jlab.jnp.utils.benchmark.Benchmark;
 import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.utils.options.OptionStore;
 
@@ -27,11 +26,7 @@ import org.jlab.jnp.utils.options.OptionStore;
  */
 public class HipoUtilities {
     
-    public static void benchmarkProcessIter(String filename, int mode,int iter){
-        for(int i = 0; i < iter; i++){
-            HipoUtilities.benchmarkProcess(filename, mode);
-        }
-    }
+    
     public static void benchmarkProcess(String filename, int mode){
         HipoReader reader = new HipoReader();
         reader.open(filename);
@@ -56,46 +51,6 @@ public class HipoUtilities {
         System.out.println("processed events -> " + nevents + "  time -> " + String.format("%.2f", processTime) + " sec");
         System.out.println("processed banks  -> " + nbanksRead);
         System.out.println(String.format("average time -> %f evt/sec",nevents/processTime));
-    }
-    
-    public static void benchmarkProcessVersionIter(String filename, int mode,int iter){
-        for(int i = 0; i < iter; i++){
-            HipoUtilities.benchmarkProcessVersion(filename, mode,iter);
-        }
-    }
-    
-    public static void benchmarkProcessVersion(String filename, int mode, int iter){
-        
-        HipoReader reader = new HipoReader();
-        reader.open(filename);
-        DataEventHipo event = new DataEventHipo();
-        int nrecords = reader.getRecordCount();
-        int icounter = 0;
-        
-        for(int i = 0; i < iter; i++){            
-            long start_time = System.currentTimeMillis();
-            for(int rec = 0; rec < nrecords; rec++){
-                boolean status = reader.readRecord(rec+1);
-                //System.out.println(" record " + rec + "  status = " + status);
-                int nevents = reader.getRecordEventCount();
-                //System.out.println(" number of events = " + nevents);
-                for(int ev = 0; ev < nevents-1; ev++){
-                    reader.readRecordEvent(event, ev+1);
-                    //HipoEvent hipoevent = reader.readRecordEvent(ev);
-                    icounter++;
-                }
-            }
-            long   end_time = System.currentTimeMillis();
-            long  maxMemory = Runtime.getRuntime().maxMemory();
-            long usedMemory = Runtime.getRuntime().totalMemory();
-            long freeMemory = Runtime.getRuntime().freeMemory();
-            System.out.println("Events # " + icounter + 
-                    String.format("  memory =  %s / %s ", 
-                            Benchmark.bytesString(usedMemory-freeMemory) , 
-                            //Benchmark.bytesString(freeMemory) ,
-                            Benchmark.bytesString(usedMemory)) + 
-                    " time = " + Benchmark.msecString(start_time, end_time));
-        }
     }
     
     public static void processRunInfo(String filename){
@@ -154,7 +109,14 @@ public class HipoUtilities {
         }
         System.out.println("\n\n");
     }
-    
+    /**
+     * Static method allows merging several files into one. The dictionary is copied
+     * from the first opened file, so user has to make sure that they are consistent across 
+     * the files
+     * @param outputFile output HIPO file name
+     * @param inputFiles input file list
+     * @param compression compression factor
+     */
     public static void mergeFiles(String outputFile, List<String> inputFiles, int compression){
         HipoReader reader = new HipoReader();
         reader.open(inputFiles.get(0));
@@ -178,6 +140,16 @@ public class HipoUtilities {
         writer.close();
     }
     
+    /**
+     * Compresses the file into a new file with compression type provided.
+     * compression types:
+     * 0 - no compression
+     * 1 - LZ4 fast compression
+     * 2 - LZ4 best compression
+     * @param inputFile input file name
+     * @param outputFile output file name
+     * @param compression compression type
+     */
     public static void compressFile(String inputFile, String outputFile, int compression){
         HipoReader reader = new HipoReader();
         reader.open(inputFile);
@@ -199,7 +171,73 @@ public class HipoUtilities {
         }
         writer.close();*/
     }
+    public static String waitForEnter() {
+        String line = "";
+        Console c = System.console();
+        if (c != null) {
+            // printf-like arguments
+            //c.format(message, args);
+            c.format("\nChoose (n=next,p=previous, q=quit), Type Bank Name or id : ");
+            line = c.readLine();
+        }
+        return line;
+    }
     
+    public static void fileDump(String filename){
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        
+        HipoEvent event = reader.readNextEvent();
+        String  command = "";
+        int    icounter = 0;
+        
+        while(reader.hasNext()==true){
+            
+            
+            if(command.length()<1){
+                System.out.println("\n");
+                System.out.println("*********************** EVENT # " + icounter 
+                        + "  ***********************");
+                event.show();
+            }
+            command = HipoUtilities.waitForEnter();
+            
+            if(command.compareTo("n")==0){
+                event = reader.readNextEvent();
+                icounter++;
+                command = "";
+                continue;
+            }
+            
+            if(command.compareTo("p")==0){
+                if(icounter>0){
+                    event = reader.readPreviousEvent();
+                    icounter--;
+                }
+                command = "";
+                continue;
+            }
+            if(command.length()>=2){
+                
+                if(event.hasGroup(command)==true){
+                    HipoGroup group = event.getGroup(command);
+                    group.show();
+                } else {
+                    System.out.println("\n**** error **** there is no bank with name : " + command);
+                }
+            }
+            if(command.compareTo("q")==0){
+                System.exit(0);
+            }
+        }
+    }
+    /**
+     * Filters given list of files into one big file only keeping the banks that are specified.
+     * @param outputFile output file name
+     * @param inputFiles input file name
+     * @param filter HipoEventFiler class describing the schemas to be kept
+     * @param compression compression type
+     */
     public static void filterFile(String outputFile, List<String> inputFiles, HipoEventFilter filter, int compression){
         
         HipoWriter writer = new HipoWriter();
@@ -314,8 +352,19 @@ public class HipoUtilities {
         parser.getOptionParser("-split").addRequired("-i", "input file name");
         parser.getOptionParser("-split").addRequired("-o", "output file pattern");
         
+        parser.addCommand("-dump", " dump the content of the file on the screen");
+        
         parser.parse(args);
         
+        
+        if(parser.getCommand().compareTo("-dump")==0){
+            List<String>  inputFiles = parser.getOptionParser("-dump").getInputList();
+            if(inputFiles.size()<1){
+                System.out.println("\n**** warning **** please provide a file name");
+            } else {
+                HipoUtilities.fileDump(inputFiles.get(0));
+            }
+        }
         
         if(parser.getCommand().compareTo("-split")==0){
             String  outputF = parser.getOptionParser("-split").getOption("-o").stringValue();
@@ -360,13 +409,7 @@ public class HipoUtilities {
         
         if(parser.getCommand().compareTo("-test")==0){
             List<String>  inputFiles = parser.getOptionParser("-test").getInputList();
-            if(parser.getOptionParser("-test").getOption("-m").intValue()>2){
-                //HipoUtilities.benchmarkProcessVersion(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
-                HipoUtilities.benchmarkProcessVersion(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue(),100);
-            } else {
-                //HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
-                HipoUtilities.benchmarkProcessIter(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue(),100);
-            }            
+            HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
         }
         /*
         OptionParser parser = new OptionParser();

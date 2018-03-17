@@ -116,23 +116,66 @@ namespace hipo {
     long firstRecordPosition;
   } fileHeader_t;
 
+  class reader_index {
+     private:
+       std::vector<int> recordEvents;
+       int              currentRecord;
+       int              currentEvent;
+       int              currentRecordEvent;
+
+     public:
+        reader_index(){
+
+        };
+        ~reader_index(){};
+
+        //bool canAdvance();
+        bool advance();
+
+        int  getEventNumber() { return currentEvent;}
+        int  getRecordNumber() { return currentRecord;}
+        int  getRecordEventNumber() { return currentRecordEvent;}
+        int  getMaxEvents();
+        void addSize(int size);
+
+        void reset(){
+          currentRecord = 0;
+          currentEvent  = 0;
+          currentRecordEvent = 0;
+        }
+  };
+
   class reader {
 
     private:
+
+        std::vector<std::string>        fileDictionary;
         std::vector<char>               headerBuffer;
         std::ifstream                   inputStream;
         std::vector<recordIndex_t>      recordIndex;
         fileHeader_t                    header;
         hipo::utils                     hipoutils;
+        /**
+        * Internal buffers for record and events to be
+        * read in sequence. When the next() is called on The
+        * reader class;
+        */
+        hipo::record                    inRecordStream;
+        hipo::event                     inEventStream;
+        hipo::reader_index              inReaderIndex;
+        int                             inReaderCurrentRecord;
 
         bool    verifyFile();
         void    readHeader();
         void    readRecordIndex();
+        void    readDictionary();
 
     public:
 
         reader();
         ~reader();
+
+        std::vector<std::string>  getDictionary();
 
         void  open(const char *filename);
         void  readRecord(int index);
@@ -142,8 +185,18 @@ namespace hipo {
         bool  isOpen();
         void  showInfo();
         void  printWarning();
+        bool  next();
+
+        template<class T> hipo::node<T> *getBranch(int group, int item);
 
     };
 
+
+}
+
+namespace hipo {
+  template<class T> hipo::node<T> *reader::getBranch(int group, int item){
+      return inEventStream.getBranch<T>(group,item);
+  }
 }
 #endif /* HIPOFILE_H */

@@ -41,10 +41,14 @@ int main(int argc, char** argv) {
     printf("-----> open file : %s\n",filename);
     hipo::reader reader;
     reader.open(filename);
+
     reader.showInfo();
 
-    hipo::node<int>  *px = reader.getNode<int>(34,1);
-    hipo::node<int>  *py = reader.getNode<int>(34,2);
+    hipo::node<uint8_t>   *node_sector    = reader.getBranch<uint8_t>(21611,1);
+    hipo::node<uint8_t>   *node_layer     = reader.getBranch<uint8_t>(21611,2);
+    hipo::node<uint16_t>  *node_component = reader.getBranch<uint16_t>(21611,3);
+    hipo::node<uint32_t>  *node_adc       = reader.getBranch<uint32_t>(21611,5);
+    hipo::node<float>     *node_time      = reader.getBranch<float>(21611,6);
 
     int nrecords = reader.getRecordCount();
 
@@ -52,20 +56,26 @@ int main(int argc, char** argv) {
     printf("\n\n");
     printf("-----> start reading records.\n");
 
+    std::vector<string> dict = reader.getDictionary();
+    for(int i = 0; i < dict.size(); i++){
+      printf(" Schema # %4d : %s\n",i, dict[i].c_str());
+    }
+
     int ecounter = 0;
-    for(int i = 0; i < nrecords; i++){
-       reader.readRecord(i);
-       int nevents = reader.getEventCount();
-       for(int k = 0; k < nevents; k++){
-         printf("-----> reading event # %d\n",ecounter);
-         reader.readEvent(k);
-         int size = px->getLength();
-         for(int s = 0; s < size; s++){
-           printf(" %8d ",px->getValue(s));
-         }
-         printf("\n");
+    while(reader.next()==true){
+      int length = node_sector->getLength();
+      printf("event # %d , LTCC data size = %d\n",ecounter,length);
+      for(int k = 0; k < length; k++){
+        printf("%4d %4d %4d %6d %f\n",
+            node_sector->getValue(k),
+            node_layer->getValue(k),
+            node_component->getValue(k),
+            node_adc->getValue(k),
+            node_time->getValue(k)
+         );
+        //printf(" %d ",node_pid->getValue(k));
+      }
          ecounter++;
-       }
     }
     printf("-----> done reading records.\n");
     return 0;

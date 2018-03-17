@@ -46,7 +46,12 @@ int main(int argc, char** argv) {
 
     hipo::event  event;
 
-    hipo::node<int> *node_pid = event.getIntNode(331,1);
+    //hipo::node<int> *node_pid = event.getIntNode(21611,5);
+    hipo::node<uint8_t>   *node_sector    = event.getBranch<uint8_t>(21611,1);
+    hipo::node<uint8_t>   *node_layer     = event.getBranch<uint8_t>(21611,2);
+    hipo::node<uint16_t>  *node_component = event.getBranch<uint16_t>(21611,3);
+    hipo::node<uint32_t>  *node_adc       = event.getBranch<uint32_t>(21611,5);
+    hipo::node<float>     *node_time      = event.getBranch<float>(21611,6);
   /*  hipo::node<int> *node_px  = event.getIntNode(331,2);
     hipo::node<int> *node_py  = event.getIntNode(331,3);
     hipo::node<int> *node_pz  = event.getIntNode(331,4);
@@ -84,12 +89,19 @@ int main(int argc, char** argv) {
        //printf(" RECORD # %d has %d events\n", i, nevents);
        for(int k = 0; k < nevents; k++){
          record.readHipoEvent(event,k);
-         int length = node_pid->getLength();
-         printf("pid length = %d\n",length);
+         int length = node_sector->getLength();
+         printf("event # %d , LTCC data size = %d\n",ecounter,length);
          for(int k = 0; k < length; k++){
-           printf(" %d ",node_pid->getValue(k));
+           printf("%4d %4d %4d %6d %f\n",
+               node_sector->getValue(k),
+               node_layer->getValue(k),
+               node_component->getValue(k),
+               node_adc->getValue(k),
+               node_time->getValue(k)
+            );
+           //printf(" %d ",node_pid->getValue(k));
          }
-          printf("\n");
+         //printf("\n");
          ecounter++;
        }
     }

@@ -60,6 +60,12 @@ namespace hipo {
         std::memcpy(&dataBuffer[size+8],(char *) &vec[0],datasize);
     }
 
+    void event::resetNodes(){
+      for(int i = 0; i < nodes.size(); i++){
+        nodes[i]->length(0);
+      }
+    }
+
     void event::appendNode(int group, int item, std::vector<int8_t> &vec){
         int     size = dataBuffer.size();
         int datasize = vec.size()*sizeof(int8_t);
@@ -257,6 +263,7 @@ namespace hipo {
 
     void event::scanEvent(){
         eventNodes.clear();
+        resetNodes();
         //int position = 8;
         int position  = 16;
         int eventSize = *(reinterpret_cast<uint32_t*>(&dataBuffer[8]));
@@ -276,7 +283,16 @@ namespace hipo {
             if(registeredNodes.count(key)>0){
                int order = registeredNodes[key];
                //nodes[order]->setType(type);
-               nodes[order]->length(length/4);
+               int elements = length;
+               switch(type){
+                  case 2: elements = length/2; break;
+                  case 3: elements = length/4; break;
+                  case 4: elements = length/4; break;
+                  case 5: elements = length/8; break;
+                  case 8: elements = length/8; break;
+                  default: break;
+               }
+               nodes[order]->length(elements);
                nodes[order]->setAddress(&dataBuffer[position+8]);
                //printf(" found the key %d %d order = %d\n" , gid,iid, order);
             }

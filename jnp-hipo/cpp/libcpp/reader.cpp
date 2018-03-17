@@ -50,6 +50,7 @@ namespace hipo {
       inputStream.close();
     }
     readRecordIndex();
+    readDictionary();
 }
 
 /**
@@ -106,6 +107,40 @@ bool      reader::verifyFile(){
 bool  reader::isOpen(){
   return inputStream.is_open();
 }
+
+void    reader::readDictionary(){
+  hipo::record  dictionary;
+  hipo::event   schema;
+  readHeaderRecord(dictionary);
+  int nentries = dictionary.getEventCount();
+  for(int d = 0; d < nentries; d++){
+    dictionary.readHipoEvent(schema,d);
+    std::string schemaString = schema.getString(31111,1);
+    fileDictionary.push_back(schemaString);
+  }
+}
+
+std::vector<std::string>  reader::getDictionary(){
+  return fileDictionary;
+}
+
+bool reader::next(){
+  if(inReaderCurrentRecord<0){
+    inReaderCurrentRecord = 0;
+    readRecord(inRecordStream,inReaderCurrentRecord);
+    inRecordStream.readHipoEvent(inEventStream,0);
+    return true;
+  }
+
+  bool status = inReaderIndex.advance();
+  if(status==false) return false;
+  if(inReaderIndex.getRecordNumber()!=inReaderCurrentRecord){
+    inReaderCurrentRecord = inReaderIndex.getRecordNumber();
+    readRecord(inRecordStream,inReaderCurrentRecord);
+  }
+  inRecordStream.readHipoEvent(inEventStream,inReaderIndex.getRecordEventNumber());
+  return true;
+}
 /**
  * Reads records indicies, it hopes through file Reading
  * only header for each records and fills a vector with
@@ -124,6 +159,9 @@ void  reader::readRecordIndex(){
     std::vector<char> recheader(80);
     int icounter   = 0;
     int eventCount = 0;
+    inReaderIndex.reset();
+    inReaderCurrentRecord = -1;
+
     while(positionOffset+56<hipoFileSize){
 
         inputStream.read( (char *) &recheader[0],56);
@@ -145,6 +183,9 @@ void  reader::readRecordIndex(){
           compressWord          = __builtin_bswap32(compressWord);
           version               = __builtin_bswap32(version);
         }
+
+        inReaderIndex.addSize(recIndex.recordEvents);
+
         version = (version&0x000000FF);
         if(version!=6) {
           printf(" version error : %d\n",version ); break;
@@ -226,5 +267,46 @@ void reader::printWarning(){
       std::cout << "*   work. However un-compressed file I/O will work.  *" << std::endl;
       std::cout << "******************************************************" << std::endl;
     #endif
+  }
+}
+
+//*************************************************************************
+// implementation of record_index class
+//*************************************************************************
+namespace hipo {
+
+  void reader_index::addSize(int size){
+    if(recordEvents.size()==0){
+      recordEvents.push_back(0);
+      recordEvents.push_back(size);
+    } else {
+      int cz = recordEvents[recordEvents.size()-1] + size;
+      recordEvents.push_back(cz);
+    }
+  }
+
+  bool reader_index::advance(){
+
+    if(recordEvents.size()==0) return false;
+
+    if(currentEvent+1<recordEvents[currentRecord+1]){
+      currentEvent++;
+      currentRecordEvent++;
+      return true;
+    }
+
+    if(recordEvents.size() < currentRecord + 2 + 1){
+      printf("advance(): Warning, reached the limit of events.");
+      return false;
+    }
+    currentEvent++;
+    currentRecord++;
+    currentRecordEvent = 0;
+    return true;
+  }
+
+  int reader_index::getMaxEvents(){
+    if(recordEvents.size()==0) return 0;
+    return recordEvents[recordEvents.size()-1];
   }
 }

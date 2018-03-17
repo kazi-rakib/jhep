@@ -37,7 +37,7 @@ namespace hipo {
         //std::vector<std::auto_ptr<hipo::generic_node>> regiteredNodesPtr;
 
         //void scanEvent();
-
+        void resetNodes();
     public:
 
         event();
@@ -67,6 +67,8 @@ namespace hipo {
         std::string         getString( int group, int item);
 
         hipo::node<int>    *getIntNode(int group, int item);
+
+        template<class T> hipo::node<T> *getBranch(int group, int item);
         //template<class T>   node<T> getNode();
 
         void scanEvent();
@@ -82,4 +84,14 @@ namespace hipo {
     } */
 }
 
+namespace hipo {
+   template<class T> hipo::node<T> *event::getBranch(int group, int item){
+     int size = nodes.size();
+     int key  =  ((0x00000000|group)<<16)  | ( (0x00000000|item)<<8);
+     registeredNodes[key] = size;
+     hipo::node<T> *type = new hipo::node<T>(group,item);
+     nodes.push_back(type);
+     return type;
+   }
+}
 #endif /* EVENT_H */

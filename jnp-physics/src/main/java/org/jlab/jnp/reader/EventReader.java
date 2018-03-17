@@ -11,6 +11,8 @@ import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.data.HipoNode;
 import org.jlab.jnp.hipo.data.HipoNodeType;
+import org.jlab.jnp.hipo.io.DataBankHipo;
+import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.pdg.PDGDatabase;
 import org.jlab.jnp.utils.options.OptionParser;
@@ -31,6 +33,11 @@ public class EventReader {
     Integer     currentEvent   = 0;
     HipoEvent   hipoEvent      = null;
     
+    private     DataEventHipo  dataEventHipo = new DataEventHipo();
+    private     String       mcEventBankName = "mc::event";
+    private     String     dataEventBankName = "data::event";
+    
+    
     public EventReader(){
         
     }
@@ -49,7 +56,55 @@ public class EventReader {
         return true;
     }
     
+    public static boolean readPhysicsEvent(DataEventHipo event, PhysicsEvent physEvent, String bankName){
+        
+        DataBankHipo bank = new DataBankHipo();
+        event.getDataBank(bank, bankName);
+        int pidSize = event.getSize(2104426497);// bank.getSize("pid");
+        physEvent.resize(pidSize);
+        int pid_pos = event.getPosition(2104426497);
+        int  px_pos = event.getPosition(2104426498);
+        int  py_pos = event.getPosition(2104426499);
+        int  pz_pos = event.getPosition(2104426500);
+        int  vx_pos = event.getPosition(2104426501);
+        int  vy_pos = event.getPosition(2104426502);
+        int  vz_pos = event.getPosition(2104426503);
+        
+        for(int p = 0; p < pidSize; p++){
+            int pid = event.getIntAt(pid_pos, p);
+            if(PDGDatabase.hasParticleById(pid)==true){
+                physEvent.getParticle(p).initParticle(pid,
+                        event.getDoubleAt(px_pos,p),
+                        event.getDoubleAt(py_pos,p),
+                        event.getDoubleAt(pz_pos,p),
+                        event.getDoubleAt(vx_pos,p),
+                        event.getDoubleAt(vy_pos,p),
+                        event.getDoubleAt(vz_pos,p)
+                );
+            } else {
+                physEvent.getParticle(p).initParticleWithMass(0.135,
+                        event.getDoubleAt(px_pos,p),
+                        event.getDoubleAt(py_pos,p),
+                        event.getDoubleAt(pz_pos,p),
+                        event.getDoubleAt(vx_pos,p),
+                        event.getDoubleAt(vy_pos,p),
+                        event.getDoubleAt(vz_pos,p)
+                );
+                /*physEvent.getParticle(p).initParticleWithMass(0.135,
+                        bank.getDouble("px",p),
+                        bank.getDouble("py",p),
+                        bank.getDouble("pz",p),
+                        bank.getDouble("vx",p),
+                        bank.getDouble("vy",p),
+                        bank.getDouble("vz",p)
+                        );*/
+            }
+        }
+        return true;
+    }
+    
     public Boolean getMcEvent(PhysicsEvent event){
+     
         event.clear();
 
         if(hipoEvent.hasGroup("mc::header")==true){

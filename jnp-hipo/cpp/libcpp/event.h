@@ -20,13 +20,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
-
+#include "node.h"
 
 namespace hipo {
+
+  //typedef std::auto_ptr<hipo::generic_node> node_pointer;
+
     class event {
+
     private:
         std::vector<char> dataBuffer;
         std::map<int,int> eventNodes;
+
+        std::map<int,int> registeredNodes;
+        std::vector<hipo::generic_node*> nodes;
+        //std::vector<std::auto_ptr<hipo::generic_node>> regiteredNodesPtr;
 
         //void scanEvent();
 
@@ -52,12 +60,13 @@ namespace hipo {
         int   getNodeLength(int address);
         int   getNodeSize(int address);
         char *getNodePtr(int address);
-        
+
         std::vector<long>   getLong( int group, int item);
         std::vector<int>    getInt(    int group, int item);
         std::vector<float>  getFloat(  int group, int item);
         std::string         getString( int group, int item);
 
+        hipo::node<int>    *getIntNode(int group, int item);
         //template<class T>   node<T> getNode();
 
         void scanEvent();

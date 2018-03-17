@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "event.h"
+//#include "event.h"
 //#include "reader.h"
 
 namespace hipo {
@@ -58,7 +58,7 @@ class node : public generic_node {
     public:
 
         node();
-        node(int group, int item,hipo::event &event);
+        //node(int group, int item,hipo::event &event);
         node(int __group, int __item);
         //node(hipo::reader &reader, int group, int item);
 
@@ -86,7 +86,7 @@ namespace hipo {
       item(__item);
     }
 
-    template <class T> node<T>::node(int group, int item,hipo::event &event){
+  /*  template <class T> node<T>::node(int group, int item,hipo::event &event){
       int address = event.getNodeAddress(group,item);
       if(address<0){
           length ( 0 );
@@ -96,7 +96,7 @@ namespace hipo {
           ptr    = reinterpret_cast<T*>(event.getNodePtr(address));
       }
     }
-
+*/
 /*
     template <class T> node<T>(hipo::reader &reader, int group, int item){
        group(group);

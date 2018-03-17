@@ -7,8 +7,11 @@ package org.jlab.jnp.hipo.utils;
 
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoNode;
+import org.jlab.jnp.hipo.io.DataBankHipo;
+import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.hipo.io.HipoWriter;
+import org.jlab.jnp.utils.benchmark.Benchmark;
 
 /**
  *
@@ -16,80 +19,37 @@ import org.jlab.jnp.hipo.io.HipoWriter;
  */
 public class HipoTests {
     
-    public static float[] getFloatArray(){
-        int size = (int) (Math.random()*300);
-        size += 300;
-        float[] array = new float[size];
-        for(int i =0; i < array.length; i++){
-            array[i] = (float) Math.random();
+    public static void readerTest(String filename){
+         HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int nrecords = reader.getRecordCount();
+        DataEventHipo event = new DataEventHipo();
+        DataBankHipo  bank  = new DataBankHipo();
+        
+        Benchmark  bench = new Benchmark();
+        bench.addTimer("HIPO-READER");
+
+        for(int r = 0; r < 1; r++){
+            bench.resume("HIPO-READER");
+            reader.readRecord(r+1);
+            int nevents = reader.getRecordEventCount();
+            //for(int ev = 0; ev < nevents-1; ev++){
+            for(int ev = 0; ev < 20; ev++){
+                //System.out.println("--- event " + ev);
+                reader.readRecordEvent(event, ev+1);
+                event.getDataBank(bank, "mc::event");
+                bank.show();
+                //event.showByteBuffer();
+            }
+            bench.pause("HIPO-READER");
         }
-        return array;
-    }
-    
-    public static int[] getIntArray(float[] array){
-        int[] buffer = new int[array.length];
-        for(int i = 0; i < buffer.length; i++){
-            buffer[i] = (int) (32000*array[i]);
-        }
-        return buffer;
-    }
-    public static short[] getShortArray(float[] array){
-        short[] buffer = new short[array.length];
-        for(int i = 0; i < buffer.length; i++){
-            buffer[i] = (short) (32000*array[i]);
-        }
-        return buffer;
-    }
-    public static double[] getDoubleArray(float[] array){
-        double[] buffer = new double[array.length];
-        for(int i = 0; i < buffer.length; i++){
-            buffer[i] = (double) (array[i]);
-        }
-        return buffer;
-    }
-    
-    public static void compressionTests(){
-        HipoWriter writerF = new HipoWriter();
-        HipoWriter writerI = new HipoWriter();
-        HipoWriter writerS = new HipoWriter();
-        HipoWriter writerD = new HipoWriter();
-        writerF.open("compression_test_F.hipo");
-        writerI.open("compression_test_I.hipo");
-        writerS.open("compression_test_S.hipo");
-        writerD.open("compression_test_D.hipo");
-        for(int i = 0; i < 25000; i++){
-            float[] arrayF = HipoTests.getFloatArray();
-            int[]   arrayI = HipoTests.getIntArray(arrayF);
-            short[] arrayS = HipoTests.getShortArray(arrayF);
-            double[] arrayD = HipoTests.getDoubleArray(arrayF);
-            //System.out.println("size = " + arrayF.length + "  " + arrayI.length);
-            HipoEvent eventF = new HipoEvent();
-            HipoEvent eventI = new HipoEvent();
-            HipoEvent eventS = new HipoEvent();
-            HipoEvent eventD = new HipoEvent();
-            HipoNode  nodeF  = new HipoNode(1200,1,arrayF);
-            HipoNode  nodeI  = new HipoNode(1200,1,arrayI);
-            HipoNode  nodeS  = new HipoNode(1200,1,arrayS);
-            HipoNode  nodeD  = new HipoNode(1200,1,arrayD);
-            eventF.addNode(nodeF);
-            eventI.addNode(nodeI);
-            eventS.addNode(nodeS);
-            eventD.addNode(nodeD);
-            writerF.writeEvent(eventF);
-            writerI.writeEvent(eventI);
-            writerS.writeEvent(eventS);
-            writerD.writeEvent(eventD);
-        }
-        writerI.close();
-        writerF.close();
-        writerS.close();
-        writerD.close();
+        System.out.println(bench.toString());
     }
     public static void writerTest(){
         
     }
     public static void main(String[] args){
-        HipoTests.compressionTests();
+        HipoTests.readerTest("/Users/gavalian/Work/DataSpace/clas12/mc/clas_dis_mcdata.hipo");
         /*
         HipoReader reader = new HipoReader();
         //reader.open("compression_test_S.hipo");

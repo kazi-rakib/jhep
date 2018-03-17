@@ -113,7 +113,7 @@ public class Benchmark {
             int seconds = (int) Math.floor(time - minutes*60);
             return String.format("%d:%d sec", minutes,seconds);
         }        
-        return String.format("%l", ms);
+        return String.format("%d", ms);
     }
     
     @Override

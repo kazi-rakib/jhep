@@ -10,11 +10,25 @@ namespace hipo {
 
     event::event(){
         reset();
+        printf("creating event class.....");
+        //hipo::node<int> *type = new hipo::node<int>();
+        //nodes.push_back(type);
     }
 
     event::~event(){
 
     }
+
+
+   hipo::node<int>    *event::getIntNode(int group, int item){
+     int size = nodes.size();
+     int key  =  ((0x00000000|group)<<16)  | ( (0x00000000|item)<<8);
+     registeredNodes[key] = size;
+
+     hipo::node<int> *type = new hipo::node<int>(group,item);
+     nodes.push_back(type);
+     return type;
+   }
 
     void event::init(std::vector<char> &buffer){
         dataBuffer.resize(buffer.size());
@@ -23,9 +37,12 @@ namespace hipo {
     }
 
     void event::init(const char *buffer, int size){
-        dataBuffer.resize(size);
-        std::memcpy(&dataBuffer[0],buffer,size);
-        scanEvent();
+        if(dataBuffer.size()<=size){
+         dataBuffer.resize(size);
+       }
+       std::memcpy(&dataBuffer[0],buffer,size);
+       *(reinterpret_cast<uint32_t*>(&dataBuffer[8])) = size;
+       scanEvent();
     }
 
     void event::appendNode(int group, int item, std::string& vec){
@@ -241,9 +258,10 @@ namespace hipo {
     void event::scanEvent(){
         eventNodes.clear();
         //int position = 8;
-        int position = 16;
+        int position  = 16;
+        int eventSize = *(reinterpret_cast<uint32_t*>(&dataBuffer[8]));
 
-        while(position+8<dataBuffer.size()){
+        while(position+8<eventSize){
             uint16_t   gid = *(reinterpret_cast<uint16_t*>(&dataBuffer[position]));
             uint8_t    iid = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+2]));
             uint8_t   type = *(reinterpret_cast<uint8_t*>(&dataBuffer[position+3]));
@@ -253,7 +271,15 @@ namespace hipo {
 
             int key  =  ((0x00000000|gid)<<16)  | ( (0x00000000|iid)<<8);
             int info =  ( (0x00000000|type)<<24) | (position);
-            eventNodes.insert(std::make_pair(key,info));
+            //eventNodes.insert(std::make_pair(key,info));
+            //printf("map count = %d \n" ,registeredNodes.size());
+            if(registeredNodes.count(key)>0){
+               int order = registeredNodes[key];
+               //nodes[order]->setType(type);
+               nodes[order]->length(length/4);
+               nodes[order]->setAddress(&dataBuffer[position+8]);
+               //printf(" found the key %d %d order = %d\n" , gid,iid, order);
+            }
             //printf(" adding node : %4d %4d %X\n",gid,iid,position);
             //printf("     key = %6d , position = %6X\n",key,info);
             position += (length + 8);

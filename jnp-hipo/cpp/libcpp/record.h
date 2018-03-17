@@ -75,6 +75,7 @@ namespace hipo {
         recordHeader_t     recordHeader;
 
         std::vector<char>  recordBuffer;
+        std::vector<char>  recordCompressedBuffer;
 
         char *getUncompressed(const char *data, int dataLength, int dataLengthUncompressed);
         int   getUncompressed(const char *data, char *dest, int dataLength, int dataLengthUncompressed);

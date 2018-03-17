@@ -12,11 +12,13 @@ import java.util.Map;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoEventFilter;
 import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.hipo.io.HipoWriter;
 import org.jlab.jnp.hipo.schema.Schema;
 
 import org.jlab.jnp.hipo.schema.SchemaFactory;
+import org.jlab.jnp.utils.benchmark.Benchmark;
 import org.jlab.jnp.utils.options.OptionParser;
 import org.jlab.jnp.utils.options.OptionStore;
 
@@ -26,6 +28,27 @@ import org.jlab.jnp.utils.options.OptionStore;
  */
 public class HipoUtilities {
     
+    public static void benchmarkFilReading_3p1(String filename, int mode){
+        
+        HipoReader reader = new HipoReader();
+        reader.open(filename);
+        int nrecords = reader.getRecordCount();
+                
+        DataEventHipo event = new DataEventHipo();
+        Benchmark  bench = new Benchmark();
+        bench.addTimer("HIPO-READER");
+
+        for(int r = 0; r < nrecords; r++){
+            bench.resume("HIPO-READER");
+            reader.readRecord(r+1);
+            int nevents = reader.getRecordEventCount();
+            for(int ev = 0; ev < nevents-1; ev++){
+                reader.readRecordEvent(event, ev+1);
+            }
+            bench.pause("HIPO-READER");
+        }
+        System.out.println(bench.toString());
+    }
     
     public static void benchmarkProcess(String filename, int mode){
         HipoReader reader = new HipoReader();
@@ -344,6 +367,7 @@ public class HipoUtilities {
 
         parser.addCommand("-test", " run speed benchmark test");
         parser.getOptionParser("-test").addOption("-m", "0","speed test mode (0 - read events, 1 - read all banks)");
+        parser.getOptionParser("-test").addOption("-iter", "2","number of iterations");
         
         parser.addCommand("-dump", "dump the file on the screen");
         
@@ -408,8 +432,17 @@ public class HipoUtilities {
         }
         
         if(parser.getCommand().compareTo("-test")==0){
+            int mode = parser.getOptionParser("-test").getOption("-m").intValue();
+            int iter = parser.getOptionParser("-test").getOption("-iter").intValue();
             List<String>  inputFiles = parser.getOptionParser("-test").getInputList();
-            HipoUtilities.benchmarkProcess(inputFiles.get(0),parser.getOptionParser("-test").getOption("-m").intValue());
+            if(mode>2){
+                for(int i = 0; i < iter; i++){
+                    HipoUtilities.benchmarkFilReading_3p1(inputFiles.get(0), mode);
+                }
+            } else {
+                HipoUtilities.benchmarkProcess(inputFiles.get(0),mode);
+            }
+            
         }
         /*
         OptionParser parser = new OptionParser();

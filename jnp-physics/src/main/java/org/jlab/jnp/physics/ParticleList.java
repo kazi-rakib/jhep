@@ -47,7 +47,7 @@ public class ParticleList {
             //System.out.println("resizing DOWN from " + cnt + " to " + size + "  removal " + (cnt-size));
             int nr = cnt-size;
             for(int i = 0; i < nr; i++) particles.remove(0);
-        }
+        }        
         //System.out.println(" after resize " + this.particles.size());
     }
     /**

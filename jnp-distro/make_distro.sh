@@ -16,3 +16,11 @@ cp -r examples jaw-$VERSION/.
 mv jaw-$VERSION/bin/jaw.sh jaw-$VERSION/
 tar -cf jaw-$VERSION.tar jaw-$VERSION
 gzip jaw-$VERSION.tar
+#**********************************************************
+# IF PROJECT ENVIRONMENT is SET COPY DISTRIBUTION
+#**********************************************************
+if [[ ! -z $PROJECT ]]
+then
+cp -r jaw-$VERSION $PROJECT/.
+echo 'Copied the distribution'
+fi

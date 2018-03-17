@@ -61,7 +61,7 @@ public class ProgressPrintout {
         System.out.println("\n\n");        
     }
     
-    public void updateStatus(){        
+    public void updateStatus(){
         this.numberOfCalls++;
         Long currentTime   = System.currentTimeMillis();
         Double elapsedTime = (currentTime - this.previousPrintoutTime)*1e-3;

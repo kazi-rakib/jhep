@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jlab.jnp.hipo.base.DataDescriptor;
+import org.jlab.jnp.hipo.base.DataDictionary;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.data.HipoNode;
@@ -30,7 +32,7 @@ import org.jlab.jnp.utils.json.JsonValue;
  *
  * @author gavalian
  */
-public class SchemaFactory {
+public class SchemaFactory implements DataDictionary  {
     
     private Boolean  overrideMode = false;
     
@@ -99,6 +101,18 @@ public class SchemaFactory {
     
     public Schema getSchema(String name){
         return this.schemaStore.get(name);
+    }
+    
+    /**
+     * Composes a hash code from given group and item ids
+     * @param group group id
+     * @param item item id
+     * @return hash code
+     */
+    public static int getHashCode(int group, int item){
+        int hash_int = 0;
+        hash_int = (group<<16)|(item);
+        return hash_int;
     }
     
     public List<Schema>  getSchemaList(){
@@ -356,6 +370,11 @@ public class SchemaFactory {
         return schemas;
     }
     
+    @Override
+    public DataDescriptor getDescriptor(String name) {
+        return this.getSchema(name);
+    }
+    
     public static void main(String[] args){
         
         SchemaFactory factory = new SchemaFactory();
@@ -402,4 +421,6 @@ public class SchemaFactory {
         ff.setFromEvent(event);
         ff.show();*/
     }
+
+
 }

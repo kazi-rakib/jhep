@@ -91,10 +91,10 @@ public class Particle implements Comparable<Particle>{
     
     public final void initParticleWithMass(double mass, double px, double py, double pz, double vx, double vy, double vz) {
         particleCharge = 0;
-        particleVector = new LorentzVector();
-        particleVertex = new Vector3(vx, vy, vz);
-        particleVector.setPxPyPzM(px, py, pz, mass);
-        particleProperties = new HashMap<String, Double>();
+        particleVector.setPxPyPzM(px, py, pz, mass); // = new LorentzVector();
+        particleVertex.setXYZ(vx, vy, vz); //= new Vector3(vx, vy, vz);
+        //particleVector.setPxPyPzM(px, py, pz, mass);
+        //particleProperties = new HashMap<String, Double>();
     }
     
     public final void initParticle(int pid, double px, double py, double pz, double vx, double vy, double vz) {

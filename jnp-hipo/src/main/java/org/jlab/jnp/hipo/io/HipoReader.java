@@ -231,10 +231,10 @@ public class HipoReader {
                 System.out.println(" ** error ** failed to read event # " + index);
                 return;
             }
-            event.resize(dataSize);
-            
-            reader.getCurrentRecordStream().copyEvent(event.eventBuffer, 0, index);            
+            event.resize(dataSize);            
+            reader.getCurrentRecordStream().getEvent(event.eventBuffer, 0, index);            
             event.eventBuffer.putInt(event.EVENT_LENGTH_WORD_POSITION, dataSize);
+            event.setSchemaFactory(schemaFactory);
             event.updateIndex();
         
         } catch (HipoException ex) {

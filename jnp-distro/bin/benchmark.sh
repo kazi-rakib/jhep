@@ -16,4 +16,4 @@ MALLOC_ARENA_MAX=1; export MALLOC_ARENA_MAX
 #---------------------------------------------------------
 JAVA_OPTIONS="-Xmx1024m -Xms1024m"
 #JAVA_OPTIONS="-XX:+UseG1GC -Xmx1024m -Xms1024m"
-java $JAVA_OPTIONS -cp "$SCRIPT_DIR/../lib/jaw-0.8.jar" org.jlab.jnp.reader.ReadClas12Events $*
+java $JAVA_OPTIONS -cp "$SCRIPT_DIR/../lib/jaw-0.8.jar" org.jlab.jnp.reader.AbsDataEventProcessor $*

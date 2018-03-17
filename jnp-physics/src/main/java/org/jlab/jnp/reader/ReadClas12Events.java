@@ -6,12 +6,19 @@
 package org.jlab.jnp.reader;
 
 import java.util.List;
+import org.jlab.jnp.hipo.abs.AbsDataMap;
+import org.jlab.jnp.hipo.abs.AbsDataMapReducer;
 import org.jlab.jnp.hipo.data.HipoEvent;
 import org.jlab.jnp.hipo.data.HipoGroup;
+import org.jlab.jnp.hipo.io.DataEventHipo;
 import org.jlab.jnp.hipo.io.HipoReader;
 import org.jlab.jnp.physics.EventFilter;
+import org.jlab.jnp.physics.LorentzVector;
 import org.jlab.jnp.physics.ParticleList;
 import org.jlab.jnp.physics.PhysicsEvent;
+import org.jlab.jnp.physics.maps.PhysicsMapProducer;
+import org.jlab.jnp.utils.benchmark.Benchmark;
+import org.jlab.jnp.utils.benchmark.ProgressPrintout;
 import org.jlab.jnp.utils.options.OptionStore;
 
 /**
@@ -71,10 +78,15 @@ public class ReadClas12Events {
     
     public static void importLundFiles(String output, List<String> input, String mcfilter){        
         EventWriter  writer = new EventWriter(output);        
-        EventFilter filter = new EventFilter(mcfilter);        
+        EventFilter filter = new EventFilter(mcfilter);
+        int         nFiles = input.size();
+        int     countFiles = 0;
         for(String inputFile : input){
             LundReader reader = new LundReader();
             reader.addFile(inputFile);
+            countFiles++;
+            System.out.println(String.format("** import ** %4d / %4d : openning file : %s", 
+                    countFiles,nFiles,inputFile));
             reader.open();
             while(reader.next()){
                 PhysicsEvent mcEvent = reader.getEvent();
@@ -101,6 +113,7 @@ public class ReadClas12Events {
         int counter    = 0;
         int write_counter = 0;
         
+        ProgressPrintout progress = new ProgressPrintout();        
         for(String inputFile : input){
             ReadClas12Events reader = new ReadClas12Events(inputFile);
             
@@ -108,6 +121,7 @@ public class ReadClas12Events {
             reader.setMcFilter(mcfilter);
             while(reader.readNext()==true){
                 counter++;
+                progress.updateStatus();
                 PhysicsEvent dataEvent = reader.readReconstructedEvent();
                 PhysicsEvent mcEvent   = reader.readGeneratedEvent();
                 if(dataEvent!=null) data_counter++;
@@ -129,11 +143,11 @@ public class ReadClas12Events {
                 
                 if(writeStatus==true){
                     writer.writeEvent(dataEvent, mcEvent);
-                    System.out.println("------ BEFORE SORTING ----");
-                    System.out.println(dataEvent.toLundString());
-                    System.out.println("------ AFTER SORTING ----");
+                    //System.out.println("------ BEFORE SORTING ----");
+                    //System.out.println(dataEvent.toLundString());
+                    //System.out.println("------ AFTER SORTING ----");
                     dataEvent.getParticleList().sort();
-                    System.out.println(dataEvent.toLundString());
+                    //System.out.println(dataEvent.toLundString());
                     write_counter++;
                 }
             }
@@ -143,9 +157,119 @@ public class ReadClas12Events {
                     " , MC Events : " + mc_counter + "\n\n");
         }
         writer.close();
+        progress.showStatus();
         
     }
     
+    public static void benchmarkPhysicsEvent(String inputFile, int mode){
+        
+        HipoReader reader = new HipoReader();
+        reader.open(inputFile);
+        int nrecords = reader.getRecordCount();
+        DataEventHipo event = new DataEventHipo();
+        PhysicsEvent  physEvent = new PhysicsEvent();
+        PhysicsMapProducer mapProducer = new PhysicsMapProducer();
+        AbsDataMap   dataMap = new AbsDataMap();
+        AbsDataMapReducer reducer = new AbsDataMapReducer("mpi0>0.05&&mpi0<0.25",
+                new String[] {"pi0m","w2","mpi0","mp"} );
+        
+        Benchmark  bench = new Benchmark();
+        bench.addTimer("HIPO-READER-PHYSICS");
+        
+        int icount = 0;
+        int icountPositive = 0;
+        for(int r = 0; r < nrecords; r++){
+            bench.resume("HIPO-READER-PHYSICS");
+            reader.readRecord(r+1);
+            int nevents = reader.getRecordEventCount();
+            for(int ev = 0; ev < nevents-1; ev++){
+                reader.readRecordEvent(event, ev+1);                
+                
+                if(mode==4){
+                    EventReader.readPhysicsEvent(event, physEvent, "mc::event");
+                }
+                
+                if(mode==5) {
+                    mapProducer.createMap(event, dataMap);
+                    if(dataMap.getStatus()==true){
+                        icount++;
+                        boolean status = reducer.reduce(dataMap);
+                        if(status==true) icountPositive++;
+                    }
+                }
+                //System.out.println(physEvent.toLundString());
+                //event.show();
+            }       
+            bench.pause("HIPO-READER-PHYSICS");         
+        }
+
+        System.out.println(bench.toString());
+        System.out.println("# of operations = " + icount + " positive " + icountPositive);
+    }
+    
+    public static void benchmarkPhysics(String inputFile){
+        HipoReader reader = new HipoReader();
+        reader.open(inputFile);
+        int nrecords = reader.getRecordCount();
+        DataEventHipo event = new DataEventHipo();
+        Benchmark  bench = new Benchmark();
+        bench.addTimer("HIPO-READER");
+        LorentzVector pi0 = new LorentzVector();
+        LorentzVector g1 = new LorentzVector();
+        LorentzVector g2 = new LorentzVector();
+        
+        int pid_hash = event.getHash(32111,1);
+        int px_hash = event.getHash(32111,2);
+        int py_hash = event.getHash(32111,3);
+        int pz_hash = event.getHash(32111,4);
+        int icount = 0;
+        for(int r = 0; r < nrecords; r++){
+            bench.resume("HIPO-READER");
+            reader.readRecord(r+1);
+            int nevents = reader.getRecordEventCount();
+            for(int ev = 0; ev < nevents-1; ev++){
+                reader.readRecordEvent(event, ev+1);
+                //event.show();
+                int npart = event.getSize(pid_hash);
+                int index_g1 = -1;
+                int index_g2 = -1;
+                int gcount = 0;
+                
+                for(int i = 0; i < npart; i++){
+                    if(event.getInt(pid_hash, i)==22){
+                        gcount++;
+                        if(index_g1<0){
+                            index_g1 = i;
+                        } else {
+                            if(index_g2<0){
+                                index_g2 = i;
+                            }
+                        }
+                    }
+                }
+                
+                if(gcount>=2){
+                    g1.setPxPyPzM(
+                            event.getFloat(px_hash, index_g1),
+                            event.getFloat(py_hash, index_g1),
+                            event.getFloat(pz_hash, index_g1),
+                            0.0);
+                    g2.setPxPyPzM(
+                            event.getFloat(px_hash, index_g2),
+                            event.getFloat(py_hash, index_g2),
+                            event.getFloat(pz_hash, index_g2),
+                            0.0);
+                    pi0.copy(g1);
+                    pi0.add(g2);
+                    icount++;
+                }
+            }
+            bench.pause("HIPO-READER");
+            //System.out.println(" pions found in the sample = " + icount);
+        }
+        System.out.println(bench.toString());
+        System.out.println(" pions found in the sample = " + icount);
+    }
     public static void main(String[] args){
         
         OptionStore parser = new OptionStore("converter");
@@ -159,6 +283,9 @@ public class ReadClas12Events {
         parser.getOptionParser("-import").addRequired("-o", "output file name");
         parser.getOptionParser("-import").addOption("-data", "X+:X-:Xn", "data filter");
         parser.getOptionParser("-import").addOption("-mc", "X+:X-:Xn", "monte carlo filter");
+        
+        parser.addCommand("-test", "testing physics events class");
+        parser.getOptionParser("-test").addOption("-m","0", "debug mode");
         
         parser.parse(args);
         if(parser.getCommand().compareTo("-convert")==0){
@@ -183,5 +310,17 @@ public class ReadClas12Events {
                 ReadClas12Events.importLundFiles(outputFile, inputList, mcFilter);
             }
         }
+         if(parser.getCommand().compareTo("-test")==0){                          
+             List<String> inputList = parser.getOptionParser("-test").getInputList();
+             Integer      mode      = parser.getOptionParser("-test").getOption("-m").intValue();
+             if(mode==0){
+                 ReadClas12Events.benchmarkPhysics(inputList.get(0));
+             } else {
+                 for(int i = 0; i < 10; i++){
+                     ReadClas12Events.benchmarkPhysicsEvent(inputList.get(0), mode);
+                 }
+             }
+         }
+        
     }
 }

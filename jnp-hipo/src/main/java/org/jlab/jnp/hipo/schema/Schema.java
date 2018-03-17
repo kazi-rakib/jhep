@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.jlab.jnp.hipo.base.DataDescriptor;
 import org.jlab.jnp.hipo.data.HipoGroup;
 import org.jlab.jnp.hipo.data.HipoNode;
 import org.jlab.jnp.hipo.data.HipoNodeType;
@@ -22,7 +23,7 @@ import org.jlab.jnp.utils.data.TextTable;
  *
  * @author gavalian
  */
-public class Schema {
+public class Schema implements DataDescriptor {
     
     private Integer group = 1;
     private String  name  = "default";
@@ -70,12 +71,16 @@ public class Schema {
     }
     
     public void addEntry(SchemaEntry entry){
+        int hash = SchemaFactory.getHashCode(this.getGroup(), entry.getId());
+        entry.setHash(hash);
         this.idEntries.put(entry.getId(), entry);
         this.nameEntries.put(entry.getName(), entry);
     }
     
     public void addEntry(String n, int id, HipoNodeType type){
-        this.addEntry(new SchemaEntry(n,id,type));
+        SchemaEntry entry = new SchemaEntry(n,id,type);
+        entry.setHash(SchemaFactory.getHashCode(getGroup(),id));
+        this.addEntry(entry);
     }
     
     public void addEntry(String n, int id, String typeString){
@@ -110,6 +115,7 @@ public class Schema {
         }
         return entryList;
     }
+    
     public final void   setName(String n){name = n;}
     public final void   setGroup(int grp){group = grp;}
     public final String getName(){return name;}
@@ -174,15 +180,27 @@ public class Schema {
         }
         return table.toString();
     }
+
+    @Override
+    public int getHash(String name) {
+        SchemaEntry entry = this.getEntry(name);
+        return entry.getHash();
+    }
+
+    @Override
+    public int getType(String name) {
+        SchemaEntry entry = this.getEntry(name);
+        return entry.getType().getType();
+    }
     /**
      * Schema entry class for keeping information on each entry
      */
     public static class SchemaEntry {
         
-        private String  name = "x";
-        private Integer id   = 1;
-        private HipoNodeType type = HipoNodeType.UNDEFINED;               
-        private int          hash = 0;
+        private String        name = "x";
+        private Integer       id   = 1;
+        private HipoNodeType  type = HipoNodeType.UNDEFINED;               
+        private int           hash = 0;
         
         public SchemaEntry(){
             
@@ -196,7 +214,7 @@ public class Schema {
         
         public SchemaEntry(String n, int i, HipoNodeType t, int h){
           name = n;
-          id = i;
+          id   = i;
           type = t;
           hash = h;
         }

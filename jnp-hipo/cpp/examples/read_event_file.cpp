@@ -46,6 +46,13 @@ int main(int argc, char** argv) {
 
     hipo::event  event;
 
+    hipo::node<int> *node_pid = event.getIntNode(331,1);
+  /*  hipo::node<int> *node_px  = event.getIntNode(331,2);
+    hipo::node<int> *node_py  = event.getIntNode(331,3);
+    hipo::node<int> *node_pz  = event.getIntNode(331,4);
+    hipo::node<int> *node_vx  = event.getIntNode(331,5);
+    hipo::node<int> *node_vy  = event.getIntNode(331,6);
+*/
     reader.open(filename);
     reader.showInfo();
 
@@ -74,27 +81,15 @@ int main(int argc, char** argv) {
     for(int i = 0; i < nrecords; i++){
        reader.readRecord(record,i);
        int nevents = record.getEventCount();
-       printf(" RECORD # %d has %d events\n", i, nevents);
+       //printf(" RECORD # %d has %d events\n", i, nevents);
        for(int k = 0; k < nevents; k++){
          record.readHipoEvent(event,k);
-         std::vector<int> vecR = event.getInt(11,1);
-         std::vector<int> vecE = event.getInt(11,2);
-         for(int s = 0; s < vecR.size(); s++){
-           printf("RUN %d %d\n", vecR[s], vecE[s]);
+         int length = node_pid->getLength();
+         printf("pid length = %d\n",length);
+         for(int k = 0; k < length; k++){
+           printf(" %d ",node_pid->getValue(k));
          }
-         std::vector<float> vecT = event.getFloat(20711,6);
-         for(int e = 0; e < vecT.size(); e++){
-           printf("%12.5f ",vecT[e]);
-         }
-         printf("\n");
-         //printf("-----> reading event # %d\n",ecounter);
-         /*reader.readEvent(k);
-         int size = px->getLength();
-         for(int s = 0; s < size; s++){
-           printf(" %8d %8.3f %8.3f %8.3f %2d\n",pid->getValue(s),
-                  px->getValue(s),py->getValue(s),pz->getValue(s),charge->getValue(s));
-         }*/
-         //printf("\n");
+          printf("\n");
          ecounter++;
        }
     }

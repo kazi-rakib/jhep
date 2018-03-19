@@ -128,7 +128,12 @@ namespace hipo {
     }
 
     template <class T> void node<T>::show(){
+      int nl = length();
         std::cout << " NODE LENGTH = " << length() << '\n';
+        for(int i = 0; i < nl; i++){
+          std::cout << getValue(i) << ",";
+        }
+        std::cout << std::endl;
     }
 }
 #endif /* NODE_H */

@@ -87,6 +87,7 @@
 #include <climits>
 #include "record.h"
 #include "utils.h"
+#include "dictionary.h"
 
 namespace hipo {
 
@@ -150,6 +151,9 @@ namespace hipo {
     private:
 
         std::vector<std::string>        fileDictionary;
+
+        hipo::dictionary                schemaDictionary;
+
         std::vector<char>               headerBuffer;
         std::ifstream                   inputStream;
         std::vector<recordIndex_t>      recordIndex;
@@ -177,6 +181,8 @@ namespace hipo {
 
         std::vector<std::string>  getDictionary();
 
+        hipo::dictionary         *getSchemaDictionary();
+
         void  open(const char *filename);
         void  readRecord(int index);
         void  readRecord(hipo::record &record, int index);
@@ -188,15 +194,25 @@ namespace hipo {
         bool  next();
 
         template<class T> hipo::node<T> *getBranch(int group, int item);
-
+        template<class T> hipo::node<T> *getBranch(const char* group, const char* item);
     };
-
 
 }
 
 namespace hipo {
   template<class T> hipo::node<T> *reader::getBranch(int group, int item){
       return inEventStream.getBranch<T>(group,item);
+  }
+  template<class T> hipo::node<T> *reader::getBranch(const char* group, const char* item){
+      if(schemaDictionary.hasSchema(group)==true){
+        hipo::schema schema = schemaDictionary.getSchema(group);
+        if(schema.hasEntry(item)==true){
+          int group_id = schema.getGroup();
+          int item__id = schema.getItem(item);
+          return inEventStream.getBranch<T>(group_id,item__id);
+        }
+      }
+      return NULL;
   }
 }
 #endif /* HIPOFILE_H */

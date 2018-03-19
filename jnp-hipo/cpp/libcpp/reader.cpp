@@ -117,6 +117,7 @@ void    reader::readDictionary(){
     dictionary.readHipoEvent(schema,d);
     std::string schemaString = schema.getString(31111,1);
     fileDictionary.push_back(schemaString);
+    schemaDictionary.parse(schemaString);
   }
 }
 
@@ -205,6 +206,10 @@ void  reader::readRecordIndex(){
           icounter,positionOffset,hipoFileSize, recIndex.recordEvents);*/
     }
     printf("total records = %d  index array = %d\n",icounter, (unsigned int) recordIndex.size());
+}
+
+hipo::dictionary         *reader::getSchemaDictionary(){
+  return &schemaDictionary;
 }
 
 void  reader::readHeaderRecord(hipo::record &record){
@@ -296,7 +301,7 @@ namespace hipo {
     }
 
     if(recordEvents.size() < currentRecord + 2 + 1){
-      printf("advance(): Warning, reached the limit of events.");
+      printf("advance(): Warning, reached the limit of events.\n");
       return false;
     }
     currentEvent++;

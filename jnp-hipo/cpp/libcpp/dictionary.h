@@ -33,7 +33,9 @@ class schema {
     int groupid;
     std::string schemaName;
     std::string getTypeString(int type);
-    
+    int         getMaxStringLength();
+    std::string getBranchVariable(const char *var, int max);
+
   public:
 
     schema(){ groupid = 0;}
@@ -51,6 +53,7 @@ class schema {
     std::string getName() { return schemaName;}
 
     void  setGroup( int grp){ groupid = grp;}
+    bool  hasEntry(const char* entry){ return schemaEntries.count(entry);}
     void  addEntry( const char* name, int id, int type)
       { schemaEntries[name] = std::make_pair(id, type);}
 
@@ -58,8 +61,11 @@ class schema {
     int   getGroup( ){ return groupid;};
     int   getItem(  const char* entry);
     int   getType(  const char* entry);
+    int   getTypeByString(const char *typestring);
+    void  ls();
 
     std::vector<std::string> branchesCode();
+    std::vector<std::string> branchesAccessCode();
 
     void operator = (const schema &D ) {
          schemaName = D.schemaName;
@@ -78,9 +84,11 @@ class dictionary {
         dictionary(){}
         virtual ~dictionary(){}
         //node(hipo::reader &reader, int group, int item);
-        bool hasSchema(const char* name){ return mapDict.count(name)>0;}
-        hipo::schema getSchema(const char *name){ return mapDict[name];}
-        void parse(std::string dictString);
+        void          ls(int mode = 0);
+        bool          hasSchema(const char* name){ return mapDict.count(name)>0;}
+        hipo::schema  getSchema(const char *name){ return mapDict[name];}
+        void          parse(std::string dictString);
+        std::vector<std::string> getSchemaList();
 };
 
 }

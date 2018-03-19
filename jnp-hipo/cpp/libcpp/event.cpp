@@ -10,7 +10,7 @@ namespace hipo {
 
     event::event(){
         reset();
-        printf("creating event class.....");
+        //printf("creating event class.....\n");
         //hipo::node<int> *type = new hipo::node<int>();
         //nodes.push_back(type);
     }

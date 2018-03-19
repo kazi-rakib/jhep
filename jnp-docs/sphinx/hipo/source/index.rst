@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    chapters/hipo_cpp
-
+   chapters/hipo_java
 
 Indices and tables
 ==================

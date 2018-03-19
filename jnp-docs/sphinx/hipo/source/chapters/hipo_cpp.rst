@@ -1,5 +1,5 @@
-HIPO Utilities
-**************
+HIPO Utilities C++
+******************
 
 Description of HIPO utilities for C++ API.
 

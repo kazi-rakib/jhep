@@ -221,6 +221,8 @@ void  reader::readHeaderRecord(hipo::record &record){
 void  reader::readRecord(hipo::record &record, int index)
 {
     long position = recordIndex[index].recordPosition;
+    //printf("\n\n***** reading record %d with length %d\n",index,recordIndex[index].recordLength*4);
+    //record.readRecord__(inputStream,position,recordIndex[index].recordLength*4);
     record.readRecord(inputStream,position,0);
 }
 void  reader::readRecord(int index){

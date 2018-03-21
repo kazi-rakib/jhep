@@ -69,12 +69,12 @@ int main(int argc, char** argv) {
     }
     printf("-----> done reading records. n events = %d\n",ecounter);
 
-    printf("-----> readin records with next() \n");
+    /*printf("-----> readin records with next() \n");
     hipo::reader reader2;
     hipo::node<float>       *mc__event_mass = reader2.getBranch<float>("mc::event","mass");
     reader2.open(filename);
     while(reader2.next()==true){
 
-    }
+    }*/
     return 0;
 }

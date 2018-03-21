@@ -87,6 +87,8 @@ namespace hipo {
         ~record();
 
         void  readRecord(std::ifstream &stream, long position, int dataOffset);
+        void  readRecord__(std::ifstream &stream, long position, long recordLength);
+
         int   getEventCount();
         void  readEvent( std::vector<char> &vec, int index);
         void  readHipoEvent(hipo::event &event, int index);

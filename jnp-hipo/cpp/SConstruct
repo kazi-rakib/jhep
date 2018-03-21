@@ -42,6 +42,7 @@ read_file   = env.Program(target="examples/read_file",source=codeList_CPP+["exam
 read_hipo   = env.Program(target="bin/hipo",source=codeList_CPP+["examples/hipo.cpp"])
 read_file_e = env.Program(target="examples/read_event_file",source=codeList_CPP+["examples/read_event_file.cpp"])
 read_file_a = env.Program(target="examples/read_file_advanced",source=codeList_CPP+["examples/read_file_advanced.cpp"])
+benchmark   = env.Program(target="bin/benchmark",source=codeList_CPP+["examples/benchmark.cpp"])
 #write_file  = env.Program(target="examples/write_file",source=codeList_CPP+["examples/write_file.cpp"])
 #pulse_comp  = env.Program(target="examples/pulse_compression",source=codeList_CPP+["examples/pulse_compression.cpp"])
 

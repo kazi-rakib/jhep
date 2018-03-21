@@ -87,7 +87,7 @@ namespace hipo {
           printf(" resizing internal buffer from %lu to %d\n", recordBuffer.size(), recordHeader.recordDataLength);
           recordBuffer.resize(decompressedLength+1024);
         }
-        for(int i = 0; i < recordBuffer.size(); i++) recordBuffer[i] = 0;
+        //for(int i = 0; i < recordBuffer.size(); i++) recordBuffer[i] = 0;
         //printf("****************** BEFORE padding = %d\n", compressedDataLengthPadding);
         //showBuffer(&recordBuffer[0], 10, 200);
         if(recordHeader.compressionType==0){
